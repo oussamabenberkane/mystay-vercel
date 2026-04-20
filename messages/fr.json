@@ -1,0 +1,146 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "menu": "Menu",
+    "orders": "Commandes",
+    "requests": "Demandes",
+    "chat": "Chat",
+    "expenses": "Dépenses",
+    "settings": "Paramètres",
+    "dashboard": "Tableau de bord",
+    "operations": "Opérations",
+    "guests": "Clients",
+    "staff": "Personnel",
+    "reports": "Rapports"
+  },
+  "auth": {
+    "login": "Connexion",
+    "signup": "S'inscrire",
+    "logout": "Déconnexion",
+    "email": "Email",
+    "password": "Mot de passe",
+    "forgotPassword": "Mot de passe oublié ?",
+    "resetPassword": "Réinitialiser le mot de passe",
+    "loginTitle": "Bon retour",
+    "loginSubtitle": "Connectez-vous à votre compte",
+    "noAccount": "Pas encore de compte ?",
+    "haveAccount": "Déjà un compte ?"
+  },
+  "guest": {
+    "dashboard": {
+      "title": "Mon Séjour",
+      "welcome": "Bienvenue",
+      "checkIn": "Arrivée",
+      "checkOut": "Départ",
+      "room": "Chambre",
+      "quickActions": "Actions rapides"
+    },
+    "menu": {
+      "title": "Menu Room Service",
+      "orderNow": "Commander maintenant",
+      "addToCart": "Ajouter au panier",
+      "viewCart": "Voir le panier",
+      "emptyCart": "Votre panier est vide",
+      "placeOrder": "Passer la commande"
+    },
+    "orders": {
+      "title": "Mes Commandes",
+      "empty": "Aucune commande",
+      "total": "Total",
+      "items": "articles"
+    },
+    "requests": {
+      "title": "Demandes de service",
+      "newRequest": "Nouvelle demande",
+      "empty": "Aucune demande",
+      "cleaning": "Nettoyage de chambre",
+      "towels": "Serviettes supplémentaires",
+      "maintenance": "Maintenance",
+      "other": "Autre"
+    },
+    "chat": {
+      "title": "Chat avec la réception",
+      "placeholder": "Tapez un message...",
+      "send": "Envoyer",
+      "empty": "Commencer une conversation"
+    },
+    "expenses": {
+      "title": "Mes Dépenses",
+      "total": "Total",
+      "empty": "Aucune dépense"
+    }
+  },
+  "staff": {
+    "orders": {
+      "title": "Commandes",
+      "pending": "Commandes en attente",
+      "active": "Commandes actives",
+      "empty": "Aucune commande"
+    },
+    "requests": {
+      "title": "Demandes de service",
+      "empty": "Aucune demande"
+    },
+    "chat": {
+      "title": "Chats clients",
+      "empty": "Aucun chat actif"
+    }
+  },
+  "admin": {
+    "operations": {
+      "title": "Vue d'ensemble des opérations"
+    },
+    "guests": {
+      "title": "Clients",
+      "checkin": "Enregistrer un client",
+      "checkout": "Départ"
+    },
+    "menu": {
+      "title": "Gestion du menu",
+      "addItem": "Ajouter un article",
+      "addCategory": "Ajouter une catégorie"
+    },
+    "settings": {
+      "title": "Paramètres de l'hôtel"
+    }
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur s'est produite",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "add": "Ajouter",
+    "back": "Retour",
+    "next": "Suivant",
+    "submit": "Soumettre",
+    "close": "Fermer",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "all": "Tout",
+    "none": "Aucun",
+    "yes": "Oui",
+    "no": "Non",
+    "or": "ou",
+    "and": "et",
+    "refresh": "Actualiser",
+    "noResults": "Aucun résultat",
+    "required": "Ce champ est obligatoire"
+  },
+  "status": {
+    "pending": "En attente",
+    "confirmed": "Confirmé",
+    "preparing": "En préparation",
+    "delivering": "En route",
+    "delivered": "Livré",
+    "cancelled": "Annulé",
+    "in_progress": "En cours",
+    "completed": "Terminé",
+    "active": "Actif",
+    "archived": "Archivé",
+    "normal": "Normal",
+    "urgent": "Urgent"
+  }
+}

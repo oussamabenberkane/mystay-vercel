@@ -1,0 +1,146 @@
+{
+  "nav": {
+    "home": "الرئيسية",
+    "menu": "القائمة",
+    "orders": "الطلبات",
+    "requests": "الخدمات",
+    "chat": "المحادثة",
+    "expenses": "المصروفات",
+    "settings": "الإعدادات",
+    "dashboard": "لوحة التحكم",
+    "operations": "العمليات",
+    "guests": "النزلاء",
+    "staff": "الموظفون",
+    "reports": "التقارير"
+  },
+  "auth": {
+    "login": "تسجيل الدخول",
+    "signup": "إنشاء حساب",
+    "logout": "تسجيل الخروج",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "resetPassword": "إعادة تعيين كلمة المرور",
+    "loginTitle": "مرحباً بعودتك",
+    "loginSubtitle": "سجّل الدخول إلى حسابك",
+    "noAccount": "ليس لديك حساب؟",
+    "haveAccount": "لديك حساب بالفعل؟"
+  },
+  "guest": {
+    "dashboard": {
+      "title": "إقامتي",
+      "welcome": "مرحباً",
+      "checkIn": "تاريخ الوصول",
+      "checkOut": "تاريخ المغادرة",
+      "room": "الغرفة",
+      "quickActions": "إجراءات سريعة"
+    },
+    "menu": {
+      "title": "قائمة خدمة الغرف",
+      "orderNow": "اطلب الآن",
+      "addToCart": "أضف إلى السلة",
+      "viewCart": "عرض السلة",
+      "emptyCart": "سلة التسوق فارغة",
+      "placeOrder": "تأكيد الطلب"
+    },
+    "orders": {
+      "title": "طلباتي",
+      "empty": "لا توجد طلبات",
+      "total": "المجموع",
+      "items": "عناصر"
+    },
+    "requests": {
+      "title": "طلبات الخدمة",
+      "newRequest": "طلب جديد",
+      "empty": "لا توجد طلبات",
+      "cleaning": "تنظيف الغرفة",
+      "towels": "مناشف إضافية",
+      "maintenance": "صيانة",
+      "other": "أخرى"
+    },
+    "chat": {
+      "title": "التحدث مع الاستقبال",
+      "placeholder": "اكتب رسالة...",
+      "send": "إرسال",
+      "empty": "ابدأ محادثة"
+    },
+    "expenses": {
+      "title": "مصروفاتي",
+      "total": "المجموع",
+      "empty": "لا توجد مصروفات"
+    }
+  },
+  "staff": {
+    "orders": {
+      "title": "الطلبات",
+      "pending": "الطلبات المعلقة",
+      "active": "الطلبات النشطة",
+      "empty": "لا توجد طلبات"
+    },
+    "requests": {
+      "title": "طلبات الخدمة",
+      "empty": "لا توجد طلبات"
+    },
+    "chat": {
+      "title": "محادثات النزلاء",
+      "empty": "لا توجد محادثات نشطة"
+    }
+  },
+  "admin": {
+    "operations": {
+      "title": "نظرة عامة على العمليات"
+    },
+    "guests": {
+      "title": "النزلاء",
+      "checkin": "تسجيل وصول نزيل",
+      "checkout": "تسجيل المغادرة"
+    },
+    "menu": {
+      "title": "إدارة القائمة",
+      "addItem": "إضافة عنصر",
+      "addCategory": "إضافة فئة"
+    },
+    "settings": {
+      "title": "إعدادات الفندق"
+    }
+  },
+  "common": {
+    "loading": "جارٍ التحميل...",
+    "error": "حدث خطأ ما",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "confirm": "تأكيد",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "add": "إضافة",
+    "back": "رجوع",
+    "next": "التالي",
+    "submit": "إرسال",
+    "close": "إغلاق",
+    "search": "بحث",
+    "filter": "تصفية",
+    "all": "الكل",
+    "none": "لا شيء",
+    "yes": "نعم",
+    "no": "لا",
+    "or": "أو",
+    "and": "و",
+    "refresh": "تحديث",
+    "noResults": "لا توجد نتائج",
+    "required": "هذا الحقل مطلوب"
+  },
+  "status": {
+    "pending": "قيد الانتظار",
+    "confirmed": "مؤكد",
+    "preparing": "قيد التحضير",
+    "delivering": "في الطريق",
+    "delivered": "تم التسليم",
+    "cancelled": "ملغى",
+    "in_progress": "قيد التنفيذ",
+    "completed": "مكتمل",
+    "active": "نشط",
+    "archived": "مؤرشف",
+    "normal": "عادي",
+    "urgent": "عاجل"
+  }
+}

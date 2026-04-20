@@ -1,0 +1,43 @@
+import { cn } from '@/lib/utils'
+import type { RequestStatus } from '@/lib/actions/service-requests'
+
+const STATUS_CONFIG: Record<
+  RequestStatus,
+  { label: string; bg: string; text: string; dot: string; pulse: boolean }
+> = {
+  pending:     { label: 'Pending',     bg: '#FEF9EC', text: '#92600A', dot: '#F59E0B', pulse: false },
+  in_progress: { label: 'In Progress', bg: '#EFF6FF', text: '#1E40AF', dot: '#3B82F6', pulse: true  },
+  completed:   { label: 'Completed',   bg: '#F0FDF4', text: '#166534', dot: '#22C55E', pulse: false },
+  cancelled:   { label: 'Cancelled',   bg: '#FEF2F2', text: '#991B1B', dot: '#EF4444', pulse: false },
+}
+
+export function RequestStatusBadge({
+  status,
+  className,
+}: {
+  status: RequestStatus
+  className?: string
+}) {
+  const config = STATUS_CONFIG[status] ?? STATUS_CONFIG.pending
+
+  return (
+    <span
+      className={cn('inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold', className)}
+      style={{ background: config.bg, color: config.text }}
+    >
+      <span className="relative flex size-2">
+        {config.pulse && (
+          <span
+            className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"
+            style={{ background: config.dot }}
+          />
+        )}
+        <span
+          className="relative inline-flex size-2 rounded-full"
+          style={{ background: config.dot }}
+        />
+      </span>
+      {config.label}
+    </span>
+  )
+}

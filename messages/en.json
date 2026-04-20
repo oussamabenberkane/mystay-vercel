@@ -1,0 +1,146 @@
+{
+  "nav": {
+    "home": "Home",
+    "menu": "Menu",
+    "orders": "Orders",
+    "requests": "Requests",
+    "chat": "Chat",
+    "expenses": "Expenses",
+    "settings": "Settings",
+    "dashboard": "Dashboard",
+    "operations": "Operations",
+    "guests": "Guests",
+    "staff": "Staff",
+    "reports": "Reports"
+  },
+  "auth": {
+    "login": "Login",
+    "signup": "Sign Up",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot Password?",
+    "resetPassword": "Reset Password",
+    "loginTitle": "Welcome Back",
+    "loginSubtitle": "Sign in to your account",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?"
+  },
+  "guest": {
+    "dashboard": {
+      "title": "My Stay",
+      "welcome": "Welcome",
+      "checkIn": "Check-in",
+      "checkOut": "Check-out",
+      "room": "Room",
+      "quickActions": "Quick Actions"
+    },
+    "menu": {
+      "title": "Room Service Menu",
+      "orderNow": "Order Now",
+      "addToCart": "Add to Cart",
+      "viewCart": "View Cart",
+      "emptyCart": "Your cart is empty",
+      "placeOrder": "Place Order"
+    },
+    "orders": {
+      "title": "My Orders",
+      "empty": "No orders yet",
+      "total": "Total",
+      "items": "items"
+    },
+    "requests": {
+      "title": "Service Requests",
+      "newRequest": "New Request",
+      "empty": "No requests yet",
+      "cleaning": "Room Cleaning",
+      "towels": "Extra Towels",
+      "maintenance": "Maintenance",
+      "other": "Other"
+    },
+    "chat": {
+      "title": "Chat with Reception",
+      "placeholder": "Type a message...",
+      "send": "Send",
+      "empty": "Start a conversation"
+    },
+    "expenses": {
+      "title": "My Expenses",
+      "total": "Total",
+      "empty": "No expenses yet"
+    }
+  },
+  "staff": {
+    "orders": {
+      "title": "Orders",
+      "pending": "Pending Orders",
+      "active": "Active Orders",
+      "empty": "No orders"
+    },
+    "requests": {
+      "title": "Service Requests",
+      "empty": "No requests"
+    },
+    "chat": {
+      "title": "Guest Chats",
+      "empty": "No active chats"
+    }
+  },
+  "admin": {
+    "operations": {
+      "title": "Operations Overview"
+    },
+    "guests": {
+      "title": "Guests",
+      "checkin": "Check In Guest",
+      "checkout": "Check Out"
+    },
+    "menu": {
+      "title": "Menu Management",
+      "addItem": "Add Item",
+      "addCategory": "Add Category"
+    },
+    "settings": {
+      "title": "Hotel Settings"
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "close": "Close",
+    "search": "Search",
+    "filter": "Filter",
+    "all": "All",
+    "none": "None",
+    "yes": "Yes",
+    "no": "No",
+    "or": "or",
+    "and": "and",
+    "refresh": "Refresh",
+    "noResults": "No results found",
+    "required": "This field is required"
+  },
+  "status": {
+    "pending": "Pending",
+    "confirmed": "Confirmed",
+    "preparing": "Preparing",
+    "delivering": "On the way",
+    "delivered": "Delivered",
+    "cancelled": "Cancelled",
+    "in_progress": "In Progress",
+    "completed": "Completed",
+    "active": "Active",
+    "archived": "Archived",
+    "normal": "Normal",
+    "urgent": "Urgent"
+  }
+}
