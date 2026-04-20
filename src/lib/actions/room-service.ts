@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { sendPushToUser } from '@/lib/utils/push'
 
 export type OrderStatus =
   | 'pending'
@@ -94,11 +95,25 @@ export async function updateOrderStatusAction(
       return { error: 'Unauthorized' }
     }
 
-    const { error } = await db
+    const { data: order, error } = await db
       .from('orders')
       .update({ status })
       .eq('id', orderId)
       .eq('hotel_id', profile.hotel_id)
+      .select('guest_id')
+      .single()
+
+    if (!error && order?.guest_id) {
+      const pushMap: Partial<Record<OrderStatus, { title: string; body: string }>> = {
+        confirmed:  { title: 'Order Confirmed ✓',  body: 'Your room service order is being prepared' },
+        delivering: { title: 'On the Way! 🚀',      body: 'Your order is on its way to your room' },
+        delivered:  { title: 'Order Delivered ✓',   body: 'Enjoy your meal! Your order has arrived' },
+      }
+      const notif = pushMap[status]
+      if (notif) {
+        sendPushToUser(order.guest_id, { ...notif, url: '/orders' })
+      }
+    }
 
     return { error: error?.message ?? null }
   } catch {

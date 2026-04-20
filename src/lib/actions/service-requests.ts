@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { sendPushToUser, sendPushToHotelStaff } from '@/lib/utils/push'
 
 export type RequestType = 'cleaning' | 'towels' | 'maintenance' | 'other'
 export type RequestPriority = 'normal' | 'urgent'
@@ -45,6 +46,23 @@ export async function createServiceRequestAction(data: {
       .single()
 
     if (error || !request) return { requestId: null, error: 'Failed to submit request' }
+
+    if (data.priority === 'urgent') {
+      // Look up room number for the notification body
+      const { data: stayRow } = await db
+        .from('stays')
+        .select('rooms(number)')
+        .eq('id', data.stayId)
+        .single()
+      const roomNumber = stayRow?.rooms?.number ?? '?'
+      const typeLabel = data.type.charAt(0).toUpperCase() + data.type.slice(1)
+      sendPushToHotelStaff(stay.hotel_id, {
+        title: '⚠️ Urgent Request',
+        body: `Room ${roomNumber} needs ${typeLabel}`,
+        url: '/staff/requests',
+      })
+    }
+
     return { requestId: request.id, error: null }
   } catch {
     return { requestId: null, error: 'Unexpected error' }
@@ -73,11 +91,22 @@ export async function updateServiceRequestStatusAction(
       return { error: 'Unauthorized' }
     }
 
-    const { error } = await db
+    const { data: reqRow, error } = await db
       .from('service_requests')
       .update({ status, updated_at: new Date().toISOString() })
       .eq('id', requestId)
       .eq('hotel_id', profile.hotel_id)
+      .select('guest_id, type')
+      .single()
+
+    if (!error && reqRow?.guest_id && status === 'in_progress') {
+      const typeLabel = reqRow.type.charAt(0).toUpperCase() + reqRow.type.slice(1)
+      sendPushToUser(reqRow.guest_id, {
+        title: 'Request Accepted',
+        body: `Your ${typeLabel} request is being handled`,
+        url: '/requests',
+      })
+    }
 
     return { error: error?.message ?? null }
   } catch {
