@@ -256,7 +256,7 @@ export default function GuestOrdersPage() {
 
       const { orders: raw } = await getOrdersForStayAction(stay.id)
       const mapped = (raw ?? []).map((o: RawOrder) => mapOrder(o))
-      mapped.forEach((o) => { prevStatusesRef.current[o.id] = o.status })
+      mapped.forEach((o: Order) => { prevStatusesRef.current[o.id] = o.status })
       setOrders(mapped)
       setLoading(false)
     }
@@ -297,7 +297,7 @@ export default function GuestOrdersPage() {
         async () => {
           const { orders: raw } = await getOrdersForStayAction(stayId)
           const mapped = (raw ?? []).map((o: RawOrder) => mapOrder(o))
-          mapped.forEach((o) => { prevStatusesRef.current[o.id] = o.status })
+          mapped.forEach((o: Order) => { prevStatusesRef.current[o.id] = o.status })
           setOrders(mapped)
         }
       )
