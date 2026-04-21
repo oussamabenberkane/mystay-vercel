@@ -94,8 +94,10 @@ export default async function AuthLayout({
         .auth-btn {
           position: relative;
           overflow: hidden;
+          cursor: pointer;
           transition: transform 0.2s, box-shadow 0.2s;
         }
+        .auth-btn:disabled { cursor: not-allowed; }
         .auth-btn::after {
           content: '';
           position: absolute;
@@ -108,6 +110,8 @@ export default async function AuthLayout({
         .auth-btn:active { transform: translateY(0); }
 
         /* Test account pill hover */
+        .test-account-btn { cursor: pointer; }
+        .test-account-btn:disabled { cursor: not-allowed; }
         .test-account-btn:hover:not(:disabled) {
           background: rgba(27,45,91,0.07) !important;
           border-color: rgba(201,168,76,0.35) !important;
