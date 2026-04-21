@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Bell, ClipboardList } from 'lucide-react'
 import { StaffRequestCard, type StaffServiceRequest } from '@/components/staff/request-card'
 import { RequestStatusBadge } from '@/components/shared/request-status-badge'
@@ -64,6 +64,8 @@ export default function StaffRequestsPage() {
   const [typeFilter, setTypeFilter] = useState<TypeFilter>('all')
   const [priorityFilter, setPriorityFilter] = useState<PriorityFilter>('all')
   const [toasts, setToasts] = useState<ToastMsg[]>([])
+  const [newIds, setNewIds] = useState<Set<string>>(new Set())
+  const seenIdsRef = useRef<Set<string>>(new Set())
 
   function showToast(message: string) {
     const id = Date.now()
@@ -74,7 +76,9 @@ export default function StaffRequestsPage() {
   useEffect(() => {
     async function init() {
       const { requests: raw } = await getStaffServiceRequestsAction()
-      setRequests(raw as StaffServiceRequest[])
+      const mapped = raw as StaffServiceRequest[]
+      mapped.forEach((r) => seenIdsRef.current.add(r.id))
+      setRequests(mapped)
       setLoading(false)
     }
     init()
@@ -95,14 +99,21 @@ export default function StaffRequestsPage() {
         },
         async (payload) => {
           const { requests: raw } = await getStaffServiceRequestsAction()
-          setRequests(raw as StaffServiceRequest[])
+          const mapped = raw as StaffServiceRequest[]
+          const incoming = new Set(mapped.map((r) => r.id).filter((id) => !seenIdsRef.current.has(id)))
+          mapped.forEach((r) => seenIdsRef.current.add(r.id))
+          setRequests(mapped)
+          if (incoming.size > 0) {
+            setNewIds(incoming)
+            setTimeout(() => setNewIds(new Set()), 600)
+          }
 
-          const incoming = payload.new as { priority: string; type: string }
-          if (incoming.priority === 'urgent') {
-            showToast(`🚨 Urgent request — needs ${incoming.type}`)
+          const incomingPayload = payload.new as { priority: string; type: string }
+          if (incomingPayload.priority === 'urgent') {
+            showToast(`🚨 Urgent request — needs ${incomingPayload.type}`)
             try { new Audio('/notification.mp3').play().catch(() => {}) } catch { /* no audio */ }
           } else {
-            showToast(`New ${incoming.type} request received`)
+            showToast(`New ${incomingPayload.type} request received`)
           }
         }
       )
@@ -124,6 +135,29 @@ export default function StaffRequestsPage() {
       .subscribe()
 
     return () => { supabase.removeChannel(channel) }
+  }, [profile?.hotel_id])
+
+  // Polling fallback — 2s interval, animates new cards with msg-rise
+  useEffect(() => {
+    if (!profile?.hotel_id) return
+    let mounted = true
+    const interval = setInterval(async () => {
+      const { requests: raw } = await getStaffServiceRequestsAction()
+      if (!mounted) return
+      const mapped = raw as StaffServiceRequest[]
+      const incoming = new Set(mapped.map((r) => r.id).filter((id) => !seenIdsRef.current.has(id)))
+      mapped.forEach((r) => seenIdsRef.current.add(r.id))
+      setRequests(mapped)
+      if (incoming.size > 0) {
+        setNewIds(incoming)
+        setTimeout(() => { if (mounted) setNewIds(new Set()) }, 600)
+      }
+    }, 2000)
+
+    return () => {
+      mounted = false
+      clearInterval(interval)
+    }
   }, [profile?.hotel_id])
 
   function handleStatusChange(id: string, status: RequestStatus) {
@@ -317,11 +351,12 @@ export default function StaffRequestsPage() {
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {filtered.map((req) => (
-              <StaffRequestCard
-                key={req.id}
-                request={req}
-                onStatusChange={handleStatusChange}
-              />
+              <div key={req.id} className={newIds.has(req.id) ? 'msg-rise' : undefined}>
+                <StaffRequestCard
+                  request={req}
+                  onStatusChange={handleStatusChange}
+                />
+              </div>
             ))}
           </div>
         )}

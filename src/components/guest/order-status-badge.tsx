@@ -16,15 +16,17 @@ const STATUS_CONFIG: Record<
 export function OrderStatusBadge({
   status,
   className,
+  flash,
 }: {
   status: OrderStatus
   className?: string
+  flash?: boolean
 }) {
   const config = STATUS_CONFIG[status] ?? STATUS_CONFIG.pending
 
   return (
     <span
-      className={cn('inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold', className)}
+      className={cn('inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold', flash && 'status-updated', className)}
       style={{ background: config.bg, color: config.text }}
     >
       <span className="relative flex size-2">

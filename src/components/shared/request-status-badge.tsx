@@ -17,16 +17,18 @@ const STATUS_STYLE: Record<
 export function RequestStatusBadge({
   status,
   className,
+  flash,
 }: {
   status: RequestStatus
   className?: string
+  flash?: boolean
 }) {
   const t = useTranslations('status')
   const style = STATUS_STYLE[status] ?? STATUS_STYLE.pending
 
   return (
     <span
-      className={cn('inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold', className)}
+      className={cn('inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold', flash && 'status-updated', className)}
       style={{ background: style.bg, color: style.text }}
     >
       <span className="relative flex size-2">

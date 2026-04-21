@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -92,7 +92,7 @@ function RequestSkeleton() {
   )
 }
 
-function RequestCard({ request }: { request: ServiceRequest }) {
+function RequestCard({ request, flash }: { request: ServiceRequest; flash?: boolean }) {
   const t = useTranslations('guest.requests')
   const Icon = TYPE_ICONS[request.type]
   const color = TYPE_COLORS[request.type]
@@ -128,7 +128,7 @@ function RequestCard({ request }: { request: ServiceRequest }) {
               </div>
             </div>
           </div>
-          <RequestStatusBadge status={request.status} />
+          <RequestStatusBadge status={request.status} flash={flash} />
         </div>
 
         {request.description && (
@@ -161,6 +161,8 @@ export default function GuestRequestsPage() {
   const [sheetOpen, setSheetOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [toasts, setToasts] = useState<ToastMsg[]>([])
+  const [flashIds, setFlashIds] = useState<Set<string>>(new Set())
+  const prevStatusesRef = useRef<Record<string, RequestStatus>>({})
 
   const {
     control,
@@ -193,7 +195,9 @@ export default function GuestRequestsPage() {
       }
       setStayId(stay.id)
       const { requests: raw } = await getServiceRequestsForStayAction(stay.id)
-      setRequests(raw as ServiceRequest[])
+      const mapped = raw as ServiceRequest[]
+      mapped.forEach((r) => { prevStatusesRef.current[r.id] = r.status })
+      setRequests(mapped)
       setLoading(false)
     }
     init()
@@ -248,6 +252,42 @@ export default function GuestRequestsPage() {
 
     return () => {
       supabase.removeChannel(channel)
+    }
+  }, [stayId])
+
+  // Polling fallback — 2s interval, animates badge on status change
+  useEffect(() => {
+    if (!stayId) return
+    let mounted = true
+    const interval = setInterval(async () => {
+      const { requests: raw } = await getServiceRequestsForStayAction(stayId)
+      if (!mounted) return
+      const mapped = (raw as ServiceRequest[]).filter((r) => !r.isOptimistic)
+
+      const changed = new Set<string>()
+      for (const r of mapped) {
+        if (
+          prevStatusesRef.current[r.id] !== undefined &&
+          prevStatusesRef.current[r.id] !== r.status
+        ) {
+          changed.add(r.id)
+        }
+        prevStatusesRef.current[r.id] = r.status
+      }
+
+      setRequests((prev) => {
+        const optimistic = prev.filter((r) => r.isOptimistic)
+        return [...optimistic, ...mapped]
+      })
+      if (changed.size > 0) {
+        setFlashIds(changed)
+        setTimeout(() => { if (mounted) setFlashIds(new Set()) }, 600)
+      }
+    }, 2000)
+
+    return () => {
+      mounted = false
+      clearInterval(interval)
     }
   }, [stayId])
 
@@ -376,7 +416,7 @@ export default function GuestRequestsPage() {
         ) : (
           <div className="space-y-4">
             {requests.map((req) => (
-              <RequestCard key={req.id} request={req} />
+              <RequestCard key={req.id} request={req} flash={flashIds.has(req.id)} />
             ))}
           </div>
         )}

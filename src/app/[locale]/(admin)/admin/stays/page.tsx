@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { defaultLocale } from '@/lib/i18n/config'
 import { StaysClient } from './_components/stays-client'
+import { AutoRefresh } from '../operations/_components/auto-refresh'
 
 export default async function StaysPage({
   params,
@@ -52,6 +53,7 @@ export default async function StaysPage({
 
   return (
     <div className="p-6 md:p-8 space-y-6">
+      <AutoRefresh />
       <div>
         <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#C9A84C' }}>
           Guest Management

@@ -14,6 +14,7 @@ import { OrderStatusBadge } from '@/components/guest/order-status-badge'
 import { RequestStatusBadge } from '@/components/shared/request-status-badge'
 import { PriorityBadge } from '@/components/shared/priority-badge'
 import { RefreshButton } from './_components/refresh-button'
+import { AutoRefresh } from './_components/auto-refresh'
 import { formatCurrency } from '@/lib/utils/format'
 
 type HotelStats = {
@@ -87,6 +88,7 @@ export default async function OperationsPage({
 
   return (
     <div className="p-6 md:p-8 space-y-8">
+      <AutoRefresh />
       {/* Page header */}
       <div className="flex items-center justify-between">
         <div>

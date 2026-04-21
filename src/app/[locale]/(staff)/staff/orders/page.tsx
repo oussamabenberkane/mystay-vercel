@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Radio, ClipboardList } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { StaffOrderCard, type StaffOrder } from '@/components/staff/order-card'
@@ -90,6 +90,8 @@ export default function StaffOrdersPage() {
   const [orders, setOrders] = useState<StaffOrder[]>([])
   const [filter, setFilter] = useState<FilterTab>('all')
   const [loading, setLoading] = useState(true)
+  const [newIds, setNewIds] = useState<Set<string>>(new Set())
+  const seenIdsRef = useRef<Set<string>>(new Set())
 
   const FILTER_TABS: { key: FilterTab; label: string }[] = [
     { key: 'all',       label: t('title')           }, // TODO: i18n — no "All Orders" key
@@ -103,7 +105,9 @@ export default function StaffOrdersPage() {
     async function load() {
       setLoading(true)
       const { orders: raw } = await getStaffOrdersAction()
-      setOrders((raw ?? []).map(mapOrder))
+      const mapped = (raw ?? []).map(mapOrder)
+      mapped.forEach((o) => seenIdsRef.current.add(o.id))
+      setOrders(mapped)
       setLoading(false)
     }
     load()
@@ -126,9 +130,15 @@ export default function StaffOrdersPage() {
           filter: `hotel_id=eq.${hotelId}`,
         },
         async () => {
-          // Refetch all to get joined room/guest data for the new order
           const { orders: raw } = await getStaffOrdersAction()
-          setOrders((raw ?? []).map(mapOrder))
+          const mapped = (raw ?? []).map(mapOrder)
+          const incoming = new Set(mapped.map((o) => o.id).filter((id) => !seenIdsRef.current.has(id)))
+          mapped.forEach((o) => seenIdsRef.current.add(o.id))
+          setOrders(mapped)
+          if (incoming.size > 0) {
+            setNewIds(incoming)
+            setTimeout(() => setNewIds(new Set()), 600)
+          }
         }
       )
       .on(
@@ -152,6 +162,30 @@ export default function StaffOrdersPage() {
 
     return () => {
       supabase.removeChannel(channel)
+    }
+  }, [profile?.hotel_id])
+
+  // Polling fallback — 2s interval, animates new cards with msg-rise
+  useEffect(() => {
+    const hotelId = profile?.hotel_id
+    if (!hotelId) return
+    let mounted = true
+    const interval = setInterval(async () => {
+      const { orders: raw } = await getStaffOrdersAction()
+      if (!mounted) return
+      const mapped = (raw ?? []).map(mapOrder)
+      const incoming = new Set(mapped.map((o) => o.id).filter((id) => !seenIdsRef.current.has(id)))
+      mapped.forEach((o) => seenIdsRef.current.add(o.id))
+      setOrders(mapped)
+      if (incoming.size > 0) {
+        setNewIds(incoming)
+        setTimeout(() => { if (mounted) setNewIds(new Set()) }, 600)
+      }
+    }, 2000)
+
+    return () => {
+      mounted = false
+      clearInterval(interval)
     }
   }, [profile?.hotel_id])
 
@@ -263,11 +297,12 @@ export default function StaffOrdersPage() {
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {filtered.map((order) => (
-              <StaffOrderCard
-                key={order.id}
-                order={order}
-                onStatusChange={handleStatusChange}
-              />
+              <div key={order.id} className={newIds.has(order.id) ? 'msg-rise' : undefined}>
+                <StaffOrderCard
+                  order={order}
+                  onStatusChange={handleStatusChange}
+                />
+              </div>
             ))}
           </div>
         )}

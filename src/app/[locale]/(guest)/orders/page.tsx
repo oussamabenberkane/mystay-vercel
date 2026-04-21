@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { ClipboardList, ChevronDown, ChevronUp } from 'lucide-react'
@@ -123,7 +123,26 @@ function OrderSkeleton() {
   )
 }
 
-function OrderCard({ order }: { order: Order }) {
+type RawOrderItem = { id: string; quantity: number; unit_price: number; menu_items: { name: string } | null }
+type RawOrder = { id: string; status: OrderStatus; total_amount: number; notes: string | null; created_at: string; order_items: RawOrderItem[] }
+
+function mapOrder(o: RawOrder): Order {
+  return {
+    id: o.id,
+    status: o.status,
+    total_amount: o.total_amount,
+    notes: o.notes,
+    created_at: o.created_at,
+    items: (o.order_items ?? []).map((oi) => ({
+      id: oi.id,
+      quantity: oi.quantity,
+      unit_price: oi.unit_price,
+      name: oi.menu_items?.name ?? 'Item',
+    })),
+  }
+}
+
+function OrderCard({ order, flash }: { order: Order; flash?: boolean }) {
   const [expanded, setExpanded] = useState(false)
   const isActive =
     order.status !== 'delivered' && order.status !== 'cancelled'
@@ -158,7 +177,7 @@ function OrderCard({ order }: { order: Order }) {
               {timeLabel(order.created_at)}
             </p>
           </div>
-          <OrderStatusBadge status={order.status} />
+          <OrderStatusBadge status={order.status} flash={flash} />
         </div>
 
         {/* Progress timeline for active orders */}
@@ -223,6 +242,8 @@ export default function GuestOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
   const [stayId, setStayId] = useState<string | null>(null)
+  const [flashIds, setFlashIds] = useState<Set<string>>(new Set())
+  const prevStatusesRef = useRef<Record<string, OrderStatus>>({})
 
   useEffect(() => {
     async function init() {
@@ -234,28 +255,8 @@ export default function GuestOrdersPage() {
       setStayId(stay.id)
 
       const { orders: raw } = await getOrdersForStayAction(stay.id)
-      const mapped: Order[] = (raw ?? []).map(
-        (o: {
-          id: string
-          status: OrderStatus
-          total_amount: number
-          notes: string | null
-          created_at: string
-          order_items: { id: string; quantity: number; unit_price: number; menu_items: { name: string } | null }[]
-        }) => ({
-          id: o.id,
-          status: o.status,
-          total_amount: o.total_amount,
-          notes: o.notes,
-          created_at: o.created_at,
-          items: (o.order_items ?? []).map((oi) => ({
-            id: oi.id,
-            quantity: oi.quantity,
-            unit_price: oi.unit_price,
-            name: oi.menu_items?.name ?? 'Item',
-          })),
-        })
-      )
+      const mapped = (raw ?? []).map((o: RawOrder) => mapOrder(o))
+      mapped.forEach((o) => { prevStatusesRef.current[o.id] = o.status })
       setOrders(mapped)
       setLoading(false)
     }
@@ -294,30 +295,9 @@ export default function GuestOrdersPage() {
           filter: `stay_id=eq.${stayId}`,
         },
         async () => {
-          // Refetch all orders to pick up the new one with its items
           const { orders: raw } = await getOrdersForStayAction(stayId)
-          const mapped: Order[] = (raw ?? []).map(
-            (o: {
-              id: string
-              status: OrderStatus
-              total_amount: number
-              notes: string | null
-              created_at: string
-              order_items: { id: string; quantity: number; unit_price: number; menu_items: { name: string } | null }[]
-            }) => ({
-              id: o.id,
-              status: o.status,
-              total_amount: o.total_amount,
-              notes: o.notes,
-              created_at: o.created_at,
-              items: (o.order_items ?? []).map((oi) => ({
-                id: oi.id,
-                quantity: oi.quantity,
-                unit_price: oi.unit_price,
-                name: oi.menu_items?.name ?? 'Item',
-              })),
-            })
-          )
+          const mapped = (raw ?? []).map((o: RawOrder) => mapOrder(o))
+          mapped.forEach((o) => { prevStatusesRef.current[o.id] = o.status })
           setOrders(mapped)
         }
       )
@@ -325,6 +305,39 @@ export default function GuestOrdersPage() {
 
     return () => {
       supabase.removeChannel(channel)
+    }
+  }, [stayId])
+
+  // Polling fallback — 2s interval, animates badge on status change
+  useEffect(() => {
+    if (!stayId) return
+    let mounted = true
+    const interval = setInterval(async () => {
+      const { orders: raw } = await getOrdersForStayAction(stayId)
+      if (!mounted) return
+      const mapped = (raw ?? []).map((o: RawOrder) => mapOrder(o))
+
+      const changed = new Set<string>()
+      for (const o of mapped) {
+        if (
+          prevStatusesRef.current[o.id] !== undefined &&
+          prevStatusesRef.current[o.id] !== o.status
+        ) {
+          changed.add(o.id)
+        }
+        prevStatusesRef.current[o.id] = o.status
+      }
+
+      setOrders(mapped)
+      if (changed.size > 0) {
+        setFlashIds(changed)
+        setTimeout(() => { if (mounted) setFlashIds(new Set()) }, 600)
+      }
+    }, 2000)
+
+    return () => {
+      mounted = false
+      clearInterval(interval)
     }
   }, [stayId])
 
@@ -387,7 +400,7 @@ export default function GuestOrdersPage() {
         ) : (
           <div className="space-y-4">
             {orders.map((order) => (
-              <OrderCard key={order.id} order={order} />
+              <OrderCard key={order.id} order={order} flash={flashIds.has(order.id)} />
             ))}
           </div>
         )}
