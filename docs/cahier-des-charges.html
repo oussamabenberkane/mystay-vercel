@@ -1,0 +1,1859 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cahier des Charges Technique — My Stay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ── CSS Variables ── */
+:root {
+  --navy: #1B2D5B;
+  --navy-light: #2a4080;
+  --gold: #C9A84C;
+  --gold-light: #e2c47a;
+  --ivory: #F8F0E8;
+  --ivory-dark: #ede4d8;
+  --text: #1a1a2e;
+  --text-muted: #5a5a7a;
+  --text-light: #8a8aaa;
+  --white: #ffffff;
+  --border: rgba(27,45,91,0.12);
+  --shadow: 0 2px 12px rgba(27,45,91,0.08);
+
+  --font-body: 'Crimson Text', Georgia, serif;
+  --font-heading: 'EB Garamond', Georgia, serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  --page-width: 210mm;
+  --margin: 25mm;
+  --content-width: 160mm;
+}
+
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: #e8e4de;
+  color: var(--text);
+  line-height: 1.7;
+}
+
+/* ── Page Layout ── */
+.page {
+  width: var(--page-width);
+  margin: 0 auto 20px;
+  background: var(--white);
+  box-shadow: 0 4px 40px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.1);
+  padding: var(--margin);
+  position: relative;
+}
+
+.page + .page { margin-top: 0; }
+
+/* ── Cover Page ── */
+.cover-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 297mm;
+  padding: 30mm 25mm;
+  background: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+
+.cover-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(27,45,91,0.035) 39px, rgba(27,45,91,0.035) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(27,45,91,0.035) 39px, rgba(27,45,91,0.035) 40px);
+  pointer-events: none;
+}
+
+.cover-border {
+  position: absolute;
+  inset: 12mm;
+  border: 0.5pt solid rgba(201,168,76,0.35);
+  pointer-events: none;
+}
+.cover-border::before {
+  content: '';
+  position: absolute;
+  inset: 3mm;
+  border: 0.25pt solid rgba(201,168,76,0.2);
+}
+
+/* Corner ornaments */
+.cover-corner {
+  position: absolute;
+  width: 10mm;
+  height: 10mm;
+  border-color: var(--gold);
+  border-style: solid;
+  opacity: 0.6;
+}
+.cover-corner.tl { top: 14mm; left: 14mm; border-width: 1px 0 0 1px; }
+.cover-corner.tr { top: 14mm; right: 14mm; border-width: 1px 1px 0 0; }
+.cover-corner.bl { bottom: 14mm; left: 14mm; border-width: 0 0 1px 1px; }
+.cover-corner.br { bottom: 14mm; right: 14mm; border-width: 0 1px 1px 0; }
+
+.cover-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+/* Logo emblem */
+.cover-emblem {
+  width: 28mm;
+  height: 28mm;
+  border-radius: 50%;
+  background: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6mm;
+  position: relative;
+  box-shadow: 0 4px 20px rgba(27,45,91,0.3), inset 0 1px 0 rgba(201,168,76,0.2);
+}
+
+.cover-emblem::before {
+  content: '';
+  position: absolute;
+  inset: -3mm;
+  border-radius: 50%;
+  border: 0.5pt solid rgba(201,168,76,0.4);
+}
+.cover-emblem::after {
+  content: '';
+  position: absolute;
+  inset: -5mm;
+  border-radius: 50%;
+  border: 0.25pt dashed rgba(201,168,76,0.2);
+}
+
+.cover-emblem-text {
+  font-family: var(--font-heading);
+  font-size: 18pt;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.cover-app-name {
+  font-family: var(--font-heading);
+  font-size: 32pt;
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 1mm;
+  margin-top: 2mm;
+}
+
+.cover-tagline {
+  font-family: var(--font-body);
+  font-size: 9pt;
+  font-weight: 400;
+  color: var(--gold);
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  margin-bottom: 14mm;
+}
+
+.cover-rule {
+  width: 40mm;
+  height: 0.5pt;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+  margin-bottom: 10mm;
+}
+
+.cover-doc-type {
+  font-family: var(--font-heading);
+  font-size: 11pt;
+  font-weight: 400;
+  color: var(--text-muted);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 3mm;
+}
+
+.cover-title {
+  font-family: var(--font-heading);
+  font-size: 24pt;
+  font-weight: 600;
+  color: var(--navy);
+  line-height: 1.2;
+  margin-bottom: 6mm;
+  text-align: center;
+}
+
+.cover-subtitle {
+  font-family: var(--font-body);
+  font-size: 12pt;
+  font-style: italic;
+  color: var(--text-muted);
+  margin-bottom: 16mm;
+}
+
+.cover-bottom {
+  margin-top: auto;
+  padding-top: 14mm;
+  text-align: center;
+  border-top: 0.5pt solid var(--border);
+  width: 100%;
+}
+
+.cover-date {
+  font-family: var(--font-body);
+  font-size: 10pt;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+}
+
+.cover-institution {
+  font-family: var(--font-heading);
+  font-size: 11pt;
+  color: var(--navy);
+  margin-top: 2mm;
+}
+
+/* ── TOC Page ── */
+.toc-page { padding-top: 20mm; min-height: 297mm; }
+
+.toc-title {
+  font-family: var(--font-heading);
+  font-size: 20pt;
+  font-weight: 700;
+  color: var(--navy);
+  border-bottom: 1pt solid var(--gold);
+  padding-bottom: 3mm;
+  margin-bottom: 10mm;
+  letter-spacing: 0.05em;
+}
+
+.toc-list { list-style: none; }
+
+.toc-entry {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 3mm;
+  font-size: 10.5pt;
+}
+
+.toc-entry.toc-h2 { padding-left: 7mm; margin-bottom: 2mm; color: var(--text-muted); font-size: 10pt; }
+
+.toc-num {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--navy);
+  min-width: 12mm;
+  font-size: 10.5pt;
+}
+
+.toc-h2 .toc-num { font-weight: 600; color: var(--text-muted); font-size: 10pt; min-width: 16mm; }
+
+.toc-dots {
+  flex: 1;
+  border-bottom: 1pt dotted rgba(27,45,91,0.2);
+  margin: 0 3mm 2px;
+}
+
+.toc-page-num {
+  font-family: var(--font-mono);
+  font-size: 9pt;
+  color: var(--text-muted);
+}
+
+.toc-entry a { text-decoration: none; color: inherit; display: flex; align-items: baseline; width: 100%; }
+.toc-entry a:hover .toc-text { color: var(--navy); }
+.toc-entry a:hover .toc-dots { border-color: var(--gold); }
+
+/* ── Content Pages ── */
+.content-page {
+  padding: var(--margin);
+  position: relative;
+}
+
+/* Running header */
+.content-page::before {
+  content: 'Cahier des Charges Technique — My Stay';
+  position: absolute;
+  top: 8mm;
+  left: var(--margin);
+  right: var(--margin);
+  font-family: var(--font-body);
+  font-size: 8pt;
+  color: var(--text-light);
+  letter-spacing: 0.05em;
+  border-bottom: 0.25pt solid var(--border);
+  padding-bottom: 1.5mm;
+}
+
+/* ── Section Headers ── */
+.section-header {
+  margin-bottom: 8mm;
+  margin-top: 4mm;
+  padding-top: 2mm;
+}
+
+.section-header:first-child { padding-top: 4mm; }
+
+.section-num {
+  font-family: var(--font-heading);
+  font-size: 11pt;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  display: block;
+  margin-bottom: 1.5mm;
+}
+
+h1.section-title {
+  font-family: var(--font-heading);
+  font-size: 20pt;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.1;
+  border-bottom: 1.5pt solid var(--navy);
+  padding-bottom: 2.5mm;
+  display: flex;
+  align-items: center;
+  gap: 4mm;
+}
+
+h2.subsection-title {
+  font-family: var(--font-heading);
+  font-size: 14pt;
+  font-weight: 600;
+  color: var(--navy);
+  margin-top: 7mm;
+  margin-bottom: 3mm;
+  display: flex;
+  align-items: center;
+  gap: 3mm;
+}
+
+h3.subsubsection-title {
+  font-family: var(--font-heading);
+  font-size: 11pt;
+  font-weight: 600;
+  color: var(--navy);
+  font-style: italic;
+  margin-top: 5mm;
+  margin-bottom: 2mm;
+}
+
+/* ── Status Badges ── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5mm;
+  padding: 1mm 3mm;
+  border-radius: 2pt;
+  font-family: var(--font-body);
+  font-size: 8.5pt;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.badge-impl {
+  background: rgba(34, 139, 34, 0.08);
+  color: #1a6b1a;
+  border: 0.5pt solid rgba(34,139,34,0.3);
+}
+
+.badge-roadmap {
+  background: rgba(201, 168, 76, 0.1);
+  color: #8a6a10;
+  border: 0.5pt solid rgba(201,168,76,0.4);
+}
+
+/* ── Body Text ── */
+p {
+  font-size: 10.5pt;
+  line-height: 1.75;
+  margin-bottom: 4mm;
+  text-align: justify;
+  hyphens: auto;
+}
+
+p.lead {
+  font-size: 11.5pt;
+  font-style: italic;
+  color: var(--text-muted);
+  border-left: 3pt solid var(--gold);
+  padding-left: 4mm;
+  margin-bottom: 6mm;
+  text-align: left;
+}
+
+/* ── Lists ── */
+ul.doc-list, ol.doc-list {
+  margin: 3mm 0 4mm 6mm;
+  font-size: 10.5pt;
+}
+
+ul.doc-list li, ol.doc-list li {
+  margin-bottom: 1.5mm;
+  line-height: 1.65;
+  position: relative;
+}
+
+ul.doc-list li::before {
+  content: '—';
+  color: var(--gold);
+  font-weight: 600;
+  margin-right: 2mm;
+}
+
+ul.doc-list { list-style: none; }
+ol.doc-list { list-style: decimal; padding-left: 4mm; }
+ol.doc-list li::marker { color: var(--navy); font-weight: 700; }
+
+/* ── Tables ── */
+.doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 9.5pt;
+  margin: 4mm 0 6mm;
+}
+
+.doc-table th {
+  background: var(--navy);
+  color: var(--white);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 9pt;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2.5mm 4mm;
+  text-align: left;
+  border: none;
+}
+
+.doc-table th:first-child { border-radius: 2pt 0 0 0; }
+.doc-table th:last-child { border-radius: 0 2pt 0 0; }
+
+.doc-table td {
+  padding: 2.5mm 4mm;
+  border-bottom: 0.5pt solid var(--border);
+  vertical-align: top;
+  line-height: 1.55;
+}
+
+.doc-table tr:nth-child(even) td { background: rgba(248,240,232,0.5); }
+.doc-table tr:last-child td { border-bottom: 1pt solid var(--navy); }
+
+.doc-table td code {
+  font-family: var(--font-mono);
+  font-size: 8.5pt;
+  background: rgba(27,45,91,0.05);
+  padding: 0.5mm 1.5mm;
+  border-radius: 2pt;
+  color: var(--navy-light);
+}
+
+/* ── Code / Monospace blocks ── */
+.code-block {
+  font-family: var(--font-mono);
+  font-size: 8.5pt;
+  background: #f5f2ee;
+  border: 0.5pt solid var(--border);
+  border-left: 3pt solid var(--navy);
+  padding: 3.5mm 5mm;
+  margin: 3mm 0 5mm;
+  line-height: 1.7;
+  color: var(--navy);
+  overflow-x: auto;
+  border-radius: 0 2pt 2pt 0;
+}
+
+.code-block .line { display: block; }
+.code-block .comment { color: var(--text-light); font-style: italic; }
+.code-block .path { color: var(--navy); }
+.code-block .desc { color: var(--text-muted); }
+
+/* ── Architecture Diagram ── */
+.arch-diagram {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin: 6mm 0 8mm;
+  padding: 6mm;
+  background: linear-gradient(135deg, rgba(248,240,232,0.8) 0%, rgba(255,255,255,0.9) 100%);
+  border: 0.5pt solid var(--border);
+  border-radius: 3pt;
+}
+
+.arch-box {
+  background: var(--white);
+  border: 1pt solid var(--navy);
+  border-radius: 4pt;
+  padding: 4mm 6mm;
+  text-align: center;
+  box-shadow: var(--shadow);
+  min-width: 42mm;
+}
+
+.arch-box-title {
+  font-family: var(--font-heading);
+  font-size: 9pt;
+  font-weight: 700;
+  color: var(--navy);
+  letter-spacing: 0.05em;
+  margin-bottom: 1.5mm;
+}
+
+.arch-box-sub {
+  font-family: var(--font-mono);
+  font-size: 7.5pt;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.arch-box.arch-primary {
+  border-color: var(--gold);
+  background: rgba(201,168,76,0.04);
+}
+
+.arch-box.arch-accent {
+  background: var(--navy);
+  border-color: var(--navy);
+}
+
+.arch-box.arch-accent .arch-box-title { color: var(--gold); }
+.arch-box.arch-accent .arch-box-sub { color: rgba(248,240,232,0.7); }
+
+.arch-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 3mm;
+  color: var(--gold);
+  font-size: 14pt;
+  line-height: 1;
+  position: relative;
+}
+
+.arch-arrow::after {
+  content: '→';
+  font-size: 16pt;
+  color: var(--navy);
+  opacity: 0.4;
+}
+
+.arch-arrow-label {
+  font-family: var(--font-mono);
+  font-size: 6.5pt;
+  color: var(--text-light);
+  margin-top: 1.5mm;
+  white-space: nowrap;
+}
+
+/* ── Screenshot Frames ── */
+.screenshot-wrap {
+  margin: 5mm 0 7mm;
+}
+
+.screenshot-caption {
+  font-family: var(--font-body);
+  font-size: 9pt;
+  font-style: italic;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 2.5mm;
+  letter-spacing: 0.02em;
+}
+
+.screenshot-caption::before {
+  content: 'Figure — ';
+  font-weight: 600;
+  color: var(--navy);
+  font-style: normal;
+}
+
+/* Phone frame */
+.phone-frame {
+  display: block;
+  max-width: 58mm;
+  margin: 0 auto;
+  position: relative;
+}
+
+.phone-shell {
+  background: #1a1a1a;
+  border-radius: 10mm;
+  padding: 3.5mm 2.5mm 4mm;
+  box-shadow:
+    0 0 0 0.5pt #444,
+    0 8px 24px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+  position: relative;
+}
+
+.phone-notch {
+  width: 16mm;
+  height: 3.5mm;
+  background: #1a1a1a;
+  border-radius: 0 0 4mm 4mm;
+  margin: 0 auto 1.5mm;
+  position: relative;
+  z-index: 2;
+}
+
+.phone-notch::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 4mm;
+  height: 1.5mm;
+  background: #2a2a2a;
+  border-radius: 2mm;
+}
+
+.phone-screen {
+  border-radius: 5mm;
+  overflow: hidden;
+  background: #f0ece8;
+  display: block;
+  width: 100%;
+}
+
+.phone-screen img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.phone-home-indicator {
+  width: 10mm;
+  height: 1mm;
+  background: rgba(255,255,255,0.3);
+  border-radius: 1mm;
+  margin: 2mm auto 0;
+}
+
+/* Volume buttons */
+.phone-shell::before {
+  content: '';
+  position: absolute;
+  left: -1.5mm;
+  top: 18mm;
+  width: 1mm;
+  height: 8mm;
+  background: #333;
+  border-radius: 0.5mm 0 0 0.5mm;
+  box-shadow: 0 10mm 0 #333;
+}
+
+/* Power button */
+.phone-shell::after {
+  content: '';
+  position: absolute;
+  right: -1.5mm;
+  top: 22mm;
+  width: 1mm;
+  height: 10mm;
+  background: #333;
+  border-radius: 0 0.5mm 0.5mm 0;
+}
+
+/* Desktop browser frame */
+.desktop-frame {
+  display: block;
+  border-radius: 6pt;
+  overflow: hidden;
+  border: 0.5pt solid rgba(27,45,91,0.2);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.desktop-chrome {
+  background: linear-gradient(to bottom, #e8e6e3, #d8d6d3);
+  padding: 3mm 4mm 2.5mm;
+  display: flex;
+  align-items: center;
+  gap: 3mm;
+  border-bottom: 0.5pt solid rgba(0,0,0,0.15);
+}
+
+.desktop-dots {
+  display: flex;
+  gap: 1.5mm;
+}
+
+.desktop-dot {
+  width: 3mm;
+  height: 3mm;
+  border-radius: 50%;
+}
+.desktop-dot:nth-child(1) { background: #ff5f57; }
+.desktop-dot:nth-child(2) { background: #ffbd2e; }
+.desktop-dot:nth-child(3) { background: #28c840; }
+
+.desktop-urlbar {
+  flex: 1;
+  background: rgba(255,255,255,0.8);
+  border-radius: 2pt;
+  padding: 0.8mm 3mm;
+  font-family: var(--font-mono);
+  font-size: 7pt;
+  color: var(--text-muted);
+  border: 0.5pt solid rgba(0,0,0,0.12);
+}
+
+.desktop-screen img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Two-up screenshot layout */
+.screenshot-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5mm;
+  margin: 5mm 0 7mm;
+  align-items: start;
+}
+
+.screenshot-row-phones {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4mm;
+  margin: 5mm 0 7mm;
+  align-items: start;
+}
+
+/* ── Role Badges ── */
+.role-pill {
+  display: inline-block;
+  padding: 0.5mm 3mm;
+  border-radius: 20pt;
+  font-size: 8.5pt;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  font-family: var(--font-body);
+}
+.role-admin { background: rgba(27,45,91,0.1); color: var(--navy); border: 0.5pt solid rgba(27,45,91,0.3); }
+.role-staff { background: rgba(201,168,76,0.1); color: #7a6010; border: 0.5pt solid rgba(201,168,76,0.4); }
+.role-client { background: rgba(34,139,34,0.08); color: #1a5c1a; border: 0.5pt solid rgba(34,139,34,0.3); }
+
+/* ── Callout / Note Box ── */
+.callout {
+  background: rgba(248,240,232,0.7);
+  border: 0.5pt solid var(--border);
+  border-left: 3pt solid var(--navy);
+  padding: 3.5mm 5mm;
+  margin: 4mm 0;
+  border-radius: 0 3pt 3pt 0;
+  font-size: 10pt;
+}
+
+.callout-label {
+  font-family: var(--font-heading);
+  font-size: 8.5pt;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--navy);
+  margin-bottom: 1.5mm;
+}
+
+/* ── DB Schema mini ── */
+.schema-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3mm;
+  margin: 4mm 0 6mm;
+}
+
+.schema-table {
+  border: 0.5pt solid var(--border);
+  border-radius: 3pt;
+  overflow: hidden;
+  font-size: 8pt;
+}
+
+.schema-table-header {
+  background: var(--navy);
+  color: var(--gold);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  padding: 1.5mm 3mm;
+  font-size: 8pt;
+  letter-spacing: 0.05em;
+}
+
+.schema-table-row {
+  padding: 1mm 3mm;
+  border-bottom: 0.25pt solid var(--border);
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  display: flex;
+  justify-content: space-between;
+  font-size: 7.5pt;
+}
+
+.schema-table-row .field-name { color: var(--text); }
+.schema-table-row .field-type { color: var(--text-light); font-style: italic; }
+.schema-table-row .field-pk { color: var(--gold); font-weight: 700; }
+.schema-table-row .field-fk { color: var(--navy-light); }
+.schema-table-row:last-child { border-bottom: none; }
+
+/* ── Status Flow ── */
+.status-flow {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 3mm 0 5mm;
+  flex-wrap: wrap;
+}
+
+.status-chip {
+  background: var(--ivory-dark);
+  border: 0.5pt solid rgba(27,45,91,0.2);
+  border-radius: 2pt;
+  padding: 1.5mm 3.5mm;
+  font-family: var(--font-mono);
+  font-size: 8pt;
+  color: var(--navy);
+}
+
+.status-arrow {
+  color: var(--gold);
+  font-size: 10pt;
+  padding: 0 2mm;
+  font-weight: 700;
+}
+
+/* ── Priority indicators ── */
+.priority-normal {
+  display: inline-block;
+  width: 2mm;
+  height: 2mm;
+  border-radius: 50%;
+  background: #4a9a4a;
+  margin-right: 1.5mm;
+  vertical-align: middle;
+}
+
+.priority-urgent {
+  display: inline-block;
+  width: 2mm;
+  height: 2mm;
+  border-radius: 50%;
+  background: #e05a1a;
+  margin-right: 1.5mm;
+  vertical-align: middle;
+}
+
+/* ── Roadmap Table ── */
+.roadmap-table td:nth-child(2) { white-space: nowrap; text-align: center; }
+.priority-high { color: #c0392b; font-weight: 600; }
+.priority-medium { color: #d68910; font-weight: 600; }
+.priority-low { color: #5d6d7e; font-weight: 600; }
+
+/* ── Page Numbers ── */
+.page-number {
+  position: absolute;
+  bottom: 10mm;
+  right: var(--margin);
+  font-family: var(--font-body);
+  font-size: 9pt;
+  color: var(--text-light);
+}
+
+.page-number-left {
+  position: absolute;
+  bottom: 10mm;
+  left: var(--margin);
+  font-family: var(--font-body);
+  font-size: 9pt;
+  color: var(--text-light);
+}
+
+/* ── Dividers ── */
+.section-divider {
+  border: none;
+  border-top: 0.5pt solid var(--border);
+  margin: 8mm 0;
+}
+
+/* ── Print ── */
+@media print {
+  html, body { background: #ffffff !important; }
+  .page { box-shadow: none; margin: 0; width: 210mm; }
+  /* Cover and TOC each get their own page. Major sections (those with an id)
+     start on a new page; subsection continuation pages flow naturally. */
+  .cover-page { break-after: page; page-break-after: always; }
+  .toc-page { break-after: page; page-break-after: always; }
+  .content-page[id] { break-before: page; page-break-before: always; }
+  /* Repeat padding-top on every physical page fragment of a content-page div */
+  .content-page {
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+  .screenshot-wrap { break-inside: avoid; page-break-inside: avoid; }
+  .schema-grid { break-inside: avoid; page-break-inside: avoid; }
+  .arch-diagram { break-inside: avoid; page-break-inside: avoid; }
+  .doc-table { break-inside: avoid; page-break-inside: avoid; }
+  h1.section-title { break-after: avoid; page-break-after: avoid; }
+  h2.subsection-title { break-after: avoid; page-break-after: avoid; }
+  .page-number { display: none; }
+  /* Tighten TOC spacing so it fits on one page */
+  .toc-title { margin-bottom: 7mm; }
+  .toc-entry { margin-bottom: 1.8mm; font-size: 10pt; }
+  .toc-entry.toc-h2 { margin-bottom: 0.8mm; font-size: 9.5pt; }
+  .toc-page { min-height: unset; }
+  @page { size: A4; margin: 0; }
+  @page {
+    @bottom-right {
+      content: counter(page);
+      font-family: 'Crimson Text', serif;
+      font-size: 9pt;
+      color: #8a8aaa;
+      margin-right: 25mm;
+      margin-bottom: 10mm;
+    }
+  }
+}
+
+/* ── Screen only ── */
+@media screen {
+  body { padding: 20px 0; }
+  .content-page { min-height: 120mm; }
+}
+
+/* ── Utility ── */
+.mt-4 { margin-top: 4mm; }
+.mb-4 { margin-bottom: 4mm; }
+.text-mono { font-family: var(--font-mono); font-size: 8.5pt; }
+strong { font-weight: 700; color: var(--navy); }
+em { font-style: italic; }
+code { font-family: var(--font-mono); font-size: 8.5pt; background: rgba(27,45,91,0.06); padding: 0.3mm 1.5mm; border-radius: 2pt; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     COVER PAGE
+═══════════════════════════════════════════════════════════════ -->
+<div class="page cover-page">
+  <div class="cover-border"></div>
+  <div class="cover-corner tl"></div>
+  <div class="cover-corner tr"></div>
+  <div class="cover-corner bl"></div>
+  <div class="cover-corner br"></div>
+
+  <div class="cover-content">
+    <div class="cover-emblem">
+      <span class="cover-emblem-text">MS</span>
+    </div>
+
+    <div class="cover-app-name">My Stay</div>
+    <div class="cover-tagline">Designed for a Perfect Stay</div>
+
+    <div class="cover-rule"></div>
+
+    <div class="cover-doc-type">Cahier des Charges Technique</div>
+    <h1 class="cover-title">Application Web Progressive<br>de Gestion d'Expérience Hôtelière</h1>
+    <div class="cover-subtitle">Mémoire de Fin d'Études</div>
+
+    <div style="margin-top: 8mm; display: flex; gap: 3mm; flex-wrap: wrap; justify-content: center;">
+      <span class="badge badge-impl">✓ Fonctionnalités implémentées</span>
+      <span class="badge badge-roadmap">◷ Fonctionnalités futures</span>
+    </div>
+
+    <div class="cover-bottom">
+      <div class="cover-date">Avril 2026</div>
+      <div style="margin-top: 4mm; font-family: var(--font-body); font-size: 9pt; color: var(--text-light); letter-spacing: 0.08em; text-transform: uppercase;">Progressive Web Application · SaaS Multi-tenant · Next.js · Supabase</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TABLE OF CONTENTS
+═══════════════════════════════════════════════════════════════ -->
+<div class="page toc-page">
+  <div class="toc-title">Table des matières</div>
+
+  <ul class="toc-list">
+    <li class="toc-entry"><a href="#s1"><span class="toc-num">1.</span><span class="toc-text">Objectif du projet</span><span class="toc-dots"></span><span class="toc-page-num">3</span></a></li>
+
+    <li class="toc-entry"><a href="#s2"><span class="toc-num">2.</span><span class="toc-text">Architecture du système</span><span class="toc-dots"></span><span class="toc-page-num">3</span></a></li>
+    <li class="toc-entry toc-h2"><a href="#s21"><span class="toc-num">2.1</span><span class="toc-text">Vue d'ensemble</span><span class="toc-dots"></span><span class="toc-page-num">3</span></a></li>
+    <li class="toc-entry toc-h2"><a href="#s22"><span class="toc-num">2.2</span><span class="toc-text">Stack technique</span><span class="toc-dots"></span><span class="toc-page-num">4</span></a></li>
+    <li class="toc-entry toc-h2"><a href="#s23"><span class="toc-num">2.3</span><span class="toc-text">Multi-tenancy et sécurité des données</span><span class="toc-dots"></span><span class="toc-page-num">4</span></a></li>
+    <li class="toc-entry toc-h2"><a href="#s24"><span class="toc-num">2.4</span><span class="toc-text">Structure du projet</span><span class="toc-dots"></span><span class="toc-page-num">5</span></a></li>
+
+    <li class="toc-entry"><a href="#s3"><span class="toc-num">3.</span><span class="toc-text">Gestion des utilisateurs</span><span class="toc-dots"></span><span class="toc-page-num">5</span></a></li>
+    <li class="toc-entry toc-h2"><a href="#s31"><span class="toc-num">3.1</span><span class="toc-text">Authentification</span><span class="toc-dots"></span><span class="toc-page-num">5</span></a></li>
+    <li class="toc-entry toc-h2"><a href="#s32"><span class="toc-num">3.2</span><span class="toc-text">Rôles et profils</span><span class="toc-dots"></span><span class="toc-page-num">6</span></a></li>
+
+    <li class="toc-entry"><a href="#s4"><span class="toc-num">4.</span><span class="toc-text">Gestion du séjour</span><span class="toc-dots"></span><span class="toc-page-num">7</span></a></li>
+    <li class="toc-entry toc-h2"><a href="#s41"><span class="toc-num">4.1</span><span class="toc-text">Tableau de bord client</span><span class="toc-dots"></span><span class="toc-page-num">7</span></a></li>
+    <li class="toc-entry toc-h2"><a href="#s42"><span class="toc-num">4.2</span><span class="toc-text">Gestion des séjours (Admin)</span><span class="toc-dots"></span><span class="toc-page-num">7</span></a></li>
+    <li class="toc-entry toc-h2"><a href="#s43"><span class="toc-num">4.3</span><span class="toc-text">Check-in en ligne</span><span class="toc-dots"></span><span class="toc-page-num">8</span></a></li>
+
+    <li class="toc-entry"><a href="#s5"><span class="toc-num">5.</span><span class="toc-text">Gestion des services</span><span class="toc-dots"></span><span class="toc-page-num">8</span></a></li>
+    <li class="toc-entry toc-h2"><a href="#s51"><span class="toc-num">5.1</span><span class="toc-text">Room Service</span><span class="toc-dots"></span><span class="toc-page-num">8</span></a></li>
+    <li class="toc-entry toc-h2"><a href="#s52"><span class="toc-num">5.2</span><span class="toc-text">Demandes de services</span><span class="toc-dots"></span><span class="toc-page-num">9</span></a></li>
+
+    <li class="toc-entry"><a href="#s6"><span class="toc-num">6.</span><span class="toc-text">Système de communication</span><span class="toc-dots"></span><span class="toc-page-num">10</span></a></li>
+    <li class="toc-entry toc-h2"><a href="#s61"><span class="toc-num">6.1</span><span class="toc-text">Chat en temps réel</span><span class="toc-dots"></span><span class="toc-page-num">10</span></a></li>
+    <li class="toc-entry toc-h2"><a href="#s62"><span class="toc-num">6.2</span><span class="toc-text">Notifications Push</span><span class="toc-dots"></span><span class="toc-page-num">11</span></a></li>
+
+    <li class="toc-entry"><a href="#s7"><span class="toc-num">7.</span><span class="toc-text">Gestion des dépenses</span><span class="toc-dots"></span><span class="toc-page-num">11</span></a></li>
+
+    <li class="toc-entry"><a href="#s8"><span class="toc-num">8.</span><span class="toc-text">Tableau de bord administrateur</span><span class="toc-dots"></span><span class="toc-page-num">12</span></a></li>
+    <li class="toc-entry toc-h2"><a href="#s81"><span class="toc-num">8.1</span><span class="toc-text">Vue opérationnelle</span><span class="toc-dots"></span><span class="toc-page-num">12</span></a></li>
+    <li class="toc-entry toc-h2"><a href="#s82"><span class="toc-num">8.2</span><span class="toc-text">Gestion du menu</span><span class="toc-dots"></span><span class="toc-page-num">12</span></a></li>
+    <li class="toc-entry toc-h2"><a href="#s83"><span class="toc-num">8.3</span><span class="toc-text">Gestion des utilisateurs</span><span class="toc-dots"></span><span class="toc-page-num">13</span></a></li>
+    <li class="toc-entry toc-h2"><a href="#s84"><span class="toc-num">8.4</span><span class="toc-text">Statistiques et rapports</span><span class="toc-dots"></span><span class="toc-page-num">13</span></a></li>
+
+    <li class="toc-entry"><a href="#s9"><span class="toc-num">9.</span><span class="toc-text">Sécurité</span><span class="toc-dots"></span><span class="toc-page-num">13</span></a></li>
+
+    <li class="toc-entry"><a href="#s10"><span class="toc-num">10.</span><span class="toc-text">Internationalisation</span><span class="toc-dots"></span><span class="toc-page-num">14</span></a></li>
+
+    <li class="toc-entry"><a href="#s11"><span class="toc-num">11.</span><span class="toc-text">Roadmap — Fonctionnalités futures</span><span class="toc-dots"></span><span class="toc-page-num">14</span></a></li>
+
+    <li class="toc-entry"><a href="#s12"><span class="toc-num">12.</span><span class="toc-text">Performance et déploiement</span><span class="toc-dots"></span><span class="toc-page-num">15</span></a></li>
+  </ul>
+
+  <span class="page-number">2</span>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 1 — OBJECTIF
+═══════════════════════════════════════════════════════════════ -->
+<div class="page content-page" id="s1">
+
+  <div class="section-header">
+    <span class="section-num">Section 1</span>
+    <h1 class="section-title">Objectif du projet</h1>
+  </div>
+
+  <p class="lead">My Stay est une Progressive Web App (PWA) multi-tenant destinée à digitaliser et améliorer l'expérience client dans les établissements hôteliers.</p>
+
+  <p>L'application permet une gestion complète du séjour, une communication fluide entre le client et l'hôtel, et une centralisation des opérations hôtelières dans une interface unifiée. Contrairement à une application mobile native, la PWA est accessible directement depuis le navigateur du client — sans installation — tout en offrant des fonctionnalités natives telles que les notifications push et le mode hors-ligne partiel.</p>
+
+  <p>Le système dessert trois profils d'utilisateurs : le <span class="role-pill role-client">client (guest)</span>, le <span class="role-pill role-staff">personnel (staff)</span>, et l'<span class="role-pill role-admin">administrateur (admin)</span>, chacun disposant d'une interface dédiée et d'un accès aux données strictement contrôlé.</p>
+
+  <h2 class="subsection-title">Objectifs principaux</h2>
+
+  <ul class="doc-list">
+    <li>Digitalisation complète du séjour client — tableau de bord, commandes, demandes, messagerie, facturation</li>
+    <li>Communication en temps réel bidirectionnelle client ↔ hôtel via Supabase Realtime (WebSocket)</li>
+    <li>Gestion opérationnelle centralisée pour le personnel hôtelier (commandes, demandes, messagerie)</li>
+    <li>Architecture multi-tenant — un seul déploiement dessert <em>N</em> hôtels avec isolation complète des données</li>
+    <li>Support multilingue natif : Français, Anglais, Arabe (avec support RTL prévu)</li>
+    <li>Accessibilité mobile sans installation native grâce à la PWA (Progressive Web App)</li>
+    <li>Notifications push VAPID pour alertes en temps réel sur statuts de commandes et messages</li>
+  </ul>
+
+  <!-- ══ SECTION 2 ══ -->
+  <div class="section-header" id="s2">
+    <span class="section-num">Section 2</span>
+    <h1 class="section-title">Architecture du système</h1>
+  </div>
+
+  <h2 class="subsection-title" id="s21">2.1 Vue d'ensemble</h2>
+
+  <p>My Stay repose sur une architecture three-tier SaaS cloud-native. Le frontend Next.js est déployé sur Vercel ; la couche données et authentification est entièrement gérée par Supabase (PostgreSQL managé, Auth, Realtime, Storage).</p>
+
+  <div class="arch-diagram">
+    <div class="arch-box arch-primary">
+      <div class="arch-box-title">Client Browser</div>
+      <div class="arch-box-sub">PWA / Service Worker<br>React 19 · Zustand<br>Tailwind CSS 4</div>
+    </div>
+    <div class="arch-arrow">
+      <div class="arch-arrow-label">HTTPS · Server Actions</div>
+    </div>
+    <div class="arch-box">
+      <div class="arch-box-title">Next.js 15</div>
+      <div class="arch-box-sub">App Router · SSR/RSC<br>Middleware · API Routes<br>Vercel Edge Network</div>
+    </div>
+    <div class="arch-arrow">
+      <div class="arch-arrow-label">SDK · WebSocket</div>
+    </div>
+    <div class="arch-box arch-accent">
+      <div class="arch-box-title">Supabase</div>
+      <div class="arch-box-sub">PostgreSQL · Auth (JWT)<br>Realtime · Row Level Security<br>VAPID Push</div>
+    </div>
+  </div>
+
+  <span class="page-number">3</span>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 2 (suite)
+═══════════════════════════════════════════════════════════════ -->
+<div class="page content-page">
+
+  <h2 class="subsection-title" id="s22">2.2 Stack Technique</h2>
+
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th style="width:28%">Couche</th>
+        <th style="width:40%">Technologie</th>
+        <th style="width:32%">Version / Note</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Framework</strong></td><td>Next.js (App Router)</td><td><code>15.x</code></td></tr>
+      <tr><td><strong>Langage</strong></td><td>TypeScript</td><td><code>^5.0</code></td></tr>
+      <tr><td><strong>Runtime UI</strong></td><td>React</td><td><code>19.x</code></td></tr>
+      <tr><td><strong>Base de données</strong></td><td>PostgreSQL via Supabase</td><td>Supabase Cloud</td></tr>
+      <tr><td><strong>Authentification</strong></td><td>Supabase Auth (JWT + SSR)</td><td><code>^2.104</code></td></tr>
+      <tr><td><strong>Temps réel</strong></td><td>Supabase Realtime (WebSocket)</td><td>postgres_changes</td></tr>
+      <tr><td><strong>Style</strong></td><td>Tailwind CSS</td><td><code>^4.0</code></td></tr>
+      <tr><td><strong>Composants UI</strong></td><td>shadcn/ui + Radix UI</td><td>—</td></tr>
+      <tr><td><strong>State Management</strong></td><td>Zustand</td><td><code>^5.0</code></td></tr>
+      <tr><td><strong>Formulaires</strong></td><td>react-hook-form + Zod</td><td><code>^7.x / ^4.x</code></td></tr>
+      <tr><td><strong>Internationalisation</strong></td><td>next-intl</td><td><code>^4.9</code> · en/fr/ar</td></tr>
+      <tr><td><strong>PWA</strong></td><td>next-pwa + Service Worker</td><td><code>^5.6</code></td></tr>
+      <tr><td><strong>Notifications Push</strong></td><td>Web Push (VAPID)</td><td><code>^3.6</code></td></tr>
+      <tr><td><strong>Utilitaires dates</strong></td><td>date-fns</td><td><code>^4.1</code></td></tr>
+      <tr><td><strong>Hébergement</strong></td><td>Vercel (recommandé)</td><td>Edge Functions</td></tr>
+    </tbody>
+  </table>
+
+  <h2 class="subsection-title" id="s23">2.3 Multi-Tenancy et sécurité des données</h2>
+
+  <p>Chaque table métier porte une colonne <code>hotel_id uuid</code>. La sécurité des données inter-tenants est appliquée au niveau base de données via <strong>Row Level Security (RLS) PostgreSQL</strong> — la couche applicative ne peut jamais accéder aux données d'un autre hôtel, même en cas de bug.</p>
+
+  <p>Deux fonctions SQL <code>SECURITY DEFINER STABLE</code> servent de prédicats dans toutes les politiques RLS :</p>
+
+  <div class="code-block">
+    <span class="line"><span class="path">get_my_hotel_id()</span> <span class="desc">— retourne le hotel_id du profil authentifié courant</span></span>
+    <span class="line"><span class="path">get_my_role()</span>     <span class="desc">— retourne le rôle (client | staff | admin) de l'utilisateur courant</span></span>
+  </div>
+
+  <p>Le client <strong>service role</strong> (qui bypasse RLS) est utilisé uniquement côté serveur pour la création de comptes utilisateurs dans le module Admin, et n'est jamais exposé au navigateur.</p>
+
+  <h2 class="subsection-title" id="s24">2.4 Structure du projet</h2>
+
+  <div class="code-block">
+    <span class="line"><span class="path">src/app/[locale]/</span></span>
+    <span class="line">  <span class="comment">├── (auth)/</span>         <span class="desc">— login, signup, reset-password</span></span>
+    <span class="line">  <span class="comment">├── (guest)/</span>        <span class="desc">— dashboard, menu, orders, requests, chat, expenses</span></span>
+    <span class="line">  <span class="comment">├── (staff)/staff/</span>  <span class="desc">— orders, requests, chat</span></span>
+    <span class="line">  <span class="comment">└── (admin)/admin/</span>  <span class="desc">— operations, users, stays, menu</span></span>
+    <span class="line"></span>
+    <span class="line"><span class="path">src/lib/</span></span>
+    <span class="line">  <span class="comment">├── actions/</span>        <span class="desc">— 6 modules de Server Actions Next.js</span></span>
+    <span class="line">  <span class="comment">├── supabase/</span>       <span class="desc">— clients browser, server, admin, middleware</span></span>
+    <span class="line">  <span class="comment">├── store/</span>          <span class="desc">— stores Zustand (auth, panier)</span></span>
+    <span class="line">  <span class="comment">└── i18n/</span>           <span class="desc">— configuration next-intl</span></span>
+    <span class="line"></span>
+    <span class="line"><span class="path">supabase/migrations/</span>  <span class="desc">— 3 fichiers SQL (schema, RLS, email)</span></span>
+    <span class="line"><span class="path">messages/</span>             <span class="desc">— en.json · fr.json · ar.json</span></span>
+    <span class="line"><span class="path">public/sw.js</span>          <span class="desc">— Service Worker (notifications push)</span></span>
+  </div>
+
+  <span class="page-number">4</span>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 3 — GESTION DES UTILISATEURS
+═══════════════════════════════════════════════════════════════ -->
+<div class="page content-page" id="s3">
+
+  <div class="section-header">
+    <span class="section-num">Section 3</span>
+    <h1 class="section-title">Gestion des utilisateurs <span class="badge badge-impl" style="font-size:9pt">✓ Implémenté</span></h1>
+  </div>
+
+  <h2 class="subsection-title" id="s31">3.1 Authentification</h2>
+
+  <p>L'authentification repose sur <strong>Supabase Auth</strong> avec gestion des sessions côté serveur (SSR cookies). Le <em>middleware</em> Next.js intercepte chaque requête pour vérifier la session et appliquer les règles d'accès par rôle.</p>
+
+  <ul class="doc-list">
+    <li>Inscription via email + mot de passe avec validation Zod côté client</li>
+    <li>Connexion sécurisée avec redirection automatique selon le rôle après authentification</li>
+    <li>Réinitialisation de mot de passe par lien email (flow Supabase natif)</li>
+    <li>Sessions JWT gérées via cookies HttpOnly côté serveur (SSR) — pas de tokens exposés au JavaScript</li>
+    <li>Middleware Next.js protège toutes les routes : non-authentifiés redirigés vers <code>/login</code></li>
+  </ul>
+
+  <div class="screenshot-wrap">
+    <div class="desktop-frame">
+      <div class="desktop-chrome">
+        <div class="desktop-dots"><div class="desktop-dot"></div><div class="desktop-dot"></div><div class="desktop-dot"></div></div>
+        <div class="desktop-urlbar">https://mystay.app/en/login</div>
+      </div>
+      <div class="desktop-screen">
+        <img src="../public/screenshots/login.png" alt="Page de connexion My Stay">
+      </div>
+    </div>
+    <div class="screenshot-caption">Page de connexion — interface PWA avec sélecteur de langue et comptes de test</div>
+  </div>
+
+  <h2 class="subsection-title" id="s32">3.2 Rôles et profils</h2>
+
+  <p>Le système implémente trois rôles distincts, stockés dans la table <code>profiles</code> et vérifiés par les politiques RLS à chaque requête base de données.</p>
+
+  <table class="doc-table">
+    <thead>
+      <tr><th>Rôle</th><th>Accès</th><th>Redirection post-login</th><th>Interface</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="role-pill role-admin">admin</span></td>
+        <td>Accès complet à l'hôtel</td>
+        <td><code>/admin/operations</code></td>
+        <td>Dashboard + sidebar desktop/mobile</td>
+      </tr>
+      <tr>
+        <td><span class="role-pill role-staff">staff</span></td>
+        <td>Opérations hôtelières</td>
+        <td><code>/staff/orders</code></td>
+        <td>Sidebar avec Orders, Requests, Chat</td>
+      </tr>
+      <tr>
+        <td><span class="role-pill role-client">client</span></td>
+        <td>Portail guest du séjour actif</td>
+        <td><code>/dashboard</code></td>
+        <td>Navigation mobile (bottom nav bar)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>Le profil utilisateur contient les champs : <code>full_name</code>, <code>email</code>, <code>phone</code>, <code>language</code> (en/fr/ar), <code>role</code>, <code>hotel_id</code>. Un client s'inscrit via son adresse email et le <em>slug</em> de son hôtel ; son profil est créé automatiquement avec <code>role = 'client'</code>.</p>
+
+  <span class="page-number">5</span>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 4 — GESTION DU SÉJOUR
+═══════════════════════════════════════════════════════════════ -->
+<div class="page content-page" id="s4">
+
+  <div class="section-header">
+    <span class="section-num">Section 4</span>
+    <h1 class="section-title">Gestion du séjour</h1>
+  </div>
+
+  <h2 class="subsection-title" id="s41">4.1 Tableau de bord client <span class="badge badge-impl">✓ Implémenté</span></h2>
+
+  <p>Dès la connexion, le client accède à une vue synthétique de son séjour actif : numéro et type de chambre, dates de check-in/check-out, solde courant, et une grille d'actions rapides. Les données sont récupérées via la fonction RPC PostgreSQL <code>get_active_stay(p_guest_id)</code> — jointure optimisée entre les tables <code>stays</code> et <code>rooms</code>.</p>
+
+  <div class="screenshot-row" style="grid-template-columns: 1fr 2fr; align-items: start;">
+    <div class="screenshot-wrap">
+      <div class="phone-frame">
+        <div class="phone-shell">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <img src="../public/screenshots/guest-dashboard.png" alt="Tableau de bord client mobile">
+          </div>
+          <div class="phone-home-indicator"></div>
+        </div>
+      </div>
+      <div class="screenshot-caption">Tableau de bord client — vue mobile</div>
+    </div>
+    <div>
+      <p>Le tableau de bord expose quatre actions rapides :</p>
+      <ul class="doc-list">
+        <li><strong>Room Service</strong> — accès au menu digital</li>
+        <li><strong>Request Service</strong> — demandes de ménage, serviettes, maintenance</li>
+        <li><strong>Chat</strong> — messagerie directe avec la réception</li>
+        <li><strong>My Bill</strong> — consultation des dépenses du séjour</li>
+      </ul>
+      <p>Un résumé des commandes récentes est affiché directement sur le dashboard, avec statuts en couleur. La navigation s'effectue via une <em>bottom navigation bar</em> mobile : Home, Menu, Orders, Requests, Chat.</p>
+      <div class="callout">
+        <div class="callout-label">Note technique</div>
+        Le solde courant est calculé en temps réel depuis la vue PostgreSQL <code>expenses</code>, qui agrège toutes les commandes dont le statut est différent de <code>cancelled</code>.
+      </div>
+    </div>
+  </div>
+
+  <h2 class="subsection-title" id="s42">4.2 Gestion des séjours — Admin <span class="badge badge-impl">✓ Implémenté</span></h2>
+
+  <p>L'administrateur crée les séjours en associant un guest à une chambre avec des dates de check-in/check-out. Le statut <code>active</code> → <code>archived</code> est géré manuellement via l'action <code>archiveStayAction</code>.</p>
+
+  <div class="screenshot-wrap">
+    <div class="desktop-frame">
+      <div class="desktop-chrome">
+        <div class="desktop-dots"><div class="desktop-dot"></div><div class="desktop-dot"></div><div class="desktop-dot"></div></div>
+        <div class="desktop-urlbar">https://mystay.app/en/admin/stays</div>
+      </div>
+      <div class="desktop-screen">
+        <img src="../public/screenshots/admin-stays.png" alt="Gestion des séjours admin">
+      </div>
+    </div>
+    <div class="screenshot-caption">Gestion des séjours — tableau de bord administrateur</div>
+  </div>
+
+  <h2 class="subsection-title" id="s43">4.3 Check-in en ligne <span class="badge badge-roadmap">◷ Roadmap</span></h2>
+
+  <p>Fonctionnalité planifiée pour une version ultérieure : formulaire numérique de check-in (identité, nationalité, upload de document d'identité), signature électronique intégrée, et validation côté hôtel avant confirmation du séjour.</p>
+
+  <span class="page-number">6</span>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 5 — GESTION DES SERVICES
+═══════════════════════════════════════════════════════════════ -->
+<div class="page content-page" id="s5">
+
+  <div class="section-header">
+    <span class="section-num">Section 5</span>
+    <h1 class="section-title">Gestion des services <span class="badge badge-impl" style="font-size:9pt">✓ Implémenté</span></h1>
+  </div>
+
+  <h2 class="subsection-title" id="s51">5.1 Room Service</h2>
+
+  <h3 class="subsubsection-title">Interface client</h3>
+
+  <p>Le menu digital est organisé par catégories (Breakfast, Drinks, Snacks). Le client parcourt les articles disponibles (<code>is_available = true</code>), les ajoute au panier géré via un store Zustand, puis valide sa commande avec une note optionnelle. La commande est soumise via la Server Action <code>placeOrderAction</code>.</p>
+
+  <h3 class="subsubsection-title">Cycle de vie d'une commande</h3>
+
+  <div class="status-flow">
+    <span class="status-chip">pending</span>
+    <span class="status-arrow">→</span>
+    <span class="status-chip">confirmed</span>
+    <span class="status-arrow">→</span>
+    <span class="status-chip">preparing</span>
+    <span class="status-arrow">→</span>
+    <span class="status-chip">delivering</span>
+    <span class="status-arrow">→</span>
+    <span class="status-chip">delivered</span>
+    <span class="status-arrow" style="color:#c0392b">→</span>
+    <span class="status-chip" style="color:#c0392b; border-color:rgba(192,57,43,0.3)">cancelled</span>
+  </div>
+
+  <p>À chaque transition de statut effectuée par le staff, une <strong>notification push</strong> est envoyée au client via la fonction utilitaire <code>sendPushToUser(userId, notification)</code>.</p>
+
+  <div class="screenshot-row">
+    <div class="screenshot-wrap">
+      <div class="phone-frame">
+        <div class="phone-shell">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <img src="../public/screenshots/guest-menu.png" alt="Menu Room Service mobile">
+          </div>
+          <div class="phone-home-indicator"></div>
+        </div>
+      </div>
+      <div class="screenshot-caption">Menu Room Service — interface client mobile</div>
+    </div>
+    <div class="screenshot-wrap" style="display:flex; flex-direction:column; justify-content:flex-start;">
+      <div class="phone-frame">
+        <div class="phone-shell">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <img src="../public/screenshots/guest-orders.png" alt="Suivi commandes mobile">
+          </div>
+          <div class="phone-home-indicator"></div>
+        </div>
+      </div>
+      <div class="screenshot-caption">Suivi des commandes — interface client mobile</div>
+    </div>
+  </div>
+
+  <div class="screenshot-wrap mt-4">
+    <div class="desktop-frame">
+      <div class="desktop-chrome">
+        <div class="desktop-dots"><div class="desktop-dot"></div><div class="desktop-dot"></div><div class="desktop-dot"></div></div>
+        <div class="desktop-urlbar">https://mystay.app/en/staff/orders</div>
+      </div>
+      <div class="desktop-screen">
+        <img src="../public/screenshots/staff-orders.png" alt="Gestion commandes staff">
+      </div>
+    </div>
+    <div class="screenshot-caption">Tableau de bord des commandes — interface staff (desktop)</div>
+  </div>
+
+  <span class="page-number">7</span>
+</div>
+
+<!-- PAGE 8 — DEMANDES DE SERVICES -->
+<div class="page content-page">
+
+  <h2 class="subsection-title" id="s52">5.2 Demandes de services <span class="badge badge-impl">✓ Implémenté</span></h2>
+
+  <p>Le module de demandes de services permet au client de soumettre des requêtes de conciergerie directement depuis son mobile. Le staff reçoit et traite ces demandes depuis son tableau de bord dédié.</p>
+
+  <table class="doc-table" style="margin-bottom:5mm">
+    <thead><tr><th>Paramètre</th><th>Valeurs</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Types</strong></td><td><code>cleaning</code> · <code>towels</code> · <code>maintenance</code> · <code>other</code></td></tr>
+      <tr><td><strong>Priorités</strong></td><td><span class="priority-normal"></span><code>normal</code> &nbsp;·&nbsp; <span class="priority-urgent"></span><code>urgent</code></td></tr>
+      <tr><td><strong>Statuts</strong></td><td><code>pending</code> → <code>in_progress</code> → <code>completed</code> → <code>cancelled</code></td></tr>
+    </tbody>
+  </table>
+
+  <p>Les demandes marquées comme <strong>urgentes</strong> déclenchent une notification push à l'ensemble du personnel de l'hôtel via <code>sendPushToHotelStaff(hotelId, notification)</code>. Les demandes normales sont notifiées lors du passage au statut <code>in_progress</code>.</p>
+
+  <div class="screenshot-row">
+    <div class="screenshot-wrap">
+      <div class="phone-frame">
+        <div class="phone-shell">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <img src="../public/screenshots/guest-requests.png" alt="Demandes service client mobile">
+          </div>
+          <div class="phone-home-indicator"></div>
+        </div>
+      </div>
+      <div class="screenshot-caption">Demandes de service — interface client mobile</div>
+    </div>
+    <div class="screenshot-wrap">
+      <div class="desktop-frame">
+        <div class="desktop-chrome">
+          <div class="desktop-dots"><div class="desktop-dot"></div><div class="desktop-dot"></div><div class="desktop-dot"></div></div>
+          <div class="desktop-urlbar">https://mystay.app/en/staff/requests</div>
+        </div>
+        <div class="desktop-screen">
+          <img src="../public/screenshots/staff-requests.png" alt="Gestion demandes staff">
+        </div>
+      </div>
+      <div class="screenshot-caption">Gestion des demandes — interface staff (desktop)</div>
+    </div>
+  </div>
+
+  <span class="page-number">8</span>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 6 — COMMUNICATION
+═══════════════════════════════════════════════════════════════ -->
+<div class="page content-page" id="s6">
+
+  <div class="section-header">
+    <span class="section-num">Section 6</span>
+    <h1 class="section-title">Système de communication <span class="badge badge-impl" style="font-size:9pt">✓ Implémenté</span></h1>
+  </div>
+
+  <h2 class="subsection-title" id="s61">6.1 Chat en temps réel</h2>
+
+  <p>My Stay intègre une messagerie bidirectionnelle client ↔ hôtel basée sur <strong>Supabase Realtime</strong> (<code>postgres_changes</code> subscriptions via WebSocket). Les messages sont stockés dans la table <code>messages</code> et immutables (<em>UPDATE: never</em> dans les politiques RLS).</p>
+
+  <h3 class="subsubsection-title">Architecture des abonnements Realtime</h3>
+
+  <div class="code-block">
+    <span class="line"><span class="comment">// Interface client — canal dédié au séjour actif</span></span>
+    <span class="line"><span class="path">canal :</span>  <span class="desc">chat:{stayId}  — filtre : messages WHERE stay_id = eq.{stayId}</span></span>
+    <span class="line"></span>
+    <span class="line"><span class="comment">// Interface staff — canal hôtel (toutes conversations)</span></span>
+    <span class="line"><span class="path">canal :</span>  <span class="desc">hotel-chat:{hotel_id}  — filtre : messages WHERE hotel_id = eq.{hotel_id}</span></span>
+    <span class="line"></span>
+    <span class="line"><span class="comment">// Chat panel staff — abonnement par conversation active</span></span>
+    <span class="line"><span class="path">canal :</span>  <span class="desc">stay:{stayId}  — fil de messages du séjour sélectionné</span></span>
+  </div>
+
+  <p>L'interface <strong>client</strong> affiche un fil de conversation unique avec la réception. L'interface <strong>staff</strong> présente un panneau à deux volets : la liste des conversations guests (avec indicateur de messages non-lus) et le fil actif à droite.</p>
+
+  <div class="screenshot-row">
+    <div class="screenshot-wrap">
+      <div class="phone-frame">
+        <div class="phone-shell">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <img src="../public/screenshots/guest-chat.png" alt="Chat client mobile">
+          </div>
+          <div class="phone-home-indicator"></div>
+        </div>
+      </div>
+      <div class="screenshot-caption">Chat client — interface mobile</div>
+    </div>
+    <div class="screenshot-wrap">
+      <div class="desktop-frame">
+        <div class="desktop-chrome">
+          <div class="desktop-dots"><div class="desktop-dot"></div><div class="desktop-dot"></div><div class="desktop-dot"></div></div>
+          <div class="desktop-urlbar">https://mystay.app/en/staff/chat</div>
+        </div>
+        <div class="desktop-screen">
+          <img src="../public/screenshots/staff-chat.png" alt="Chat staff desktop">
+        </div>
+      </div>
+      <div class="screenshot-caption">Chat staff — interface bureau (liste + fil actif)</div>
+    </div>
+  </div>
+
+  <h2 class="subsection-title" id="s62">6.2 Notifications Push <span class="badge badge-impl">✓ Implémenté</span></h2>
+
+  <p>Le système de notifications push repose sur le standard <strong>VAPID</strong> (Voluntary Application Server Identification) via le package <code>web-push</code>. Un Service Worker (<code>/public/sw.js</code>) gère la réception des notifications en arrière-plan.</p>
+
+  <ul class="doc-list">
+    <li>Table <code>push_subscriptions</code> : une subscription JSON par utilisateur (UNIQUE sur <code>user_id</code>)</li>
+    <li>Déclencheur 1 — changement de statut commande → notification au <strong>client</strong></li>
+    <li>Déclencheur 2 — demande urgente créée → notification à tout le <strong>staff</strong> de l'hôtel</li>
+    <li>Déclencheur 3 — nouveau message client → notification au <strong>staff</strong></li>
+  </ul>
+
+  <span class="page-number">9</span>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 7 — DÉPENSES
+═══════════════════════════════════════════════════════════════ -->
+<div class="page content-page" id="s7">
+
+  <div class="section-header">
+    <span class="section-num">Section 7</span>
+    <h1 class="section-title">Gestion des dépenses <span class="badge badge-impl" style="font-size:9pt">✓ Implémenté</span></h1>
+  </div>
+
+  <p class="lead">Le suivi des dépenses est entièrement dérivé des commandes Room Service passées durant le séjour, sans saisie manuelle.</p>
+
+  <p>Une <strong>vue PostgreSQL</strong> (<code>expenses</code>) agrège toutes les commandes dont le statut est différent de <code>cancelled</code>, en projetant les colonnes : <code>id</code>, <code>hotel_id</code>, <code>stay_id</code>, <code>guest_id</code>, <code>total_amount AS amount</code>, <code>status</code>, <code>created_at</code>.</p>
+
+  <p>Le client consulte son solde courant et le détail de chaque charge (référence, date, montant, statut). Un message en pied de page rappelle que toutes les charges sont reportées sur la note de chambre et réglées au check-out.</p>
+
+  <div class="callout">
+    <div class="callout-label">Roadmap — Facturation PDF</div>
+    La génération d'une facture PDF téléchargeable (récapitulatif de séjour) est planifiée dans la prochaine version. La fonctionnalité de règlement en ligne (Visa, PayPal, Baridimob) est également prévue.
+  </div>
+
+  <div class="screenshot-row" style="grid-template-columns: 220px 1fr; align-items: center;">
+    <div class="screenshot-wrap">
+      <div class="phone-frame">
+        <div class="phone-shell">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <img src="../public/screenshots/guest-expenses.png" alt="Mes dépenses client mobile">
+          </div>
+          <div class="phone-home-indicator"></div>
+        </div>
+      </div>
+      <div class="screenshot-caption">Mes dépenses — interface client mobile</div>
+    </div>
+    <div>
+      <h3 class="subsubsection-title" style="margin-top:0">Schéma de la vue expenses</h3>
+      <table class="doc-table">
+        <thead><tr><th>Colonne</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>id</code></td><td>uuid</td><td>Identifiant de la commande</td></tr>
+          <tr><td><code>hotel_id</code></td><td>uuid</td><td>Isolation multi-tenant</td></tr>
+          <tr><td><code>stay_id</code></td><td>uuid</td><td>Lien vers le séjour</td></tr>
+          <tr><td><code>amount</code></td><td>numeric(10,2)</td><td>Montant total de la commande</td></tr>
+          <tr><td><code>status</code></td><td>text</td><td>Statut de la commande (≠ cancelled)</td></tr>
+          <tr><td><code>created_at</code></td><td>timestamptz</td><td>Date et heure de la commande</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <span class="page-number">10</span>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 8 — ADMIN DASHBOARD
+═══════════════════════════════════════════════════════════════ -->
+<div class="page content-page" id="s8">
+
+  <div class="section-header">
+    <span class="section-num">Section 8</span>
+    <h1 class="section-title">Tableau de bord administrateur <span class="badge badge-impl" style="font-size:9pt">✓ Implémenté</span></h1>
+  </div>
+
+  <h2 class="subsection-title" id="s81">8.1 Vue opérationnelle</h2>
+
+  <p>L'administrateur dispose d'une vue opérationnelle en temps réel de l'activité de son hôtel, construite autour de la fonction RPC <code>get_hotel_stats(p_hotel_id)</code> qui retourne un objet <code>jsonb</code> avec quatre KPIs.</p>
+
+  <table class="doc-table" style="margin-bottom:4mm">
+    <thead><tr><th>KPI</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td><code>active_stays</code></td><td>Nombre de séjours actifs (clients actuellement en hôtel)</td></tr>
+      <tr><td><code>total_orders_today</code></td><td>Nombre total de commandes Room Service du jour</td></tr>
+      <tr><td><code>pending_orders</code></td><td>Commandes en attente de traitement</td></tr>
+      <tr><td><code>revenue_today</code></td><td>Chiffre d'affaires Room Service du jour (DA)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="screenshot-wrap">
+    <div class="desktop-frame">
+      <div class="desktop-chrome">
+        <div class="desktop-dots"><div class="desktop-dot"></div><div class="desktop-dot"></div><div class="desktop-dot"></div></div>
+        <div class="desktop-urlbar">https://mystay.app/en/admin/operations</div>
+      </div>
+      <div class="desktop-screen">
+        <img src="../public/screenshots/admin-operations.png" alt="Vue opérationnelle admin">
+      </div>
+    </div>
+    <div class="screenshot-caption">Vue opérationnelle — tableau de bord administrateur avec KPIs en temps réel</div>
+  </div>
+
+  <span class="page-number">11</span>
+</div>
+
+<div class="page content-page">
+
+  <h2 class="subsection-title" id="s82">8.2 Gestion du menu <span class="badge badge-impl">✓ Implémenté</span></h2>
+
+  <p>L'administrateur gère le menu Room Service via un CRUD complet : création/modification/suppression de <strong>catégories</strong> et d'<strong>articles</strong>. Un toggle de disponibilité permet de désactiver instantanément un article sans le supprimer.</p>
+
+  <div class="screenshot-wrap">
+    <div class="desktop-frame">
+      <div class="desktop-chrome">
+        <div class="desktop-dots"><div class="desktop-dot"></div><div class="desktop-dot"></div><div class="desktop-dot"></div></div>
+        <div class="desktop-urlbar">https://mystay.app/en/admin/menu</div>
+      </div>
+      <div class="desktop-screen">
+        <img src="../public/screenshots/admin-menu.png" alt="Gestion du menu admin">
+      </div>
+    </div>
+    <div class="screenshot-caption">Gestion du menu — CRUD catégories et articles avec toggle de disponibilité</div>
+  </div>
+
+  <h2 class="subsection-title" id="s83">8.3 Gestion des utilisateurs <span class="badge badge-impl">✓ Implémenté</span></h2>
+
+  <p>L'administrateur crée les comptes staff et admin via l'<strong>API Admin Supabase</strong> (client service role, côté serveur uniquement). Il peut modifier les rôles et supprimer des comptes. Les clients créent eux-mêmes leur compte via la page d'inscription publique.</p>
+
+  <div class="screenshot-wrap">
+    <div class="desktop-frame">
+      <div class="desktop-chrome">
+        <div class="desktop-dots"><div class="desktop-dot"></div><div class="desktop-dot"></div><div class="desktop-dot"></div></div>
+        <div class="desktop-urlbar">https://mystay.app/en/admin/users</div>
+      </div>
+      <div class="desktop-screen">
+        <img src="../public/screenshots/admin-users.png" alt="Gestion des utilisateurs admin">
+      </div>
+    </div>
+    <div class="screenshot-caption">Gestion des utilisateurs — liste, rôles, et actions admin</div>
+  </div>
+
+  <h2 class="subsection-title" id="s84">8.4 Statistiques et rapports <span class="badge badge-roadmap">◷ Roadmap</span></h2>
+
+  <p>Graphiques historiques des commandes et revenus, indicateurs de satisfaction client, et export CSV/PDF des données opérationnelles. Planifié pour une version ultérieure.</p>
+
+  <span class="page-number">12</span>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 9 — SÉCURITÉ
+═══════════════════════════════════════════════════════════════ -->
+<div class="page content-page" id="s9">
+
+  <div class="section-header">
+    <span class="section-num">Section 9</span>
+    <h1 class="section-title">Sécurité <span class="badge badge-impl" style="font-size:9pt">✓ Implémenté</span></h1>
+  </div>
+
+  <p class="lead">La sécurité de My Stay est implémentée en couches multiples, de la couche réseau jusqu'aux politiques base de données, garantissant une isolation stricte des données entre tenants.</p>
+
+  <table class="doc-table">
+    <thead><tr><th style="width:30%">Couche</th><th>Mécanisme</th><th>Détail</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Transport</strong></td>
+        <td>HTTPS / TLS</td>
+        <td>Certificat géré par Vercel, force HTTPS sur toutes les routes</td>
+      </tr>
+      <tr>
+        <td><strong>Authentification</strong></td>
+        <td>JWT (Supabase Auth)</td>
+        <td>Tokens stockés en cookies HttpOnly SSR — non accessibles au JavaScript</td>
+      </tr>
+      <tr>
+        <td><strong>Contrôle d'accès</strong></td>
+        <td>Middleware Next.js</td>
+        <td>Vérification session + rôle sur chaque requête avant rendu</td>
+      </tr>
+      <tr>
+        <td><strong>Isolation données</strong></td>
+        <td>Row Level Security (RLS)</td>
+        <td>Politiques PostgreSQL sur toutes les tables — inviolable côté serveur</td>
+      </tr>
+      <tr>
+        <td><strong>Multi-tenancy</strong></td>
+        <td><code>hotel_id</code> + RLS</td>
+        <td>Un hôtel ne peut jamais accéder aux données d'un autre</td>
+      </tr>
+      <tr>
+        <td><strong>Admin API</strong></td>
+        <td>Service Role Key</td>
+        <td>Utilisée uniquement dans les Server Actions — jamais exposée au client</td>
+      </tr>
+      <tr>
+        <td><strong>Validation</strong></td>
+        <td>Zod + contraintes SQL</td>
+        <td>Double validation : schémas Zod côté client + CHECK constraints PostgreSQL</td>
+      </tr>
+      <tr>
+        <td><strong>VAPID</strong></td>
+        <td>Clés push privées</td>
+        <td>Clé privée VAPID uniquement côté serveur (<code>.env</code>)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ══ SECTION 10 ══ -->
+  <div class="section-header" id="s10">
+    <span class="section-num">Section 10</span>
+    <h1 class="section-title">Internationalisation <span class="badge badge-impl" style="font-size:9pt">✓ Implémenté</span></h1>
+  </div>
+
+  <p>L'application supporte trois langues dès la première version, avec la locale encodée dans l'URL pour un support SEO optimal et un partage de liens avec langue préservée.</p>
+
+  <table class="doc-table">
+    <thead><tr><th>Langue</th><th>Code</th><th>Statut</th><th>Exemple URL</th></tr></thead>
+    <tbody>
+      <tr><td>Français</td><td><code>fr</code></td><td>Complet</td><td><code>/fr/dashboard</code></td></tr>
+      <tr><td>Anglais</td><td><code>en</code></td><td>Complet (défaut)</td><td><code>/en/dashboard</code></td></tr>
+      <tr><td>Arabe</td><td><code>ar</code></td><td>Traductions présentes · RTL prévu</td><td><code>/ar/dashboard</code></td></tr>
+    </tbody>
+  </table>
+
+  <p>Les fichiers de traduction JSON (<code>/messages/*.json</code>) couvrent les namespaces : <code>nav</code>, <code>auth</code>, <code>guest.*</code>, <code>staff.*</code>, <code>admin.*</code>, <code>common</code>, <code>status</code>. Le sélecteur de langue est accessible depuis la page de connexion.</p>
+
+  <span class="page-number">13</span>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 11 — ROADMAP
+═══════════════════════════════════════════════════════════════ -->
+<div class="page content-page" id="s11">
+
+  <div class="section-header">
+    <span class="section-num">Section 11</span>
+    <h1 class="section-title">Roadmap — Fonctionnalités futures</h1>
+  </div>
+
+  <p class="lead">Les fonctionnalités suivantes sont identifiées et planifiées pour les versions ultérieures de My Stay, classées par priorité de développement.</p>
+
+  <table class="doc-table roadmap-table">
+    <thead>
+      <tr>
+        <th style="width:32%">Fonctionnalité</th>
+        <th style="width:14%">Priorité</th>
+        <th>Description technique</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Check-in en ligne</strong></td>
+        <td><span class="priority-high">● Haute</span></td>
+        <td>Formulaire numérique d'identité (upload document), signature électronique, validation hôtel. Extension du schéma <code>stays</code> avec champs <code>checkin_form</code> (jsonb) et <code>signature_url</code>.</td>
+      </tr>
+      <tr>
+        <td><strong>Facturation PDF</strong></td>
+        <td><span class="priority-high">● Haute</span></td>
+        <td>Génération d'une facture PDF récapitulative au moment du check-out. Intégration d'une librairie PDF côté serveur (ex. <code>@react-pdf/renderer</code>).</td>
+      </tr>
+      <tr>
+        <td><strong>Intégration paiement</strong></td>
+        <td><span class="priority-high">● Haute</span></td>
+        <td>Règlement en ligne des charges : Visa/Mastercard, PayPal, Baridimob (Algérie). Extension du schéma avec table <code>payments</code> et statuts de règlement.</td>
+      </tr>
+      <tr>
+        <td><strong>Feedback client</strong></td>
+        <td><span class="priority-medium">● Moyenne</span></td>
+        <td>Évaluation 1–5 étoiles + commentaire texte à la fin du séjour. Table <code>reviews</code> avec consultation via le dashboard admin.</td>
+      </tr>
+      <tr>
+        <td><strong>Programme de fidélité</strong></td>
+        <td><span class="priority-medium">● Moyenne</span></td>
+        <td>Attribution de points par séjour, historique des points, avantages associés (remises, upgrades). Tables <code>loyalty_points</code> et <code>rewards</code>.</td>
+      </tr>
+      <tr>
+        <td><strong>Intégration PMS</strong></td>
+        <td><span class="priority-medium">● Moyenne</span></td>
+        <td>Import automatique des réservations depuis le Property Management System de l'hôtel (Opera, Protel, Fidelio). API REST bidirectionnelle.</td>
+      </tr>
+      <tr>
+        <td><strong>Chatbot automatique</strong></td>
+        <td><span class="priority-low">● Basse</span></td>
+        <td>Réponses automatiques aux questions fréquentes des clients (horaires, services, FAQ). Modèle NLP léger ou intégration LLM via API.</td>
+      </tr>
+      <tr>
+        <td><strong>Application native</strong></td>
+        <td><span class="priority-low">● Basse</span></td>
+        <td>Publication sur App Store / Google Play via React Native (Expo) ou conversion PWA → APK/IPA pour une expérience native enrichie.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <span class="page-number">14</span>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     SECTION 12 — PERFORMANCE & DÉPLOIEMENT
+═══════════════════════════════════════════════════════════════ -->
+<div class="page content-page" id="s12">
+
+  <div class="section-header">
+    <span class="section-num">Section 12</span>
+    <h1 class="section-title">Performance et déploiement</h1>
+  </div>
+
+  <h2 class="subsection-title">12.1 Optimisations techniques</h2>
+
+  <ul class="doc-list">
+    <li><strong>React Server Components</strong> — les pages Next.js sont rendues côté serveur par défaut, réduisant le bundle JavaScript envoyé au client et améliorant le LCP (Largest Contentful Paint)</li>
+    <li><strong>Server Actions</strong> — les mutations de données (commandes, demandes, messages) sont exécutées directement côté serveur sans API REST intermédiaire, éliminant un aller-retour réseau</li>
+    <li><strong>Indexes PostgreSQL composites</strong> — sur toutes les colonnes filtrées fréquemment : <code>(hotel_id, status)</code>, <code>(hotel_id, created_at DESC)</code>, <code>(stay_id, created_at ASC)</code>, etc.</li>
+    <li><strong>PWA + Service Worker</strong> — mise en cache des assets statiques et stratégie <em>stale-while-revalidate</em> pour un chargement instantané après la première visite</li>
+    <li><strong>Supabase Realtime</strong> — WebSocket persistant pour les mises à jour en temps réel (chat, commandes) sans polling</li>
+  </ul>
+
+  <h2 class="subsection-title">12.2 Objectifs de performance</h2>
+
+  <table class="doc-table">
+    <thead><tr><th>Métrique</th><th>Objectif</th></tr></thead>
+    <tbody>
+      <tr><td>Temps de réponse API (Server Actions)</td><td>&lt; 500ms (p95)</td></tr>
+      <tr><td>First Contentful Paint (FCP)</td><td>&lt; 1.5s sur 4G</td></tr>
+      <tr><td>Latence chat (WebSocket)</td><td>&lt; 100ms</td></tr>
+      <tr><td>Utilisateurs simultanés</td><td>1 000+ (Supabase Cloud)</td></tr>
+      <tr><td>Disponibilité cible</td><td>99.9% (SLA Vercel + Supabase)</td></tr>
+    </tbody>
+  </table>
+
+  <h2 class="subsection-title">12.3 Configuration de déploiement recommandée</h2>
+
+  <div class="code-block">
+    <span class="line"><span class="comment"># Frontend</span></span>
+    <span class="line"><span class="path">Vercel</span>      <span class="desc">— déploiement Next.js, Edge Network CDN mondial, preview branches</span></span>
+    <span class="line"></span>
+    <span class="line"><span class="comment"># Backend / Base de données</span></span>
+    <span class="line"><span class="path">Supabase</span>    <span class="desc">— PostgreSQL managé, Auth, Realtime, Storage (images menu)</span></span>
+    <span class="line"></span>
+    <span class="line"><span class="comment"># Variables d'environnement requises</span></span>
+    <span class="line"><span class="path">NEXT_PUBLIC_SUPABASE_URL</span>         <span class="desc">— URL du projet Supabase</span></span>
+    <span class="line"><span class="path">NEXT_PUBLIC_SUPABASE_ANON_KEY</span>    <span class="desc">— Clé publique (RLS actif)</span></span>
+    <span class="line"><span class="path">SUPABASE_SERVICE_ROLE_KEY</span>        <span class="desc">— Clé admin (serveur uniquement)</span></span>
+    <span class="line"><span class="path">NEXT_PUBLIC_VAPID_PUBLIC_KEY</span>     <span class="desc">— Push notifications</span></span>
+    <span class="line"><span class="path">VAPID_PRIVATE_KEY</span>                <span class="desc">— Push notifications (serveur)</span></span>
+    <span class="line"><span class="path">VAPID_SUBJECT</span>                    <span class="desc">— Email de contact VAPID</span></span>
+  </div>
+
+  <hr class="section-divider">
+
+  <div style="text-align: center; padding: 6mm 0;">
+    <div style="font-family: var(--font-heading); font-size: 11pt; color: var(--navy); margin-bottom: 2mm;">My Stay · Cahier des Charges Technique</div>
+    <div style="font-family: var(--font-body); font-size: 9pt; color: var(--text-light); letter-spacing: 0.1em;">Mémoire de Fin d'Études · Avril 2026</div>
+    <div style="width: 20mm; height: 0.5pt; background: var(--gold); margin: 3mm auto;"></div>
+    <div style="font-family: var(--font-mono); font-size: 8pt; color: var(--text-light);">Next.js 15 · React 19 · Supabase · TypeScript 5 · PWA</div>
+  </div>
+
+  <span class="page-number">15</span>
+</div>
+
+</body>
+</html>
