@@ -243,9 +243,8 @@ export default function LoginPage() {
             <div className="flex-1 h-px" style={{ background: 'rgba(27,45,91,0.07)' }} />
           </div>
 
-          {/* ── Dev-only test accounts ── */}
-          {process.env.NODE_ENV !== 'production' && (
-            <div className="auth-up-6 mt-6">
+          {/* ── Test accounts ── */}
+          <div className="auth-up-6 mt-6">
               <div className="flex items-center gap-2 mb-4">
                 <div className="flex-1 h-px" style={{ background: 'rgba(27,45,91,0.07)' }} />
                 <div className="flex items-center gap-1.5">
@@ -298,8 +297,7 @@ export default function LoginPage() {
                 ))}
               </div>
             </div>
-          )}
-        </div>
+          </div>
       </div>
 
       {/* Sub-card tagline */}
