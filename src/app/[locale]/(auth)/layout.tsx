@@ -32,7 +32,7 @@ export default async function AuthLayout({
       </div>
 
       {/* Language switcher */}
-      <div className="absolute top-5 right-5 flex items-center gap-1 z-10">
+      <div className="absolute top-5 right-5 flex items-center gap-1 z-20">
         {locales.map((l) => {
           const isArabic = l === 'ar'
           const href = isArabic ? `/${locale}/login` : `/${l}/login`
