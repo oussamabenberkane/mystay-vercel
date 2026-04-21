@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { Plus, Minus } from 'lucide-react'
 import { useCartStore } from '@/lib/store/cart-store'
 import { cn } from '@/lib/utils'
+import { formatCurrency } from '@/lib/utils/format'
 
 type Props = {
   id: string
@@ -77,7 +78,7 @@ export function MenuItemCard({ id, name, description, price, imageUrl }: Props) 
 
         <div className="mt-3 flex items-center justify-between">
           <span className="font-heading text-lg font-bold" style={{ color: '#C9A84C' }}>
-            €{price.toFixed(2)}
+            {formatCurrency(price)}
           </span>
 
           {quantity === 0 ? (

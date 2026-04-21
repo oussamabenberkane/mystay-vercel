@@ -4,9 +4,11 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { ClipboardList, ChevronDown, ChevronUp } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { OrderStatusBadge } from '@/components/guest/order-status-badge'
 import { getActiveStayAction, getOrdersForStayAction } from '@/lib/actions/room-service'
 import { createClient } from '@/lib/supabase/client'
+import { formatCurrency } from '@/lib/utils/format'
 import type { OrderStatus } from '@/lib/actions/room-service'
 
 type OrderItem = {
@@ -182,7 +184,7 @@ function OrderCard({ order }: { order: Order }) {
             className="font-heading text-lg font-bold"
             style={{ color: '#C9A84C' }}
           >
-            €{order.total_amount.toFixed(2)}
+            {formatCurrency(order.total_amount)}
           </span>
         </div>
 
@@ -194,7 +196,7 @@ function OrderCard({ order }: { order: Order }) {
                   {item.quantity}× {item.name}
                 </span>
                 <span style={{ color: '#7A8BA8' }}>
-                  €{(item.unit_price * item.quantity).toFixed(2)}
+                  {formatCurrency(item.unit_price * item.quantity)}
                 </span>
               </li>
             ))}
@@ -216,6 +218,7 @@ function OrderCard({ order }: { order: Order }) {
 export default function GuestOrdersPage() {
   const params = useParams()
   const locale = typeof params.locale === 'string' ? params.locale : 'en'
+  const t = useTranslations('guest.orders')
 
   const [orders, setOrders] = useState<Order[]>([])
   const [loading, setLoading] = useState(true)
@@ -336,13 +339,14 @@ export default function GuestOrdersPage() {
           className="text-xs font-semibold uppercase tracking-widest"
           style={{ color: '#C9A84C' }}
         >
+          {/* TODO: i18n */}
           Room Service
         </p>
         <h1
           className="font-heading text-2xl font-bold leading-tight"
           style={{ color: '#1B2D5B' }}
         >
-          My Orders
+          {t('title')}
         </h1>
       </div>
 
@@ -365,9 +369,10 @@ export default function GuestOrdersPage() {
               className="font-heading text-xl font-semibold"
               style={{ color: '#1B2D5B' }}
             >
-              No orders yet
+              {t('empty')}
             </h2>
             <p className="mt-2 text-center text-sm" style={{ color: '#7A8BA8' }}>
+              {/* TODO: i18n */}
               Browse our menu and place your first order.
             </p>
             <Link
@@ -375,6 +380,7 @@ export default function GuestOrdersPage() {
               className="mt-8 rounded-2xl px-8 py-3.5 text-sm font-semibold transition-all active:scale-[0.98]"
               style={{ background: '#1B2D5B', color: '#F8F0E8' }}
             >
+              {/* TODO: i18n */}
               Browse Menu
             </Link>
           </div>

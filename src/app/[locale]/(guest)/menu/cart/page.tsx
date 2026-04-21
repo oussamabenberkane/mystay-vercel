@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { ArrowLeft, Trash2, Plus, Minus, ShoppingBag, MapPin } from 'lucide-react'
 import { useCartStore } from '@/lib/store/cart-store'
 import { placeOrderAction, getActiveStayAction } from '@/lib/actions/room-service'
+import { formatCurrency } from '@/lib/utils/format'
 
 type ActiveStay = {
   id: string
@@ -175,7 +176,7 @@ export default function CartPage() {
                   {item.name}
                 </p>
                 <p className="mt-0.5 text-sm font-bold" style={{ color: '#C9A84C' }}>
-                  €{(item.price * item.quantity).toFixed(2)}
+                  {formatCurrency(item.price * item.quantity)}
                 </p>
               </div>
               <div className="flex shrink-0 items-center gap-2">
@@ -245,7 +246,7 @@ export default function CartPage() {
             style={{ color: '#7A8BA8' }}
           >
             <span>Subtotal</span>
-            <span>€{total().toFixed(2)}</span>
+            <span>{formatCurrency(total())}</span>
           </div>
           <div
             className="my-3 h-px"
@@ -262,7 +263,7 @@ export default function CartPage() {
               className="font-heading text-xl font-bold"
               style={{ color: '#C9A84C' }}
             >
-              €{total().toFixed(2)}
+              {formatCurrency(total())}
             </span>
           </div>
           <p className="mt-1 text-xs" style={{ color: '#B0BEC5' }}>

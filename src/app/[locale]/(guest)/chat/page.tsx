@@ -2,9 +2,9 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { MessageCircle } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { MessageBubble } from '@/components/shared/message-bubble'
 import { MessageInput } from '@/components/shared/message-input'
-import { PushPermissionPrompt } from '@/components/shared/push-permission-prompt'
 import {
   sendMessageAction,
   getMessagesForStayAction,
@@ -27,6 +27,7 @@ function findLastOptimistic(messages: ExtendedMessage[], senderId: string, conte
 
 export default function GuestChatPage() {
   const profile = useAuthStore((s) => s.profile)
+  const t = useTranslations('guest.chat')
   const [messages, setMessages] = useState<ExtendedMessage[]>([])
   const [stayId, setStayId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
@@ -144,7 +145,7 @@ export default function GuestChatPage() {
               className="font-heading text-[15px] font-bold leading-tight"
               style={{ color: '#1B2D5B' }}
             >
-              My Stay Reception
+              {t('title')}
             </p>
           </div>
           <div className="flex items-center gap-1.5">
@@ -164,8 +165,6 @@ export default function GuestChatPage() {
           </div>
         </div>
 
-        {/* Push prompt inlined under header */}
-        <PushPermissionPrompt />
         <div className="h-2" />
       </div>
 
@@ -204,7 +203,7 @@ export default function GuestChatPage() {
               className="font-heading text-lg font-semibold"
               style={{ color: '#1B2D5B' }}
             >
-              Start a conversation
+              {t('empty')}
             </p>
             <p className="mt-1.5 text-sm" style={{ color: '#7A8BA8' }}>
               Our concierge team is here to help with anything you need during your stay.
@@ -231,7 +230,7 @@ export default function GuestChatPage() {
 
       {/* Input — only when stay exists */}
       {stayId && (
-        <MessageInput onSend={handleSend} disabled={sending || !profile} />
+        <MessageInput onSend={handleSend} disabled={sending || !profile} placeholder={t('placeholder')} />
       )}
     </div>
   )

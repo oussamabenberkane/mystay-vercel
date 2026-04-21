@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { ShoppingBag } from 'lucide-react'
 import { useCartStore } from '@/lib/store/cart-store'
+import { formatCurrency } from '@/lib/utils/format'
 
 export function CartButton() {
   const { items, total, itemCount } = useCartStore()
@@ -37,7 +38,7 @@ export function CartButton() {
           </div>
         </div>
         <span className="font-heading text-lg font-bold" style={{ color: '#C9A84C' }}>
-          €{total().toFixed(2)}
+          {formatCurrency(total())}
         </span>
       </Link>
     </div>

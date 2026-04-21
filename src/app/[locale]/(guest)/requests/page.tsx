@@ -5,6 +5,7 @@ import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Bell, Brush, Droplets, Wrench, Ellipsis, AlertTriangle } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import {
   Sheet,
   SheetContent,
@@ -49,12 +50,7 @@ const TYPE_ICONS: Record<RequestType, React.ElementType> = {
   other:       Ellipsis,
 }
 
-const TYPE_LABELS: Record<RequestType, string> = {
-  cleaning:    'Cleaning',
-  towels:      'Fresh Towels',
-  maintenance: 'Maintenance',
-  other:       'Other',
-}
+// Labels resolved via t() inside components that have translation context
 
 const TYPE_COLORS: Record<RequestType, string> = {
   cleaning:    '#3B82F6',
@@ -97,6 +93,7 @@ function RequestSkeleton() {
 }
 
 function RequestCard({ request }: { request: ServiceRequest }) {
+  const t = useTranslations('guest.requests')
   const Icon = TYPE_ICONS[request.type]
   const color = TYPE_COLORS[request.type]
   const accentBorder = request.priority === 'urgent' ? '#EF4444' : 'rgba(27,45,91,0.12)'
@@ -121,7 +118,7 @@ function RequestCard({ request }: { request: ServiceRequest }) {
             </div>
             <div>
               <p className="text-sm font-semibold" style={{ color: '#1B2D5B' }}>
-                {TYPE_LABELS[request.type]}
+                {t(request.type)}
               </p>
               <div className="mt-0.5 flex items-center gap-2">
                 <PriorityBadge priority={request.priority} />
@@ -156,6 +153,8 @@ function RequestCard({ request }: { request: ServiceRequest }) {
 type ToastMsg = { id: number; message: string; isError: boolean }
 
 export default function GuestRequestsPage() {
+  const t = useTranslations('guest.requests')
+  const tStatus = useTranslations('status')
   const [requests, setRequests] = useState<ServiceRequest[]>([])
   const [loading, setLoading] = useState(true)
   const [stayId, setStayId] = useState<string | null>(null)
@@ -330,7 +329,7 @@ export default function GuestRequestsPage() {
               className="font-heading text-2xl font-bold leading-tight"
               style={{ color: '#1B2D5B' }}
             >
-              Service Requests
+              {t('title')}
             </h1>
           </div>
           <button
@@ -339,7 +338,7 @@ export default function GuestRequestsPage() {
             style={{ background: '#1B2D5B', color: '#F8F0E8' }}
           >
             <Bell className="size-4" style={{ color: '#C9A84C' }} />
-            New Request
+            {t('newRequest')}
           </button>
         </div>
       </div>
@@ -360,9 +359,10 @@ export default function GuestRequestsPage() {
               <Bell className="size-9" style={{ color: '#7A8BA8' }} />
             </div>
             <h2 className="font-heading text-xl font-semibold" style={{ color: '#1B2D5B' }}>
-              No requests yet
+              {t('empty')}
             </h2>
             <p className="mt-2 text-center text-sm" style={{ color: '#7A8BA8' }}>
+              {/* TODO: i18n */}
               Need something? Tap below to request a service.
             </p>
             <button
@@ -370,7 +370,7 @@ export default function GuestRequestsPage() {
               className="mt-8 rounded-2xl px-8 py-3.5 text-sm font-semibold transition-all active:scale-[0.98]"
               style={{ background: '#1B2D5B', color: '#F8F0E8' }}
             >
-              New Request
+              {t('newRequest')}
             </button>
           </div>
         ) : (
@@ -402,7 +402,7 @@ export default function GuestRequestsPage() {
               Concierge
             </p>
             <SheetTitle className="font-heading text-xl font-bold" style={{ color: '#1B2D5B' }}>
-              New Request
+              {t('newRequest')}
             </SheetTitle>
           </SheetHeader>
 
@@ -446,7 +446,7 @@ export default function GuestRequestsPage() {
                     }
                   >
                     {p === 'urgent' && <AlertTriangle className="size-3.5" />}
-                    {p === 'normal' ? 'Normal' : 'Urgent'}
+                    {tStatus(p)}
                   </button>
                 ))}
               </div>

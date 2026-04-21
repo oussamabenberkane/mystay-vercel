@@ -3,20 +3,22 @@
 import Link from 'next/link'
 import { usePathname, useParams } from 'next/navigation'
 import { Home, UtensilsCrossed, ClipboardList, Bell, MessageCircle } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
-
-const navItems = [
-  { key: 'home',     href: '/dashboard', icon: Home,            label: 'Home'     },
-  { key: 'menu',     href: '/menu',      icon: UtensilsCrossed, label: 'Menu'     },
-  { key: 'orders',   href: '/orders',    icon: ClipboardList,   label: 'Orders'   },
-  { key: 'requests', href: '/requests',  icon: Bell,            label: 'Requests' },
-  { key: 'chat',     href: '/chat',      icon: MessageCircle,   label: 'Chat'     },
-]
 
 export function BottomNav() {
   const pathname = usePathname()
   const params = useParams()
   const locale = typeof params.locale === 'string' ? params.locale : 'en'
+  const t = useTranslations('nav')
+
+  const navItems = [
+    { key: 'home',     href: '/dashboard', icon: Home,            label: t('home')     },
+    { key: 'menu',     href: '/menu',      icon: UtensilsCrossed, label: t('menu')     },
+    { key: 'orders',   href: '/orders',    icon: ClipboardList,   label: t('orders')   },
+    { key: 'requests', href: '/requests',  icon: Bell,            label: t('requests') },
+    { key: 'chat',     href: '/chat',      icon: MessageCircle,   label: t('chat')     },
+  ]
 
   return (
     <nav
