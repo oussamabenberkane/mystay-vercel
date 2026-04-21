@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { MessageCircle } from 'lucide-react'
+import { Sparkles } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { MessageBubble } from '@/components/shared/message-bubble'
 import { MessageInput } from '@/components/shared/message-input'
@@ -32,10 +32,16 @@ export default function GuestChatPage() {
   const [stayId, setStayId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
-  const bottomRef = useRef<HTMLDivElement>(null)
+  const messagesRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = useCallback((smooth = true) => {
-    bottomRef.current?.scrollIntoView({ behavior: smooth ? 'smooth' : 'instant' })
+    const el = messagesRef.current
+    if (!el) return
+    if (smooth) {
+      el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' })
+    } else {
+      el.scrollTop = el.scrollHeight
+    }
   }, [])
 
   useEffect(() => {
@@ -53,6 +59,23 @@ export default function GuestChatPage() {
     }
     init()
   }, [scrollToBottom])
+
+  useEffect(() => {
+    if (!stayId) return
+    const interval = setInterval(async () => {
+      const { messages: polled } = await getMessagesForStayAction(stayId)
+      setMessages((prev) => {
+        const optimistics = prev.filter((m) => m.isOptimistic)
+        const remaining = optimistics.filter(
+          (opt) => !polled.some((m) => m.sender_id === opt.sender_id && m.content === opt.content)
+        )
+        const prevRealCount = prev.filter((m) => !m.isOptimistic).length
+        if (polled.length > prevRealCount) setTimeout(() => scrollToBottom(), 0)
+        return [...polled, ...remaining]
+      })
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [stayId, scrollToBottom])
 
   useEffect(() => {
     if (!stayId) return
@@ -116,62 +139,91 @@ export default function GuestChatPage() {
   return (
     <div
       className="flex flex-col overflow-hidden"
-      style={{ height: 'calc(100dvh - 64px)', background: '#F8F0E8' }}
+      style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: '64px' }}
     >
-      {/* Chat header */}
+      {/* Header */}
       <div
-        className="shrink-0 border-b"
+        className="shrink-0"
         style={{
-          background: '#FFFFFF',
-          borderColor: 'rgba(27,45,91,0.08)',
-          boxShadow: '0 1px 8px rgba(27,45,91,0.05)',
+          background: '#1B2D5B',
+          boxShadow: '0 2px 16px rgba(27,45,91,0.18)',
         }}
       >
-        <div className="flex items-center gap-3 px-4 py-3.5">
+        <div className="flex items-center gap-3 px-4 py-4">
           <div
             className="flex size-10 shrink-0 items-center justify-center rounded-xl"
-            style={{ background: '#1B2D5B' }}
+            style={{
+              background: 'rgba(201,168,76,0.15)',
+              border: '1px solid rgba(201,168,76,0.3)',
+            }}
           >
-            <MessageCircle className="size-5" style={{ color: '#C9A84C' }} />
+            <Sparkles className="size-4.5" style={{ color: '#C9A84C' }} />
           </div>
+
           <div className="flex-1 min-w-0">
             <p
-              className="text-[10px] font-semibold uppercase tracking-widest"
-              style={{ color: '#C9A84C' }}
+              className="text-[9px] font-semibold uppercase tracking-[0.15em]"
+              style={{ color: 'rgba(201,168,76,0.7)' }}
             >
               Hotel Concierge
             </p>
             <p
-              className="font-heading text-[15px] font-bold leading-tight"
-              style={{ color: '#1B2D5B' }}
+              className="font-heading text-[16px] font-bold leading-tight"
+              style={{ color: '#F8F0E8' }}
             >
               {t('title')}
             </p>
           </div>
-          <div className="flex items-center gap-1.5">
-            <span className="relative flex size-2.5">
+
+          <div className="flex items-center gap-2">
+            <span className="relative flex size-2">
               <span
-                className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75"
+                className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-60"
                 style={{ background: '#4ade80' }}
               />
               <span
-                className="relative inline-flex size-2.5 rounded-full"
+                className="relative inline-flex size-2 rounded-full"
                 style={{ background: '#22c55e' }}
               />
             </span>
-            <span className="text-xs" style={{ color: '#7A8BA8' }}>
-              Online
+            <span
+              className="text-[11px] font-medium"
+              style={{ color: 'rgba(248,240,232,0.6)' }}
+            >
+              Available
             </span>
           </div>
         </div>
 
-        <div className="h-2" />
+        {/* Gold ornament rule */}
+        <div
+          className="mx-4 mb-3"
+          style={{
+            height: '1px',
+            background: 'linear-gradient(to right, transparent, rgba(201,168,76,0.4), transparent)',
+          }}
+        />
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto space-y-3 px-4 py-4">
+      <div
+        ref={messagesRef}
+        className="flex-1 overflow-y-auto px-4 py-5"
+        style={{
+          background: '#F8F0E8',
+          backgroundImage: `
+            repeating-linear-gradient(
+              45deg,
+              transparent,
+              transparent 60px,
+              rgba(201,168,76,0.025) 60px,
+              rgba(201,168,76,0.025) 61px
+            )
+          `,
+        }}
+      >
         {loading ? (
-          <div className="flex items-center justify-center py-16">
+          <div className="flex items-center justify-center py-20">
             <div className="flex gap-1.5">
               {[0, 1, 2].map((i) => (
                 <div
@@ -183,54 +235,55 @@ export default function GuestChatPage() {
             </div>
           </div>
         ) : !stayId ? (
-          <div className="flex flex-col items-center justify-center py-16 text-center px-6">
-            <p className="text-sm font-medium" style={{ color: '#7A8BA8' }}>
+          <div className="flex flex-col items-center justify-center py-20 text-center px-6">
+            <p className="font-heading text-base font-semibold" style={{ color: '#1B2D5B' }}>
               No active stay found
             </p>
-            <p className="mt-1 text-xs" style={{ color: '#7A8BA8' }}>
+            <p className="mt-1.5 text-sm" style={{ color: '#7A8BA8' }}>
               Please contact reception to activate your stay.
             </p>
           </div>
         ) : messages.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
+          <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
             <div
-              className="mb-4 flex size-16 items-center justify-center rounded-3xl"
-              style={{ background: 'rgba(27,45,91,0.06)' }}
+              className="mb-5 flex size-16 items-center justify-center rounded-2xl"
+              style={{
+                background: '#FFFFFF',
+                border: '1px solid rgba(201,168,76,0.2)',
+                boxShadow: '0 4px 20px rgba(27,45,91,0.08)',
+              }}
             >
-              <MessageCircle className="size-8" style={{ color: '#C9A84C' }} />
+              <Sparkles className="size-7" style={{ color: '#C9A84C' }} />
             </div>
-            <p
-              className="font-heading text-lg font-semibold"
-              style={{ color: '#1B2D5B' }}
-            >
+            <p className="font-heading text-xl font-bold" style={{ color: '#1B2D5B' }}>
               {t('empty')}
             </p>
-            <p className="mt-1.5 text-sm" style={{ color: '#7A8BA8' }}>
+            <p className="mt-2 text-sm leading-relaxed" style={{ color: '#7A8BA8' }}>
               Our concierge team is here to help with anything you need during your stay.
             </p>
           </div>
         ) : (
-          messages.map((msg) => (
-            <div
-              key={msg.id}
-              style={{ opacity: msg.isOptimistic ? 0.7 : 1, transition: 'opacity 0.2s' }}
-            >
-              <MessageBubble
-                content={msg.content}
-                senderName={msg.sender_name}
-                senderRole={msg.sender_role}
-                createdAt={msg.created_at}
-                isOwn={msg.sender_id === profile?.id}
-              />
-            </div>
-          ))
+          <div className="flex flex-col gap-3">
+            {messages.map((msg) => (
+              <div
+                key={msg.id}
+                style={{ opacity: msg.isOptimistic ? 0.65 : 1, transition: 'opacity 0.3s' }}
+              >
+                <MessageBubble
+                  content={msg.content}
+                  senderName={msg.sender_name}
+                  senderRole={msg.sender_role}
+                  createdAt={msg.created_at}
+                  isOwn={msg.sender_id === profile?.id}
+                />
+              </div>
+            ))}
+          </div>
         )}
-        <div ref={bottomRef} />
       </div>
 
-      {/* Input — only when stay exists */}
       {stayId && (
-        <MessageInput onSend={handleSend} disabled={sending || !profile} placeholder={t('placeholder')} />
+        <MessageInput onSend={handleSend} disabled={sending} placeholder={t('placeholder')} />
       )}
     </div>
   )

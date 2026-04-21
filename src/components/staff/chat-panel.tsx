@@ -63,6 +63,22 @@ export function ChatPanel({ stayId, roomNumber, guestName, checkIn, checkOut, on
   }, [stayId, scrollToBottom])
 
   useEffect(() => {
+    const interval = setInterval(async () => {
+      const { messages: polled } = await getMessagesForStayAction(stayId)
+      setMessages((prev) => {
+        const optimistics = prev.filter((m) => m.isOptimistic)
+        const remaining = optimistics.filter(
+          (opt) => !polled.some((m) => m.sender_id === opt.sender_id && m.content === opt.content)
+        )
+        const prevRealCount = prev.filter((m) => !m.isOptimistic).length
+        if (polled.length > prevRealCount) setTimeout(() => scrollToBottom(), 0)
+        return [...polled, ...remaining]
+      })
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [stayId, scrollToBottom])
+
+  useEffect(() => {
     const supabase = createClient()
     const channel = supabase
       .channel(`chat-panel:${stayId}`)
@@ -222,7 +238,7 @@ export function ChatPanel({ stayId, roomNumber, guestName, checkIn, checkOut, on
         <div ref={bottomRef} />
       </div>
 
-      <MessageInput onSend={handleSend} disabled={sending || !profile} />
+      <MessageInput onSend={handleSend} disabled={sending} />
     </div>
   )
 }

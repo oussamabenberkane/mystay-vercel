@@ -28,6 +28,15 @@ export default function StaffChatPage() {
     })
   }, [])
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      getConversationsForStaffAction().then(({ conversations: loaded }) => {
+        setConversations(loaded)
+      })
+    }, 10000)
+    return () => clearInterval(interval)
+  }, [])
+
   // Single hotel-level subscription updates the conversation list
   useEffect(() => {
     if (!profile?.hotel_id) return
