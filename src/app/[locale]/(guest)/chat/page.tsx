@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { Sparkles } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { MessageBubble } from '@/components/shared/message-bubble'
+import { TypingIndicator } from '@/components/shared/typing-indicator'
 import { MessageInput } from '@/components/shared/message-input'
 import {
   sendMessageAction,
@@ -32,7 +33,25 @@ export default function GuestChatPage() {
   const [stayId, setStayId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
+  const [isTyping, setIsTyping] = useState(false)
+  const [newMsgIds, setNewMsgIds] = useState<Set<string>>(new Set())
+
   const messagesRef = useRef<HTMLDivElement>(null)
+  const shownIdsRef = useRef(new Set<string>())
+  const pendingIdsRef = useRef(new Set<string>())
+  const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const mountedRef = useRef(true)
+  const profileRef = useRef(profile)
+
+  useEffect(() => { profileRef.current = profile }, [profile])
+
+  useEffect(() => {
+    mountedRef.current = true
+    return () => {
+      mountedRef.current = false
+      if (typingTimerRef.current) clearTimeout(typingTimerRef.current)
+    }
+  }, [])
 
   const scrollToBottom = useCallback((smooth = true) => {
     const el = messagesRef.current
@@ -44,6 +63,41 @@ export default function GuestChatPage() {
     }
   }, [])
 
+  const revealMessages = useCallback((msgs: ExtendedMessage[]) => {
+    if (!mountedRef.current) return
+    typingTimerRef.current = null
+    msgs.forEach((m) => pendingIdsRef.current.delete(m.id))
+    setIsTyping(false)
+    setMessages((prev) => {
+      const ids = new Set(prev.map((m) => m.id))
+      const fresh = msgs.filter((m) => !ids.has(m.id))
+      return fresh.length === 0 ? prev : [...prev, ...fresh]
+    })
+    setNewMsgIds((prev) => {
+      const next = new Set(prev)
+      msgs.forEach((m) => next.add(m.id))
+      return next
+    })
+    scrollToBottom()
+    setTimeout(() => {
+      if (!mountedRef.current) return
+      setNewMsgIds((prev) => {
+        const next = new Set(prev)
+        msgs.forEach((m) => next.delete(m.id))
+        return next
+      })
+    }, 2500)
+  }, [scrollToBottom])
+
+  const showIncoming = useCallback((msgs: MessageWithSender[]) => {
+    msgs.forEach((m) => pendingIdsRef.current.add(m.id))
+    if (typingTimerRef.current) return
+    setIsTyping(true)
+    const delay = Math.min(1400, Math.max(700, msgs[0].content.length * 10))
+    typingTimerRef.current = setTimeout(() => revealMessages(msgs as ExtendedMessage[]), delay)
+  }, [revealMessages])
+
+  // Initial load
   useEffect(() => {
     async function init() {
       const { stay } = await getActiveStayAction()
@@ -51,8 +105,10 @@ export default function GuestChatPage() {
         setLoading(false)
         return
       }
-      setStayId(stay.id)
       const { messages: loaded } = await getMessagesForStayAction(stay.id)
+      if (!mountedRef.current) return
+      shownIdsRef.current = new Set(loaded.map((m) => m.id))
+      setStayId(stay.id)
       setMessages(loaded)
       setLoading(false)
       setTimeout(() => scrollToBottom(false), 50)
@@ -60,23 +116,36 @@ export default function GuestChatPage() {
     init()
   }, [scrollToBottom])
 
+  // Polling fallback — 2s
   useEffect(() => {
     if (!stayId) return
     const interval = setInterval(async () => {
+      if (!mountedRef.current) return
       const { messages: polled } = await getMessagesForStayAction(stayId)
+
+      const incoming = polled.filter(
+        (m) => !shownIdsRef.current.has(m.id) && m.sender_id !== profileRef.current?.id
+      )
+
+      incoming.forEach((m) => shownIdsRef.current.add(m.id))
+
       setMessages((prev) => {
         const optimistics = prev.filter((m) => m.isOptimistic)
         const remaining = optimistics.filter(
           (opt) => !polled.some((m) => m.sender_id === opt.sender_id && m.content === opt.content)
         )
-        const prevRealCount = prev.filter((m) => !m.isOptimistic).length
-        if (polled.length > prevRealCount) setTimeout(() => scrollToBottom(), 0)
-        return [...polled, ...remaining]
+        const knownShown = polled.filter(
+          (m) => shownIdsRef.current.has(m.id) && !pendingIdsRef.current.has(m.id)
+        )
+        return [...knownShown, ...remaining]
       })
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [stayId, scrollToBottom])
 
+      if (incoming.length > 0) showIncoming(incoming)
+    }, 2000)
+    return () => clearInterval(interval)
+  }, [stayId, showIncoming])
+
+  // Realtime subscription
   useEffect(() => {
     if (!stayId) return
     const supabase = createClient()
@@ -87,25 +156,30 @@ export default function GuestChatPage() {
         { event: 'INSERT', schema: 'public', table: 'messages', filter: `stay_id=eq.${stayId}` },
         (payload) => {
           const newMsg = payload.new as MessageWithSender
-          setMessages((prev) => {
-            if (prev.some((m) => m.id === newMsg.id)) return prev
-            const optIdx = findLastOptimistic(prev, newMsg.sender_id, newMsg.content)
-            if (optIdx >= 0) {
-              const updated = [...prev]
-              updated[optIdx] = { ...newMsg }
-              return updated
-            }
-            return [...prev, newMsg]
-          })
-          scrollToBottom()
+          if (shownIdsRef.current.has(newMsg.id)) return
+          shownIdsRef.current.add(newMsg.id)
+
+          if (newMsg.sender_id === profileRef.current?.id) {
+            setMessages((prev) => {
+              if (prev.some((m) => m.id === newMsg.id)) return prev
+              const optIdx = findLastOptimistic(prev, newMsg.sender_id, newMsg.content)
+              if (optIdx >= 0) {
+                const updated = [...prev]
+                updated[optIdx] = { ...newMsg }
+                return updated
+              }
+              return [...prev, newMsg]
+            })
+            scrollToBottom()
+          } else {
+            showIncoming([newMsg])
+          }
         }
       )
       .subscribe()
 
-    return () => {
-      supabase.removeChannel(channel)
-    }
-  }, [stayId, scrollToBottom])
+    return () => { supabase.removeChannel(channel) }
+  }, [stayId, showIncoming, scrollToBottom])
 
   const handleSend = useCallback(
     async (content: string) => {
@@ -243,7 +317,7 @@ export default function GuestChatPage() {
               Please contact reception to activate your stay.
             </p>
           </div>
-        ) : messages.length === 0 ? (
+        ) : messages.length === 0 && !isTyping ? (
           <div className="flex flex-col items-center justify-center py-20 px-6 text-center">
             <div
               className="mb-5 flex size-16 items-center justify-center rounded-2xl"
@@ -275,9 +349,11 @@ export default function GuestChatPage() {
                   senderRole={msg.sender_role}
                   createdAt={msg.created_at}
                   isOwn={msg.sender_id === profile?.id}
+                  isNew={newMsgIds.has(msg.id)}
                 />
               </div>
             ))}
+            {isTyping && <TypingIndicator senderName="Hotel Concierge" />}
           </div>
         )}
       </div>

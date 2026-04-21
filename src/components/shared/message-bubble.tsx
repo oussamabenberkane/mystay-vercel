@@ -6,6 +6,7 @@ type Props = {
   senderRole: 'client' | 'staff' | 'admin'
   createdAt: string
   isOwn: boolean
+  isNew?: boolean
 }
 
 function formatTime(dateStr: string): string {
@@ -21,7 +22,11 @@ function formatTime(dateStr: string): string {
   return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) + ` ${time}`
 }
 
-export function MessageBubble({ content, senderName, createdAt, isOwn }: Props) {
+export function MessageBubble({ content, senderName, createdAt, isOwn, isNew }: Props) {
+  const revealDuration = isNew && !isOwn
+    ? `${Math.min(900, Math.max(350, content.length * 20))}ms`
+    : undefined
+
   return (
     <div className={`msg-rise flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
       <div className={`flex max-w-[78%] flex-col gap-1 ${isOwn ? 'items-end' : 'items-start'}`}>
@@ -55,7 +60,18 @@ export function MessageBubble({ content, senderName, createdAt, isOwn }: Props) 
                 }
           }
         >
-          {content}
+          {revealDuration ? (
+            <span
+              style={{
+                display: 'block',
+                animation: `text-reveal ${revealDuration} cubic-bezier(0.4, 0, 0.2, 1) 150ms both`,
+              }}
+            >
+              {content}
+            </span>
+          ) : (
+            content
+          )}
         </div>
 
         <span

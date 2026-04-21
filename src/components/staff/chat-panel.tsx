@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { ArrowLeft, Calendar } from 'lucide-react'
 import { MessageBubble } from '@/components/shared/message-bubble'
+import { TypingIndicator } from '@/components/shared/typing-indicator'
 import { MessageInput } from '@/components/shared/message-input'
 import {
   sendMessageAction,
@@ -46,38 +47,116 @@ export function ChatPanel({ stayId, roomNumber, guestName, checkIn, checkOut, on
   const [messages, setMessages] = useState<ExtendedMessage[]>([])
   const [loading, setLoading] = useState(true)
   const [sending, setSending] = useState(false)
+  const [isTyping, setIsTyping] = useState(false)
+  const [newMsgIds, setNewMsgIds] = useState<Set<string>>(new Set())
+
   const bottomRef = useRef<HTMLDivElement>(null)
+  const shownIdsRef = useRef(new Set<string>())
+  const pendingIdsRef = useRef(new Set<string>())
+  const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const mountedRef = useRef(true)
+  const profileRef = useRef(profile)
+
+  useEffect(() => { profileRef.current = profile }, [profile])
+
+  useEffect(() => {
+    mountedRef.current = true
+    return () => {
+      mountedRef.current = false
+      if (typingTimerRef.current) clearTimeout(typingTimerRef.current)
+    }
+  }, [])
 
   const scrollToBottom = useCallback((smooth = true) => {
     bottomRef.current?.scrollIntoView({ behavior: smooth ? 'smooth' : 'instant' })
   }, [])
 
+  const revealMessages = useCallback((msgs: ExtendedMessage[]) => {
+    if (!mountedRef.current) return
+    typingTimerRef.current = null
+    msgs.forEach((m) => pendingIdsRef.current.delete(m.id))
+    setIsTyping(false)
+    setMessages((prev) => {
+      const ids = new Set(prev.map((m) => m.id))
+      const fresh = msgs.filter((m) => !ids.has(m.id))
+      return fresh.length === 0 ? prev : [...prev, ...fresh]
+    })
+    setNewMsgIds((prev) => {
+      const next = new Set(prev)
+      msgs.forEach((m) => next.add(m.id))
+      return next
+    })
+    scrollToBottom()
+    setTimeout(() => {
+      if (!mountedRef.current) return
+      setNewMsgIds((prev) => {
+        const next = new Set(prev)
+        msgs.forEach((m) => next.delete(m.id))
+        return next
+      })
+    }, 2500)
+  }, [scrollToBottom])
+
+  const showIncoming = useCallback((msgs: MessageWithSender[]) => {
+    msgs.forEach((m) => pendingIdsRef.current.add(m.id))
+    if (typingTimerRef.current) return
+    setIsTyping(true)
+    const delay = Math.min(1400, Math.max(700, msgs[0].content.length * 10))
+    typingTimerRef.current = setTimeout(() => revealMessages(msgs as ExtendedMessage[]), delay)
+  }, [revealMessages])
+
+  // Initial load
   useEffect(() => {
     setLoading(true)
     setMessages([])
+    shownIdsRef.current = new Set()
+    pendingIdsRef.current = new Set()
+    if (typingTimerRef.current) {
+      clearTimeout(typingTimerRef.current)
+      typingTimerRef.current = null
+    }
+    setIsTyping(false)
+    setNewMsgIds(new Set())
+
     getMessagesForStayAction(stayId).then(({ messages: loaded }) => {
+      if (!mountedRef.current) return
+      shownIdsRef.current = new Set(loaded.map((m) => m.id))
       setMessages(loaded)
       setLoading(false)
       setTimeout(() => scrollToBottom(false), 50)
     })
   }, [stayId, scrollToBottom])
 
+  // Polling fallback — 2s
   useEffect(() => {
+    if (!stayId) return
     const interval = setInterval(async () => {
+      if (!mountedRef.current) return
       const { messages: polled } = await getMessagesForStayAction(stayId)
+
+      const incoming = polled.filter(
+        (m) => !shownIdsRef.current.has(m.id) && m.sender_id !== profileRef.current?.id
+      )
+
+      incoming.forEach((m) => shownIdsRef.current.add(m.id))
+
       setMessages((prev) => {
         const optimistics = prev.filter((m) => m.isOptimistic)
         const remaining = optimistics.filter(
           (opt) => !polled.some((m) => m.sender_id === opt.sender_id && m.content === opt.content)
         )
-        const prevRealCount = prev.filter((m) => !m.isOptimistic).length
-        if (polled.length > prevRealCount) setTimeout(() => scrollToBottom(), 0)
-        return [...polled, ...remaining]
+        const knownShown = polled.filter(
+          (m) => shownIdsRef.current.has(m.id) && !pendingIdsRef.current.has(m.id)
+        )
+        return [...knownShown, ...remaining]
       })
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [stayId, scrollToBottom])
 
+      if (incoming.length > 0) showIncoming(incoming)
+    }, 2000)
+    return () => clearInterval(interval)
+  }, [stayId, showIncoming])
+
+  // Realtime subscription
   useEffect(() => {
     const supabase = createClient()
     const channel = supabase
@@ -87,25 +166,30 @@ export function ChatPanel({ stayId, roomNumber, guestName, checkIn, checkOut, on
         { event: 'INSERT', schema: 'public', table: 'messages', filter: `stay_id=eq.${stayId}` },
         (payload) => {
           const newMsg = payload.new as MessageWithSender
-          setMessages((prev) => {
-            if (prev.some((m) => m.id === newMsg.id)) return prev
-            const optIdx = findLastOptimistic(prev, newMsg.sender_id, newMsg.content)
-            if (optIdx >= 0) {
-              const updated = [...prev]
-              updated[optIdx] = { ...newMsg }
-              return updated
-            }
-            return [...prev, newMsg]
-          })
-          scrollToBottom()
+          if (shownIdsRef.current.has(newMsg.id)) return
+          shownIdsRef.current.add(newMsg.id)
+
+          if (newMsg.sender_id === profileRef.current?.id) {
+            setMessages((prev) => {
+              if (prev.some((m) => m.id === newMsg.id)) return prev
+              const optIdx = findLastOptimistic(prev, newMsg.sender_id, newMsg.content)
+              if (optIdx >= 0) {
+                const updated = [...prev]
+                updated[optIdx] = { ...newMsg }
+                return updated
+              }
+              return [...prev, newMsg]
+            })
+            scrollToBottom()
+          } else {
+            showIncoming([newMsg])
+          }
         }
       )
       .subscribe()
 
-    return () => {
-      supabase.removeChannel(channel)
-    }
-  }, [stayId, scrollToBottom])
+    return () => { supabase.removeChannel(channel) }
+  }, [stayId, showIncoming, scrollToBottom])
 
   const handleSend = useCallback(
     async (content: string) => {
@@ -150,7 +234,7 @@ export function ChatPanel({ stayId, roomNumber, guestName, checkIn, checkOut, on
             style={{ background: '#F8F0E8' }}
             aria-label="Back to conversations"
           >
-            <ArrowLeft className="size-[18px]" style={{ color: '#1B2D5B' }} />
+            <ArrowLeft className="size-4.5" style={{ color: '#1B2D5B' }} />
           </button>
         )}
 
@@ -175,7 +259,6 @@ export function ChatPanel({ stayId, roomNumber, guestName, checkIn, checkOut, on
           )}
         </div>
 
-        {/* Online indicator */}
         <div className="flex items-center gap-1.5">
           <span className="relative flex size-2.5">
             <span
@@ -187,15 +270,13 @@ export function ChatPanel({ stayId, roomNumber, guestName, checkIn, checkOut, on
               style={{ background: '#22c55e' }}
             />
           </span>
-          <span className="text-[11px]" style={{ color: '#7A8BA8' }}>
-            Room {roomNumber}
-          </span>
+          <span className="text-[11px]" style={{ color: '#7A8BA8' }}>Room {roomNumber}</span>
         </div>
       </div>
 
       {/* Messages */}
       <div
-        className="flex-1 overflow-y-auto space-y-3 px-4 py-4"
+        className="flex-1 overflow-y-auto px-4 py-4"
         style={{ background: '#F8F0E8' }}
       >
         {loading ? (
@@ -210,32 +291,32 @@ export function ChatPanel({ stayId, roomNumber, guestName, checkIn, checkOut, on
               ))}
             </div>
           </div>
-        ) : messages.length === 0 ? (
+        ) : messages.length === 0 && !isTyping ? (
           <div className="flex flex-col items-center justify-center py-16 text-center">
-            <p className="text-sm font-medium" style={{ color: '#7A8BA8' }}>
-              No messages yet
-            </p>
-            <p className="mt-1 text-xs" style={{ color: '#7A8BA8' }}>
-              Send a message to start the conversation
-            </p>
+            <p className="text-sm font-medium" style={{ color: '#7A8BA8' }}>No messages yet</p>
+            <p className="mt-1 text-xs" style={{ color: '#7A8BA8' }}>Send a message to start the conversation</p>
           </div>
         ) : (
-          messages.map((msg) => (
-            <div
-              key={msg.id}
-              style={{ opacity: msg.isOptimistic ? 0.7 : 1, transition: 'opacity 0.2s' }}
-            >
-              <MessageBubble
-                content={msg.content}
-                senderName={msg.sender_name}
-                senderRole={msg.sender_role}
-                createdAt={msg.created_at}
-                isOwn={msg.sender_id === profile?.id}
-              />
-            </div>
-          ))
+          <div className="flex flex-col gap-3">
+            {messages.map((msg) => (
+              <div
+                key={msg.id}
+                style={{ opacity: msg.isOptimistic ? 0.7 : 1, transition: 'opacity 0.2s' }}
+              >
+                <MessageBubble
+                  content={msg.content}
+                  senderName={msg.sender_name}
+                  senderRole={msg.sender_role}
+                  createdAt={msg.created_at}
+                  isOwn={msg.sender_id === profile?.id}
+                  isNew={newMsgIds.has(msg.id)}
+                />
+              </div>
+            ))}
+            {isTyping && <TypingIndicator senderName={guestName} />}
+            <div ref={bottomRef} />
+          </div>
         )}
-        <div ref={bottomRef} />
       </div>
 
       <MessageInput onSend={handleSend} disabled={sending} />

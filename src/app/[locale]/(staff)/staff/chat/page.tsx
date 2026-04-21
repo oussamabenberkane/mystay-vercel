@@ -33,7 +33,7 @@ export default function StaffChatPage() {
       getConversationsForStaffAction().then(({ conversations: loaded }) => {
         setConversations(loaded)
       })
-    }, 10000)
+    }, 2000)
     return () => clearInterval(interval)
   }, [])
 
