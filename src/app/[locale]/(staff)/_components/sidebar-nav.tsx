@@ -2,19 +2,30 @@
 
 import Link from 'next/link'
 import { usePathname, useParams } from 'next/navigation'
-import { ClipboardList, Bell, MessageCircle, LayoutDashboard } from 'lucide-react'
+import { ClipboardList, Bell, MessageCircle, LogOut } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
+import { logoutAction } from '@/lib/actions/auth'
+import { useState } from 'react'
 
-const navItems = [
-  { href: '/staff/orders',   icon: ClipboardList,   label: 'Orders'   },
-  { href: '/staff/requests', icon: Bell,             label: 'Requests' },
-  { href: '/staff/chat',     icon: MessageCircle,   label: 'Chat'     },
-]
-
-export function StaffSidebarNav() {
+export function StaffSidebarNav({ staffName }: { staffName: string }) {
   const pathname = usePathname()
   const params = useParams()
   const locale = typeof params.locale === 'string' ? params.locale : 'en'
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
+  const tNav = useTranslations('nav')
+  const tAuth = useTranslations('auth')
+
+  const navItems = [
+    { href: '/staff/orders',   icon: ClipboardList,  label: tNav('orders')   },
+    { href: '/staff/requests', icon: Bell,            label: tNav('requests') },
+    { href: '/staff/chat',     icon: MessageCircle,  label: tNav('chat')     },
+  ]
+
+  async function handleLogout() {
+    setIsLoggingOut(true)
+    await logoutAction()
+  }
 
   return (
     <aside
@@ -68,11 +79,25 @@ export function StaffSidebarNav() {
         })}
       </nav>
 
-      {/* Footer */}
-      <div className="px-6 py-4 border-t" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
-        <p className="text-[11px]" style={{ color: 'rgba(248,240,232,0.35)' }}>
-          © My Stay Platform
-        </p>
+      {/* Footer with user info + sign out */}
+      <div className="px-4 py-4 border-t space-y-3" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
+        <div className="px-2">
+          <p className="text-xs font-medium truncate" style={{ color: 'rgba(248,240,232,0.9)' }}>
+            {staffName}
+          </p>
+          <p className="text-[11px]" style={{ color: 'rgba(248,240,232,0.4)' }}>
+            Staff
+          </p>
+        </div>
+        <button
+          onClick={handleLogout}
+          disabled={isLoggingOut}
+          className="flex w-full items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-medium transition-opacity hover:opacity-70 disabled:opacity-50"
+          style={{ color: 'rgba(248,240,232,0.6)' }}
+        >
+          <LogOut className="size-4 shrink-0" />
+          {isLoggingOut ? '…' : tAuth('logout')}
+        </button>
       </div>
     </aside>
   )

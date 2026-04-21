@@ -5,6 +5,7 @@ import { Clock, User, MapPin, ChevronDown, ChevronUp } from 'lucide-react'
 import { OrderStatusBadge } from '@/components/guest/order-status-badge'
 import { updateOrderStatusAction, type OrderStatus } from '@/lib/actions/room-service'
 import { cn } from '@/lib/utils'
+import { formatCurrency } from '@/lib/utils/format'
 
 type OrderItem = {
   id: string
@@ -110,7 +111,7 @@ export function StaffOrderCard({
           </div>
         </div>
         <span className="font-heading text-xl font-bold" style={{ color: '#C9A84C' }}>
-          €{order.total_amount.toFixed(2)}
+          {formatCurrency(order.total_amount)}
         </span>
       </div>
 
@@ -136,7 +137,7 @@ export function StaffOrderCard({
                   {item.quantity}× {item.menu_items?.name ?? 'Item'}
                 </span>
                 <span style={{ color: '#7A8BA8' }}>
-                  €{(item.unit_price * item.quantity).toFixed(2)}
+                  {formatCurrency(item.unit_price * item.quantity)}
                 </span>
               </li>
             ))}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Radio, ClipboardList } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { StaffOrderCard, type StaffOrder } from '@/components/staff/order-card'
 import { OrderStatusBadge } from '@/components/guest/order-status-badge'
 import { getStaffOrdersAction } from '@/lib/actions/room-service'
@@ -10,13 +11,6 @@ import { createClient } from '@/lib/supabase/client'
 import type { OrderStatus } from '@/lib/actions/room-service'
 
 type FilterTab = 'all' | 'pending' | 'active' | 'completed'
-
-const FILTER_TABS: { key: FilterTab; label: string }[] = [
-  { key: 'all',       label: 'All Orders' },
-  { key: 'pending',   label: 'Pending'    },
-  { key: 'active',    label: 'Active'     },
-  { key: 'completed', label: 'Completed'  },
-]
 
 const ACTIVE_STATUSES: OrderStatus[] = ['confirmed', 'preparing', 'delivering']
 
@@ -91,9 +85,18 @@ function OrderCardSkeleton() {
 
 export default function StaffOrdersPage() {
   const { profile } = useAuthStore()
+  const t = useTranslations('staff.orders')
+  const tStatus = useTranslations('status')
   const [orders, setOrders] = useState<StaffOrder[]>([])
   const [filter, setFilter] = useState<FilterTab>('all')
   const [loading, setLoading] = useState(true)
+
+  const FILTER_TABS: { key: FilterTab; label: string }[] = [
+    { key: 'all',       label: t('title')           }, // TODO: i18n — no "All Orders" key
+    { key: 'pending',   label: tStatus('pending')   },
+    { key: 'active',    label: tStatus('active')    },
+    { key: 'completed', label: tStatus('completed') },
+  ]
 
   // Initial data load
   useEffect(() => {
@@ -178,7 +181,7 @@ export default function StaffOrdersPage() {
               Operations
             </p>
             <h1 className="font-heading text-2xl font-bold" style={{ color: '#1B2D5B' }}>
-              Orders
+              {t('title')}
             </h1>
           </div>
           {/* Live indicator */}
@@ -250,9 +253,10 @@ export default function StaffOrdersPage() {
               className="font-heading text-lg font-semibold"
               style={{ color: '#1B2D5B' }}
             >
-              No orders here
+              {t('empty')}
             </p>
             <p className="mt-1 text-sm" style={{ color: '#7A8BA8' }}>
+              {/* TODO: i18n */}
               {filter === 'pending' ? 'All caught up!' : 'Nothing to show for this filter.'}
             </p>
           </div>

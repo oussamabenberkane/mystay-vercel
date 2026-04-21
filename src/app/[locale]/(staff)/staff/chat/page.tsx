@@ -2,9 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { MessageCircle } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { ConversationList } from '@/components/staff/conversation-list'
 import { ChatPanel } from '@/components/staff/chat-panel'
-import { PushPermissionPrompt } from '@/components/shared/push-permission-prompt'
 import {
   getConversationsForStaffAction,
   type Conversation,
@@ -14,6 +14,7 @@ import { createClient } from '@/lib/supabase/client'
 
 export default function StaffChatPage() {
   const profile = useAuthStore((s) => s.profile)
+  const t = useTranslations('staff.chat')
   const [conversations, setConversations] = useState<Conversation[]>([])
   const [activeConversation, setActiveConversation] = useState<Conversation | null>(null)
   const [mobileView, setMobileView] = useState<'list' | 'thread'>('list')
@@ -120,7 +121,7 @@ export default function StaffChatPage() {
               className="font-heading text-lg font-bold"
               style={{ color: '#1B2D5B' }}
             >
-              Guest Chats
+              {t('title')}
             </h1>
           </div>
           {unreadStayIds.size > 0 && (
@@ -132,9 +133,6 @@ export default function StaffChatPage() {
             </div>
           )}
         </div>
-
-        {/* Push prompt */}
-        <PushPermissionPrompt />
 
         {/* Conversations */}
         <div className="flex-1 overflow-y-auto">
