@@ -23,6 +23,12 @@ function getServiceDb() {
   ) as any
 }
 
+// 410 Gone / 404 Not Found = subscription expired or unregistered on the browser side
+function isStaleSubscription(err: unknown): boolean {
+  return (err as { statusCode?: number })?.statusCode === 410 ||
+    (err as { statusCode?: number })?.statusCode === 404
+}
+
 export async function sendPushToUser(
   userId: string,
   notification: { title: string; body: string; url?: string }
@@ -32,7 +38,7 @@ export async function sendPushToUser(
     const db = getServiceDb()
     const { data: subs } = await db
       .from('push_subscriptions')
-      .select('subscription')
+      .select('user_id, subscription')
       .eq('user_id', userId)
 
     if (!subs?.length) return
@@ -45,7 +51,15 @@ export async function sendPushToUser(
 
     await Promise.allSettled(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      subs.map((s: any) => webpush.sendNotification(s.subscription as webpush.PushSubscription, payload))
+      subs.map((s: any) =>
+        webpush.sendNotification(s.subscription as webpush.PushSubscription, payload).catch(
+          async (err) => {
+            if (isStaleSubscription(err)) {
+              await db.from('push_subscriptions').delete().eq('user_id', s.user_id)
+            }
+          }
+        )
+      )
     )
   } catch {
     // Never throw from push utility
@@ -73,7 +87,7 @@ export async function sendPushToHotelStaff(
 
     const { data: subs } = await db
       .from('push_subscriptions')
-      .select('subscription')
+      .select('user_id, subscription')
       .in('user_id', staffIds)
 
     if (!subs?.length) return
@@ -86,7 +100,15 @@ export async function sendPushToHotelStaff(
 
     await Promise.allSettled(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      subs.map((s: any) => webpush.sendNotification(s.subscription as webpush.PushSubscription, payload))
+      subs.map((s: any) =>
+        webpush.sendNotification(s.subscription as webpush.PushSubscription, payload).catch(
+          async (err) => {
+            if (isStaleSubscription(err)) {
+              await db.from('push_subscriptions').delete().eq('user_id', s.user_id)
+            }
+          }
+        )
+      )
     )
   } catch {
     // Never throw from push utility
