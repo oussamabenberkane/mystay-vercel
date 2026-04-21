@@ -1,16 +1,14 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { defaultLocale } from '@/lib/i18n/config'
-import { getTranslations } from 'next-intl/server'
-import { MenuClient } from './_components/menu-client'
+import { UsersClient } from './_components/users-client'
 
-export default async function MenuPage({
+export default async function UsersPage({
   params,
 }: {
   params: Promise<{ locale: string }>
 }) {
   const { locale } = await params
-  const t = await getTranslations('admin.menu')
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -25,38 +23,27 @@ export default async function MenuPage({
   const profile = profileData as { hotel_id: string; role: string } | null
   if (!profile || profile.role !== 'admin') redirect(`/${locale ?? defaultLocale}/login`)
 
-  const hotelId = profile.hotel_id
-
-  const { data: categories } = await supabase
-    .from('menu_categories')
-    .select('*, menu_items(*)')
-    .eq('hotel_id', hotelId)
-    .order('sort_order')
-
-  const totalItems = (categories ?? []).reduce(
-    (sum, c) => sum + ((c as any).menu_items?.length ?? 0),
-    0
-  )
+  const { data: users } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('hotel_id', profile.hotel_id)
+    .order('created_at', { ascending: false })
 
   return (
     <div className="p-6 md:p-8 space-y-6">
       <div>
         <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#C9A84C' }}>
-          {/* TODO: i18n */}
-          Food & Beverage
+          Team Management
         </p>
         <h1 className="font-heading text-3xl font-bold" style={{ color: '#1B2D5B' }}>
-          {t('title')}
+          Users
         </h1>
         <p className="mt-1 text-sm" style={{ color: '#7A8BA8' }}>
-          {categories?.length ?? 0} categories · {totalItems} items
+          {users?.length ?? 0} members in your hotel
         </p>
       </div>
 
-      <MenuClient
-        categories={(categories ?? []) as any[]}
-        hotelId={hotelId}
-      />
+      <UsersClient users={(users ?? []) as any[]} hotelId={profile.hotel_id} />
     </div>
   )
 }
