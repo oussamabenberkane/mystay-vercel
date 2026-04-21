@@ -92,7 +92,7 @@ export function StaffSidebarNav({ staffName }: { staffName: string }) {
         <button
           onClick={handleLogout}
           disabled={isLoggingOut}
-          className="flex w-full items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-medium transition-opacity hover:opacity-70 disabled:opacity-50"
+          className="flex w-full cursor-pointer items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-medium transition-all hover:bg-white/8 hover:opacity-70 disabled:cursor-not-allowed disabled:opacity-50"
           style={{ color: 'rgba(248,240,232,0.6)' }}
         >
           <LogOut className="size-4 shrink-0" />

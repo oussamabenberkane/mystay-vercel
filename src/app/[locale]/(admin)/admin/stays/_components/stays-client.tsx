@@ -154,7 +154,7 @@ export function StaysClient({ stays, guests, rooms }: StaysClientProps) {
       {actionError && (
         <div className="rounded-xl px-4 py-3 text-sm" style={{ background: 'rgba(192,57,43,0.08)', color: '#C0392B' }}>
           {actionError}
-          <button className="ml-2 underline" onClick={() => setActionError(null)}>Dismiss</button>
+          <button className="ml-2 cursor-pointer underline hover:no-underline" onClick={() => setActionError(null)}>Dismiss</button>
         </div>
       )}
 
@@ -217,7 +217,7 @@ export function StaysClient({ stays, guests, rooms }: StaysClientProps) {
                       {stay.status === 'active' && (
                         <button
                           onClick={() => setArchiveTarget(stay)}
-                          className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors hover:bg-black/5"
+                          className="flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors hover:bg-black/5"
                           style={{ color: '#7A8BA8' }}
                         >
                           <Archive className="size-3.5" />

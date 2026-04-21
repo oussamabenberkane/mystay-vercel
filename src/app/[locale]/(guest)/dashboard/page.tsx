@@ -193,7 +193,7 @@ export default async function GuestDashboardPage({
               </p>
               <Link
                 href={`/${locale}/orders`}
-                className="text-xs font-medium"
+                className="text-xs font-medium transition-opacity hover:opacity-70"
                 style={{ color: '#C9A84C' }}
               >
                 {/* TODO: i18n */}

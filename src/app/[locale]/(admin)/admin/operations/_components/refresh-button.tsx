@@ -17,7 +17,7 @@ export function RefreshButton() {
   return (
     <button
       onClick={handleRefresh}
-      className="flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-all hover:opacity-80 active:scale-95"
+      className="flex cursor-pointer items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition-all hover:bg-[rgba(27,45,91,0.12)] hover:opacity-80 active:scale-95"
       style={{ background: 'rgba(27,45,91,0.07)', color: '#1B2D5B' }}
     >
       <RefreshCw

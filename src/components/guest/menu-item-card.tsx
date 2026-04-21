@@ -84,7 +84,7 @@ export function MenuItemCard({ id, name, description, price, imageUrl }: Props) 
           {quantity === 0 ? (
             <button
               onClick={handleAdd}
-              className="flex items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-150 active:scale-95"
+              className="flex cursor-pointer items-center gap-1.5 rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-150 hover:opacity-90 active:scale-95"
               style={{ background: '#1B2D5B', color: '#F8F0E8' }}
             >
               <Plus className="size-3.5" />
@@ -94,7 +94,7 @@ export function MenuItemCard({ id, name, description, price, imageUrl }: Props) 
             <div className="flex items-center gap-2">
               <button
                 onClick={handleDecrement}
-                className="flex size-9 items-center justify-center rounded-xl border transition-all duration-150 active:scale-95"
+                className="flex size-9 cursor-pointer items-center justify-center rounded-xl border transition-all duration-150 hover:bg-[rgba(27,45,91,0.06)] active:scale-95"
                 style={{ borderColor: 'rgba(27,45,91,0.15)', color: '#1B2D5B' }}
               >
                 <Minus className="size-3.5" />
@@ -107,7 +107,7 @@ export function MenuItemCard({ id, name, description, price, imageUrl }: Props) 
               </span>
               <button
                 onClick={handleAdd}
-                className="flex size-9 items-center justify-center rounded-xl transition-all duration-150 active:scale-95"
+                className="flex size-9 cursor-pointer items-center justify-center rounded-xl transition-all duration-150 hover:opacity-90 active:scale-95"
                 style={{ background: '#1B2D5B', color: '#F8F0E8' }}
               >
                 <Plus className="size-3.5" />

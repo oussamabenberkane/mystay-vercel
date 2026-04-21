@@ -267,7 +267,7 @@ export function MenuClient({ categories, hotelId }: MenuClientProps) {
           </p>
           <button
             onClick={() => setCatAddOpen(true)}
-            className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium transition-colors"
+            className="flex cursor-pointer items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium transition-colors hover:bg-[rgba(27,45,91,0.12)]"
             style={{ color: '#1B2D5B', background: 'rgba(27,45,91,0.07)' }}
           >
             <Plus className="size-3" />
@@ -335,7 +335,7 @@ export function MenuClient({ categories, hotelId }: MenuClientProps) {
         {actionError && (
           <div className="rounded-xl px-4 py-3 text-sm" style={{ background: 'rgba(192,57,43,0.08)', color: '#C0392B' }}>
             {actionError}
-            <button className="ml-2 underline" onClick={() => setActionError(null)}>Dismiss</button>
+            <button className="ml-2 cursor-pointer underline hover:no-underline" onClick={() => setActionError(null)}>Dismiss</button>
           </div>
         )}
 
@@ -420,7 +420,7 @@ export function MenuClient({ categories, hotelId }: MenuClientProps) {
                           <button
                             onClick={() => handleToggleAvailability(item)}
                             disabled={isPending}
-                            className="flex items-center gap-1.5 text-xs font-medium transition-opacity disabled:opacity-50"
+                            className="flex cursor-pointer items-center gap-1.5 text-xs font-medium transition-opacity hover:opacity-75 disabled:cursor-not-allowed disabled:opacity-50"
                             style={{ color: item.is_available ? '#16a34a' : '#7A8BA8' }}
                           >
                             {item.is_available ? (
@@ -635,6 +635,7 @@ export function MenuClient({ categories, hotelId }: MenuClientProps) {
                 <button
                   type="button"
                   onClick={() => form.setValue('isAvailable', !form.watch('isAvailable'))}
+                  className="cursor-pointer transition-opacity hover:opacity-75"
                   style={{ color: form.watch('isAvailable') ? '#16a34a' : '#7A8BA8' }}
                 >
                   {form.watch('isAvailable') ? (

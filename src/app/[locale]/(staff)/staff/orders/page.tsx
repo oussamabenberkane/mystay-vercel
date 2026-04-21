@@ -213,7 +213,7 @@ export default function StaffOrdersPage() {
             <button
               key={tab.key}
               onClick={() => setFilter(tab.key)}
-              className="shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold transition-all duration-150"
+              className="shrink-0 cursor-pointer rounded-full px-4 py-1.5 text-xs font-semibold transition-all duration-150 hover:opacity-90"
               style={
                 filter === tab.key
                   ? { background: '#1B2D5B', color: '#F8F0E8' }

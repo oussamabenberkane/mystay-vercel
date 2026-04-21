@@ -190,7 +190,7 @@ export function UsersClient({ users, hotelId }: UsersClientProps) {
           style={{ background: 'rgba(192,57,43,0.08)', color: '#C0392B' }}
         >
           {actionError}
-          <button className="ml-2 underline" onClick={() => setActionError(null)}>
+          <button className="ml-2 cursor-pointer underline hover:no-underline" onClick={() => setActionError(null)}>
             Dismiss
           </button>
         </div>

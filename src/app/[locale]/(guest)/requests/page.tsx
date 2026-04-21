@@ -334,7 +334,7 @@ export default function GuestRequestsPage() {
           </div>
           <button
             onClick={() => setSheetOpen(true)}
-            className="flex items-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-semibold transition-all active:scale-[0.97]"
+            className="flex cursor-pointer items-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-semibold transition-all hover:opacity-90 active:scale-[0.97]"
             style={{ background: '#1B2D5B', color: '#F8F0E8' }}
           >
             <Bell className="size-4" style={{ color: '#C9A84C' }} />
@@ -367,7 +367,7 @@ export default function GuestRequestsPage() {
             </p>
             <button
               onClick={() => setSheetOpen(true)}
-              className="mt-8 rounded-2xl px-8 py-3.5 text-sm font-semibold transition-all active:scale-[0.98]"
+              className="mt-8 cursor-pointer rounded-2xl px-8 py-3.5 text-sm font-semibold transition-all hover:opacity-90 active:scale-[0.98]"
               style={{ background: '#1B2D5B', color: '#F8F0E8' }}
             >
               {t('newRequest')}
@@ -436,7 +436,7 @@ export default function GuestRequestsPage() {
                     key={p}
                     type="button"
                     onClick={() => setValue('priority', p)}
-                    className="flex flex-1 items-center justify-center gap-2 rounded-xl border-2 py-3 text-sm font-semibold transition-all duration-150"
+                    className="flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl border-2 py-3 text-sm font-semibold transition-all duration-150 hover:opacity-90"
                     style={
                       selectedPriority === p
                         ? p === 'urgent'
@@ -481,7 +481,7 @@ export default function GuestRequestsPage() {
             <button
               type="submit"
               disabled={submitting || !selectedType}
-              className="w-full rounded-2xl py-4 text-sm font-semibold transition-all active:scale-[0.98] disabled:opacity-50"
+              className="w-full cursor-pointer rounded-2xl py-4 text-sm font-semibold transition-all hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
               style={{ background: '#1B2D5B', color: '#F8F0E8', minHeight: '52px' }}
             >
               {submitting ? 'Submitting…' : 'Submit Request'}

@@ -90,7 +90,7 @@ export default function CartPage() {
         </p>
         <Link
           href={`/${locale}/menu`}
-          className="mt-8 rounded-2xl px-8 py-3.5 text-sm font-semibold transition-all duration-150 active:scale-[0.98]"
+          className="mt-8 rounded-2xl px-8 py-3.5 text-sm font-semibold transition-all duration-150 hover:opacity-90 active:scale-[0.98]"
           style={{ background: '#1B2D5B', color: '#F8F0E8' }}
         >
           Browse Menu
@@ -108,7 +108,7 @@ export default function CartPage() {
       >
         <Link
           href={`/${locale}/menu`}
-          className="flex size-9 items-center justify-center rounded-xl transition-all"
+          className="flex size-9 items-center justify-center rounded-xl transition-all hover:bg-[rgba(27,45,91,0.12)]"
           style={{ background: 'rgba(27,45,91,0.07)', color: '#1B2D5B' }}
         >
           <ArrowLeft className="size-4.5" />
@@ -182,7 +182,7 @@ export default function CartPage() {
               <div className="flex shrink-0 items-center gap-2">
                 <button
                   onClick={() => updateQuantity(item.menuItemId, item.quantity - 1)}
-                  className="flex size-8 items-center justify-center rounded-xl border transition-all active:scale-95"
+                  className="flex size-8 cursor-pointer items-center justify-center rounded-xl border transition-all hover:bg-[rgba(27,45,91,0.06)] active:scale-95"
                   style={{ borderColor: 'rgba(27,45,91,0.15)', color: '#1B2D5B' }}
                 >
                   <Minus className="size-3" />
@@ -195,14 +195,14 @@ export default function CartPage() {
                 </span>
                 <button
                   onClick={() => updateQuantity(item.menuItemId, item.quantity + 1)}
-                  className="flex size-8 items-center justify-center rounded-xl transition-all active:scale-95"
+                  className="flex size-8 cursor-pointer items-center justify-center rounded-xl transition-all hover:opacity-90 active:scale-95"
                   style={{ background: '#1B2D5B', color: '#F8F0E8' }}
                 >
                   <Plus className="size-3" />
                 </button>
                 <button
                   onClick={() => removeItem(item.menuItemId)}
-                  className="ml-1 flex size-8 items-center justify-center rounded-xl transition-all active:scale-95"
+                  className="ml-1 flex size-8 cursor-pointer items-center justify-center rounded-xl transition-all hover:bg-[rgba(239,68,68,0.15)] active:scale-95"
                   style={{ color: '#EF4444', background: 'rgba(239,68,68,0.08)' }}
                 >
                   <Trash2 className="size-3.5" />
@@ -284,7 +284,7 @@ export default function CartPage() {
         <button
           onClick={handlePlaceOrder}
           disabled={loading || stayLoading || !stay}
-          className="w-full rounded-2xl py-4 text-base font-bold transition-all duration-150 active:scale-[0.98] disabled:opacity-60"
+          className="w-full cursor-pointer rounded-2xl py-4 text-base font-bold transition-all duration-150 hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
           style={{ background: '#1B2D5B', color: '#F8F0E8' }}
         >
           {loading ? 'Placing Order…' : 'Place Order →'}

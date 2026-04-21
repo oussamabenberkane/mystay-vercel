@@ -168,7 +168,7 @@ export default function MenuPage() {
                 <button
                   key={cat.id}
                   onClick={() => scrollToCategory(cat.id)}
-                  className="shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-all duration-150"
+                  className="shrink-0 cursor-pointer rounded-full px-4 py-2 text-sm font-semibold transition-all duration-150 hover:opacity-90"
                   style={
                     activeCategory === cat.id
                       ? { background: '#C9A84C', color: '#FFFFFF' }

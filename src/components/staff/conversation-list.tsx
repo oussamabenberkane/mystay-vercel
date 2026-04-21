@@ -51,7 +51,7 @@ export function ConversationList({ conversations, activeStayId, onSelect, unread
           <li key={conv.stay_id}>
             <button
               onClick={() => onSelect(conv)}
-              className="w-full flex items-start gap-3 px-4 py-3.5 text-left transition-colors"
+              className="w-full flex cursor-pointer items-start gap-3 px-4 py-3.5 text-left transition-colors hover:bg-[rgba(27,45,91,0.04)]"
               style={
                 isActive
                   ? {

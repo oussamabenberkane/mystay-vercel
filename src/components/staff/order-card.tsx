@@ -122,7 +122,7 @@ export function StaffOrderCard({
       >
         <button
           onClick={() => setExpanded((v) => !v)}
-          className="flex w-full items-center justify-between pt-3 text-xs font-medium"
+          className="flex w-full cursor-pointer items-center justify-between pt-3 text-xs font-medium transition-colors hover:text-[#1B2D5B]"
           style={{ color: '#7A8BA8' }}
         >
           <span>{order.order_items.length} item{order.order_items.length !== 1 ? 's' : ''}</span>
@@ -165,7 +165,7 @@ export function StaffOrderCard({
               onClick={handleAdvance}
               disabled={loading}
               className={cn(
-                'flex-1 rounded-xl py-2.5 text-sm font-semibold transition-all duration-150 active:scale-[0.98] disabled:opacity-60'
+                'flex-1 cursor-pointer rounded-xl py-2.5 text-sm font-semibold transition-all duration-150 hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60'
               )}
               style={{ background: '#1B2D5B', color: '#F8F0E8' }}
             >
@@ -175,7 +175,7 @@ export function StaffOrderCard({
           <button
             onClick={handleCancel}
             disabled={loading}
-            className="rounded-xl border px-4 py-2.5 text-sm font-medium transition-all duration-150 active:scale-[0.98] disabled:opacity-60"
+            className="cursor-pointer rounded-xl border px-4 py-2.5 text-sm font-medium transition-all duration-150 hover:bg-[rgba(27,45,91,0.04)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
             style={{ borderColor: 'rgba(27,45,91,0.15)', color: '#7A8BA8' }}
           >
             Cancel

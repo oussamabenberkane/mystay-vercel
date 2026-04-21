@@ -125,7 +125,7 @@ function SidebarContent({
         <button
           onClick={handleLogout}
           disabled={isLoggingOut}
-          className="text-xs font-medium transition-opacity hover:opacity-70 disabled:opacity-50"
+          className="cursor-pointer text-xs font-medium transition-all hover:opacity-70 disabled:cursor-not-allowed disabled:opacity-50"
           style={{ color: 'rgba(248,240,232,0.5)' }}
         >
           {isLoggingOut ? '…' : tAuth('logout')}
@@ -174,7 +174,7 @@ export function AdminSidebarNav({ hotelName, adminName }: AdminSidebarNavProps) 
 
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <SheetTrigger
-            className="flex size-8 items-center justify-center rounded-lg"
+            className="flex size-8 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-white/10"
             style={{ color: 'rgba(248,240,232,0.75)' }}
             aria-label="Open menu"
           >

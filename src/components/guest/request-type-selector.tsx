@@ -36,8 +36,8 @@ export function RequestTypeSelector({
               type="button"
               onClick={() => onChange(key)}
               className={cn(
-                'flex flex-col items-center gap-2 rounded-2xl border-2 px-4 py-4 transition-all duration-150 active:scale-[0.97]',
-                selected ? 'scale-[1.02]' : 'hover:scale-[1.01]'
+                'flex cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 px-4 py-4 transition-all duration-150 active:scale-[0.97]',
+                selected ? 'scale-[1.02]' : 'hover:scale-[1.01] hover:shadow-md'
               )}
               style={{
                 background: selected ? `${color}10` : '#FFFFFF',
