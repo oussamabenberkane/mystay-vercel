@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod/v4'
@@ -10,9 +10,30 @@ import { useTranslations } from 'next-intl'
 import { loginAction } from '@/lib/actions/auth'
 
 const TEST_ACCOUNTS = [
-  { role: 'Admin',  email: 'admin@legrand.com',  password: 'Admin1234!', icon: '◈' },
-  { role: 'Staff',  email: 'staff1@legrand.com', password: 'Staff1234!', icon: '◉' },
-  { role: 'Guest',  email: 'guest1@legrand.com', password: 'Guest1234!', icon: '◌' },
+  {
+    role: 'Admin',
+    email: 'admin@legrand.com',
+    password: 'Admin1234!',
+    icon: '◈',
+    tagline: 'Full system control',
+    capabilities: ['Manage rooms, guests & bookings', 'View reports & analytics', 'Configure hotel settings & staff'],
+  },
+  {
+    role: 'Staff',
+    email: 'staff1@legrand.com',
+    password: 'Staff1234!',
+    icon: '◉',
+    tagline: 'Hotel operations',
+    capabilities: ['Process & fulfill guest orders', 'Update room status in real-time', 'Handle service requests'],
+  },
+  {
+    role: 'Guest',
+    email: 'guest1@legrand.com',
+    password: 'Guest1234!',
+    icon: '◌',
+    tagline: 'Guest portal',
+    capabilities: ['Browse hotel services & amenities', 'Request room service & extras', 'View stay details & receipts'],
+  },
 ] as const
 
 const loginSchema = z.object({
@@ -89,7 +110,20 @@ export default function LoginPage() {
   const params = useParams()
   const locale = (params.locale as string) || 'en'
   const [serverError, setServerError] = useState<string | null>(null)
+  const [hoveredRole, setHoveredRole] = useState<string | null>(null)
+  const [tappedRole, setTappedRole] = useState<string | null>(null)
+  const gridRef = useRef<HTMLDivElement>(null)
   const t = useTranslations('auth')
+
+  useEffect(() => {
+    function onTouchOutside(e: TouchEvent) {
+      if (gridRef.current && !gridRef.current.contains(e.target as Node)) {
+        setTappedRole(null)
+      }
+    }
+    document.addEventListener('touchstart', onTouchOutside)
+    return () => document.removeEventListener('touchstart', onTouchOutside)
+  }, [])
 
   const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
@@ -117,13 +151,13 @@ export default function LoginPage() {
     <div className="auth-card">
       {/* ── Two-tone card ── */}
       <div
-        className="rounded-3xl overflow-hidden"
+        className="rounded-3xl"
         style={{ boxShadow: '0 16px 56px rgba(27,45,91,0.18), 0 2px 8px rgba(27,45,91,0.08), inset 0 1px 0 rgba(255,255,255,0.06)' }}
       >
 
         {/* ▓ Navy header vault */}
         <div
-          className="relative px-8 pt-9 pb-8 flex flex-col items-center overflow-hidden"
+          className="relative px-8 pt-9 pb-8 flex flex-col items-center overflow-hidden rounded-t-3xl"
           style={{ background: '#1B2D5B' }}
         >
           {/* Subtle radial warmth from top */}
@@ -158,7 +192,7 @@ export default function LoginPage() {
         </div>
 
         {/* ▓ White form section */}
-        <div className="bg-white px-8 pb-8">
+        <div className="bg-white px-8 pb-8 rounded-b-3xl">
           <OrnamentalDivider />
 
           <p className="auth-up-3 text-[10px] font-bold uppercase tracking-[0.25em] text-[#C9A84C] text-center mb-7">
@@ -261,40 +295,117 @@ export default function LoginPage() {
                 <div className="flex-1 h-px" style={{ background: 'rgba(27,45,91,0.07)' }} />
               </div>
 
-              <div className="grid grid-cols-3 gap-2">
-                {TEST_ACCOUNTS.map(({ role, email, password, icon }) => (
-                  <button
-                    key={role}
-                    type="button"
-                    onClick={() => loginAsTestAccount(email, password)}
-                    disabled={isSubmitting}
-                    className="test-account-btn group relative flex flex-col items-center gap-1.5 rounded-xl py-3 px-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{
-                      background: 'rgba(27,45,91,0.04)',
-                      border: '1px solid rgba(27,45,91,0.08)',
-                      transition: 'all 0.2s cubic-bezier(0.16,1,0.3,1)',
-                    }}
-                  >
-                    <span
-                      className="flex items-center justify-center rounded-full text-[15px] leading-none"
+              <div className="grid grid-cols-3 gap-2" ref={gridRef}>
+                {TEST_ACCOUNTS.map(({ role, email, password, icon, tagline, capabilities }, idx) => {
+                  const isHovered = hoveredRole === role
+                  const isTapped = tappedRole === role
+                  const isVisible = isHovered || isTapped
+                  const isLeft = idx === 0
+                  const isRight = idx === TEST_ACCOUNTS.length - 1
+                  return (
+                    <button
+                      key={role}
+                      type="button"
+                      onClick={() => {
+                        if (isHovered || isTapped) {
+                          loginAsTestAccount(email, password)
+                        } else {
+                          setTappedRole(role)
+                        }
+                      }}
+                      disabled={isSubmitting}
+                      onMouseEnter={() => setHoveredRole(role)}
+                      onMouseLeave={() => setHoveredRole(null)}
+                      className="test-account-btn relative flex flex-col items-center gap-1.5 rounded-xl py-3 px-2 disabled:opacity-50 disabled:cursor-not-allowed"
                       style={{
-                        width: 32, height: 32,
-                        background: 'rgba(201,168,76,0.08)',
-                        border: '1px solid rgba(201,168,76,0.2)',
-                        color: '#C9A84C',
-                        transition: 'background 0.2s, border-color 0.2s',
+                        background: isVisible ? 'rgba(27,45,91,0.08)' : 'rgba(27,45,91,0.04)',
+                        border: `1px solid ${isVisible ? 'rgba(201,168,76,0.35)' : 'rgba(27,45,91,0.08)'}`,
+                        transition: 'all 0.2s cubic-bezier(0.16,1,0.3,1)',
                       }}
                     >
-                      {icon}
-                    </span>
-                    <span
-                      className="text-[10px] font-bold uppercase tracking-[0.12em]"
-                      style={{ color: '#1B2D5B' }}
-                    >
-                      {role}
-                    </span>
-                  </button>
-                ))}
+                      <span
+                        className="flex items-center justify-center rounded-full text-[15px] leading-none"
+                        style={{
+                          width: 32, height: 32,
+                          background: isVisible ? 'rgba(201,168,76,0.16)' : 'rgba(201,168,76,0.08)',
+                          border: `1px solid ${isVisible ? 'rgba(201,168,76,0.5)' : 'rgba(201,168,76,0.2)'}`,
+                          color: '#C9A84C',
+                          transition: 'background 0.2s, border-color 0.2s',
+                        }}
+                      >
+                        {icon}
+                      </span>
+                      <span className="text-[10px] font-bold uppercase tracking-[0.12em]" style={{ color: '#1B2D5B' }}>
+                        {role}
+                      </span>
+
+                      {/* Floating speech-bubble tooltip */}
+                      <div
+                        style={{
+                          position: 'absolute',
+                          bottom: 'calc(100% + 12px)',
+                          left: isLeft ? '-8px' : isRight ? 'auto' : '50%',
+                          right: isRight ? '-8px' : 'auto',
+                          transform: isLeft || isRight
+                            ? (isVisible ? 'translateY(0)' : 'translateY(6px)')
+                            : (isVisible ? 'translateX(-50%) translateY(0)' : 'translateX(-50%) translateY(6px)'),
+                          width: 200,
+                          zIndex: 50,
+                          opacity: isVisible ? 1 : 0,
+                          transition: 'opacity 0.18s ease, transform 0.2s cubic-bezier(0.16,1,0.3,1)',
+                          pointerEvents: 'none',
+                        }}
+                      >
+                        {/* Bubble body */}
+                        <div
+                          className="rounded-2xl px-4 py-3.5"
+                          style={{
+                            background: 'linear-gradient(145deg, #1E3366 0%, #1B2D5B 100%)',
+                            border: '1px solid rgba(201,168,76,0.3)',
+                            boxShadow: '0 12px 32px rgba(0,0,0,0.3), 0 2px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(201,168,76,0.08)',
+                          }}
+                        >
+                          <p className="text-[10px] font-black uppercase tracking-[0.2em] mb-3" style={{ color: '#C9A84C' }}>
+                            {tagline}
+                          </p>
+                          <ul className="space-y-2">
+                            {capabilities.map((cap) => (
+                              <li key={cap} className="flex items-start gap-2">
+                                <svg width="5" height="5" viewBox="0 0 4 4" fill="#C9A84C" className="mt-0.75 shrink-0" opacity="0.7">
+                                  <path d="M2 0L4 2L2 4L0 2Z" />
+                                </svg>
+                                <span className="text-[11px] leading-snug text-left font-medium" style={{ color: 'rgba(248,240,232,0.9)' }}>
+                                  {cap}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                          {isTapped && (
+                            <p className="md:hidden mt-3 pt-2.5 text-[10px] font-bold text-center tracking-wide" style={{ color: 'rgba(201,168,76,0.8)', borderTop: '1px solid rgba(201,168,76,0.15)' }}>
+                              Tap again to sign in →
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Arrow tail */}
+                        <div
+                          style={{
+                            position: 'absolute',
+                            bottom: -5,
+                            left: isLeft ? 24 : isRight ? 'auto' : '50%',
+                            right: isRight ? 24 : 'auto',
+                            transform: (isLeft || isRight) ? 'rotate(45deg)' : 'translateX(-50%) rotate(45deg)',
+                            width: 9,
+                            height: 9,
+                            background: '#1B2D5B',
+                            borderRight: '1px solid rgba(201,168,76,0.3)',
+                            borderBottom: '1px solid rgba(201,168,76,0.3)',
+                          }}
+                        />
+                      </div>
+                    </button>
+                  )
+                })}
               </div>
             </div>
           </div>
