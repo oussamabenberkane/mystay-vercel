@@ -22,7 +22,7 @@ function getRoleRedirect(role: Role, locale: string): string {
 function getRequiredRole(path: string): Role | null {
   if (path.startsWith('/staff/')) return 'staff'
   if (path.startsWith('/admin/')) return 'admin'
-  if (path.startsWith('/dashboard') || path.startsWith('/menu') || path.startsWith('/orders') || path.startsWith('/requests') || path.startsWith('/chat') || path.startsWith('/expenses')) return 'client'
+  if (path.startsWith('/dashboard') || path.startsWith('/menu') || path.startsWith('/orders') || path.startsWith('/requests') || path.startsWith('/chat') || path.startsWith('/expenses') || path.startsWith('/feedback')) return 'client'
   return null
 }
 
@@ -58,15 +58,19 @@ export async function middleware(request: NextRequest) {
 
     const role = (profileData as { role: Role } | null)?.role
 
-    // Redirect authenticated users away from auth pages and root
-    if (isPublicPath || pathnameWithoutLocale === '/') {
-      const url = request.nextUrl.clone()
-      url.pathname = role ? getRoleRedirect(role, locale) : `/${locale}/dashboard`
-      return NextResponse.redirect(url)
-    }
-
-    // Enforce role-based access
+    // Only enforce redirects when we successfully retrieved the role.
+    // If the DB is unavailable and role is undefined, let the request
+    // pass through — page-level auth guards will handle it, and this
+    // prevents an infinite redirect loop.
     if (role) {
+      // Redirect authenticated users away from auth pages and root
+      if (isPublicPath || pathnameWithoutLocale === '/') {
+        const url = request.nextUrl.clone()
+        url.pathname = getRoleRedirect(role, locale)
+        return NextResponse.redirect(url)
+      }
+
+      // Enforce role-based access
       const requiredRole = getRequiredRole(pathnameWithoutLocale)
       if (requiredRole && role !== requiredRole) {
         const url = request.nextUrl.clone()
