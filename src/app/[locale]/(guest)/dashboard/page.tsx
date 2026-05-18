@@ -7,10 +7,10 @@ import {
   UtensilsCrossed,
   Bell,
   MessageCircle,
-  Receipt,
   BedDouble,
   Calendar,
   Star,
+  Info,
 } from 'lucide-react'
 import { OrderStatusBadge } from '@/components/guest/order-status-badge'
 import { GuestSignOutButton } from '../_components/sign-out-button'
@@ -70,10 +70,11 @@ export default async function GuestDashboardPage({
 
   // TODO: i18n — quick action labels/descriptions have no matching translation keys
   const quickActions = [
-    { href: '/menu',     label: 'Room Service',    icon: UtensilsCrossed, description: 'Commander repas & boissons' },
-    { href: '/requests', label: 'Demandes',         icon: Bell,            description: 'Ménage & services' },
-    { href: '/chat',     label: 'Chat',             icon: MessageCircle,   description: 'Contacter la réception' },
-    { href: '/feedback', label: 'Votre Avis',       icon: Star,            description: 'Remarques & impressions' },
+    { href: '/menu',     label: 'Room Service', icon: UtensilsCrossed, description: 'Commander repas & boissons' },
+    { href: '/requests', label: 'Demandes',      icon: Bell,            description: 'Ménage & services'        },
+    { href: '/chat',     label: 'Chat',           icon: MessageCircle,   description: 'Contacter la réception'  },
+    { href: '/info',     label: 'Infos Hôtel',   icon: Info,            description: 'Wifi, horaires, services' },
+    { href: '/feedback', label: 'Votre Avis',    icon: Star,            description: 'Remarques & impressions'  },
   ]
 
   return (
@@ -164,7 +165,7 @@ export default async function GuestDashboardPage({
           <p className="text-[11px] font-semibold uppercase tracking-widest mb-3" style={{ color: '#7A8BA8' }}>
             {t('quickActions')}
           </p>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {quickActions.map(({ href, label, icon: Icon, description }) => (
               <Link
                 key={href}
