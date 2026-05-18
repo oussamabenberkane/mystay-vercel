@@ -103,12 +103,29 @@ export default function EventsPage() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    let mounted = true
     async function load() {
       const { announcements } = await getAnnouncementsAction()
-      setItems(announcements)
-      setLoading(false)
+      if (mounted) {
+        setItems(announcements)
+        setLoading(false)
+      }
     }
     load()
+    return () => { mounted = false }
+  }, [])
+
+  // Polling fallback — covers environments where WebSocket/Realtime is unavailable
+  useEffect(() => {
+    let mounted = true
+    const interval = setInterval(async () => {
+      const { announcements } = await getAnnouncementsAction()
+      if (mounted) setItems(announcements)
+    }, 30000)
+    return () => {
+      mounted = false
+      clearInterval(interval)
+    }
   }, [])
 
   useEffect(() => {
