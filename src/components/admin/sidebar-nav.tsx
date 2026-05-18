@@ -7,6 +7,7 @@ import {
   Users,
   CalendarDays,
   UtensilsCrossed,
+  Megaphone,
   Menu,
   X,
   Settings,
@@ -43,8 +44,9 @@ function SidebarContent({
     { href: '/admin/operations', icon: LayoutDashboard, label: tNav('operations') },
     { href: '/admin/users',      icon: Users,           label: 'Users'             },
     { href: '/admin/stays',      icon: CalendarDays,    label: 'Stays'             },
-    { href: '/admin/menu',       icon: UtensilsCrossed, label: tNav('menu')        },
-    { href: '/admin/settings',   icon: Settings,        label: 'Paramètres & QR'  },
+    { href: '/admin/menu',          icon: UtensilsCrossed, label: tNav('menu')        },
+    { href: '/admin/announcements', icon: Megaphone,       label: 'Annonces'          },
+    { href: '/admin/settings',      icon: Settings,        label: 'Paramètres & QR'  },
   ]
 
   async function handleLogout() {

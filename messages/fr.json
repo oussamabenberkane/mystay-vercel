@@ -6,6 +6,7 @@
     "orders": "Commandes",
     "requests": "Demandes",
     "chat": "Chat",
+    "events": "Actualités",
     "feedback": "Avis",
     "expenses": "Dépenses",
     "settings": "Paramètres",
@@ -74,6 +75,10 @@
     "info": {
       "title": "Informations",
       "noInfo": "Informations bientôt disponibles"
+    },
+    "events": {
+      "title": "Actualités & Événements",
+      "empty": "Aucune actualité pour le moment"
     },
     "feedback": {
       "title": "Votre Avis",

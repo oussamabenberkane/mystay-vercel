@@ -63,6 +63,11 @@ export type Database = {
         Insert: { id?: string; hotel_id: string; stay_id: string; guest_id: string; rating?: number | null; remarks?: string | null; complaints?: string | null; impressions?: string | null }
         Update: { rating?: number | null; remarks?: string | null; complaints?: string | null; impressions?: string | null }
       }
+      announcements: {
+        Row: { id: string; hotel_id: string; title: string; body: string; category: string; event_date: string | null; is_active: boolean; created_at: string }
+        Insert: { id?: string; hotel_id: string; title: string; body: string; category?: string; event_date?: string | null; is_active?: boolean }
+        Update: { title?: string; body?: string; category?: string; event_date?: string | null; is_active?: boolean }
+      }
     }
       hotel_info: {
         Row: { id: string; hotel_id: string; tagline: string | null; phone: string | null; email: string | null; checkin_time: string | null; checkout_time: string | null; wifi_network: string | null; wifi_password: string | null; room_amenities: string[] | null; hotel_services: string[] | null; restaurant_hours: Json | null; updated_at: string }

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname, useParams } from 'next/navigation'
-import { Home, Info, UtensilsCrossed, ClipboardList, Bell, Star } from 'lucide-react'
+import { Home, Info, UtensilsCrossed, ClipboardList, Bell, Star, CalendarDays } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 
@@ -18,6 +18,7 @@ export function BottomNav() {
     { key: 'orders',   href: '/orders',    icon: ClipboardList, label: t('orders')   },
     { key: 'requests', href: '/requests',  icon: Bell,          label: t('requests') },
     { key: 'info',     href: '/info',      icon: Info,          label: t('info')     },
+    { key: 'events',   href: '/events',    icon: CalendarDays,  label: t('events')   },
     { key: 'feedback', href: '/feedback',  icon: Star,          label: t('feedback') },
   ]
 
@@ -49,12 +50,12 @@ export function BottomNav() {
             <Icon
               className={cn(
                 'transition-all duration-200',
-                isActive ? 'size-[22px] stroke-[2.5]' : 'size-[20px] stroke-[1.8]'
+                isActive ? 'size-5 stroke-[2.5]' : 'size-4.5 stroke-[1.8]'
               )}
             />
             <span
               className={cn(
-                'text-[10px] font-medium tracking-wide transition-all duration-200',
+                'text-[9px] font-medium tracking-wide transition-all duration-200',
                 isActive ? 'opacity-100' : 'opacity-70'
               )}
             >

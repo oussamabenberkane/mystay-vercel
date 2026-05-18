@@ -6,6 +6,7 @@
     "orders": "Orders",
     "requests": "Requests",
     "chat": "Chat",
+    "events": "Events",
     "feedback": "Review",
     "expenses": "Expenses",
     "settings": "Settings",
@@ -74,6 +75,10 @@
     "info": {
       "title": "Hotel Info",
       "noInfo": "Info coming soon"
+    },
+    "events": {
+      "title": "News & Events",
+      "empty": "No news yet"
     },
     "feedback": {
       "title": "Your Review",
