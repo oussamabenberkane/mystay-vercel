@@ -58,6 +58,11 @@ export type Database = {
         Insert: { id?: string; user_id: string; subscription: Json }
         Update: { subscription?: Json }
       }
+      feedback: {
+        Row: { id: string; hotel_id: string; stay_id: string; guest_id: string; rating: number | null; remarks: string | null; complaints: string | null; impressions: string | null; created_at: string }
+        Insert: { id?: string; hotel_id: string; stay_id: string; guest_id: string; rating?: number | null; remarks?: string | null; complaints?: string | null; impressions?: string | null }
+        Update: { rating?: number | null; remarks?: string | null; complaints?: string | null; impressions?: string | null }
+      }
     }
     Views: {
       expenses: {

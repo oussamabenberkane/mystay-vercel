@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname, useParams } from 'next/navigation'
-import { Home, UtensilsCrossed, ClipboardList, Bell, MessageCircle } from 'lucide-react'
+import { Home, UtensilsCrossed, ClipboardList, Bell, MessageCircle, Star } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 
@@ -15,9 +15,9 @@ export function BottomNav() {
   const navItems = [
     { key: 'home',     href: '/dashboard', icon: Home,            label: t('home')     },
     { key: 'menu',     href: '/menu',      icon: UtensilsCrossed, label: t('menu')     },
-    { key: 'orders',   href: '/orders',    icon: ClipboardList,   label: t('orders')   },
     { key: 'requests', href: '/requests',  icon: Bell,            label: t('requests') },
     { key: 'chat',     href: '/chat',      icon: MessageCircle,   label: t('chat')     },
+    { key: 'feedback', href: '/feedback',  icon: Star,            label: t('feedback') },
   ]
 
   return (

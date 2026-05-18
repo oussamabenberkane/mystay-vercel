@@ -12,7 +12,7 @@ import { loginAction } from '@/lib/actions/auth'
 const TEST_ACCOUNTS = [
   {
     role: 'Admin',
-    email: 'admin@legrand.com',
+    email: 'admin@helioshotel.dz',
     password: 'Admin1234!',
     icon: '◈',
     tagline: 'Full system control',
@@ -20,19 +20,19 @@ const TEST_ACCOUNTS = [
   },
   {
     role: 'Staff',
-    email: 'staff1@legrand.com',
+    email: 'staff@helioshotel.dz',
     password: 'Staff1234!',
     icon: '◉',
     tagline: 'Hotel operations',
     capabilities: ['Process & fulfill guest orders', 'Update room status in real-time', 'Handle service requests'],
   },
   {
-    role: 'Guest',
-    email: 'guest1@legrand.com',
-    password: 'Guest1234!',
+    role: 'Alice',
+    email: 'alice@helioshotel.dz',
+    password: 'RES-240001',
     icon: '◌',
-    tagline: 'Guest portal',
-    capabilities: ['Browse hotel services & amenities', 'Request room service & extras', 'View stay details & receipts'],
+    tagline: 'Chambre 301 — Vue Mer',
+    capabilities: ['Mot de passe : numéro de réservation', 'Commander room service & extras', 'Laisser vos remarques & impressions'],
   },
 ] as const
 
@@ -69,7 +69,7 @@ function HotelCrest() {
         className="relative flex items-center justify-center rounded-full"
         style={{ width: 56, height: 56, background: 'rgba(201,168,76,0.1)', border: '1.5px solid #C9A84C' }}
       >
-        <span className="font-heading text-[22px] font-bold text-[#C9A84C] leading-none select-none">MS</span>
+        <span className="font-heading text-[22px] font-bold text-[#C9A84C] leading-none select-none">H</span>
       </div>
       {/* Four cardinal diamonds */}
       {[
@@ -180,12 +180,12 @@ export default function LoginPage() {
 
           {/* Hotel name */}
           <h1 className="auth-up-2 font-heading text-[26px] font-bold text-[#F8F0E8] tracking-[0.05em] mt-4 mb-1">
-            My Stay
+            HELIOS Hotel
           </h1>
           <div className="auth-up-3 flex items-center gap-2">
             <div className="h-px w-5" style={{ background: 'rgba(201,168,76,0.45)' }} />
             <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-[#C9A84C]">
-              Premier Guest Experience
+              Béjaïa · 5 Étoiles · Vue Mer
             </p>
             <div className="h-px w-5" style={{ background: 'rgba(201,168,76,0.45)' }} />
           </div>

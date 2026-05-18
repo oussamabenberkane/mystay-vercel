@@ -1,3 +1,41 @@
-export default function AdminSettingsPage() {
-  return <div className="p-4">Admin Settings</div>
+import { QRCodeSection } from './_components/qr-code-section'
+import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
+import { defaultLocale } from '@/lib/i18n/config'
+
+export default async function AdminSettingsPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}) {
+  const { locale } = await params
+  const supabase = await createClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect(`/${locale ?? defaultLocale}/login`)
+
+  const { data: profileData } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single()
+  const profile = profileData as { role: string } | null
+  if (!profile || profile.role !== 'admin') redirect(`/${locale ?? defaultLocale}/login`)
+
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://my-stay.vercel.app'
+
+  return (
+    <div className="p-6 max-w-2xl mx-auto space-y-8">
+      <div>
+        <h1 className="text-2xl font-bold" style={{ color: '#1B2D5B' }}>
+          Paramètres — HELIOS Hotel
+        </h1>
+        <p className="text-sm mt-1" style={{ color: '#7A8BA8' }}>
+          Configuration et outils de l'hôtel
+        </p>
+      </div>
+
+      <QRCodeSection appUrl={appUrl} />
+    </div>
+  )
 }

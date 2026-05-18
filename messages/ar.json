@@ -5,6 +5,7 @@
     "orders": "الطلبات",
     "requests": "الخدمات",
     "chat": "المحادثة",
+    "feedback": "تقييم",
     "expenses": "المصروفات",
     "settings": "الإعدادات",
     "dashboard": "لوحة التحكم",
@@ -68,6 +69,23 @@
       "title": "مصروفاتي",
       "total": "المجموع",
       "empty": "لا توجد مصروفات"
+    },
+    "feedback": {
+      "title": "تقييمك",
+      "subtitle": "فندق HELIOS",
+      "ratingLabel": "التقييم العام",
+      "ratingQuestion": "كيف تقيّم إقامتك؟",
+      "ratingRequired": "يرجى اختيار تقييم قبل الإرسال.",
+      "remarksLabel": "ملاحظات",
+      "remarksPlaceholder": "شاركنا ملاحظاتك حول إقامتك…",
+      "complaintsLabel": "شكاوى",
+      "complaintsPlaceholder": "أبلغ عن أي مشكلة أو عدم رضا…",
+      "impressionsLabel": "الانطباع الأخير",
+      "impressionsPlaceholder": "ما هو انطباعك العام عن الفندق؟",
+      "submit": "إرسال تقييمي",
+      "submitting": "جارٍ الإرسال…",
+      "thankYou": "شكراً على تقييمك!",
+      "submittedMsg": "تمّ إرسال ملاحظاتك إلى إدارة الفندق."
     }
   },
   "staff": {

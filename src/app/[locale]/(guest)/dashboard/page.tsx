@@ -10,9 +10,11 @@ import {
   Receipt,
   BedDouble,
   Calendar,
+  Star,
 } from 'lucide-react'
 import { OrderStatusBadge } from '@/components/guest/order-status-badge'
 import { GuestSignOutButton } from '../_components/sign-out-button'
+import { LanguageSelector } from '@/components/shared/language-selector'
 import { formatCurrency } from '@/lib/utils/format'
 
 function formatDate(d: string) {
@@ -68,10 +70,10 @@ export default async function GuestDashboardPage({
 
   // TODO: i18n — quick action labels/descriptions have no matching translation keys
   const quickActions = [
-    { href: '/menu', label: 'Room Service', icon: UtensilsCrossed, description: 'Order food & drinks' },
-    { href: '/requests', label: 'Request Service', icon: Bell, description: 'Housekeeping & more' },
-    { href: '/chat', label: 'Chat', icon: MessageCircle, description: 'Message reception' },
-    { href: '/expenses', label: 'My Bill', icon: Receipt, description: 'View charges' },
+    { href: '/menu',     label: 'Room Service',    icon: UtensilsCrossed, description: 'Commander repas & boissons' },
+    { href: '/requests', label: 'Demandes',         icon: Bell,            description: 'Ménage & services' },
+    { href: '/chat',     label: 'Chat',             icon: MessageCircle,   description: 'Contacter la réception' },
+    { href: '/feedback', label: 'Votre Avis',       icon: Star,            description: 'Remarques & impressions' },
   ]
 
   return (
@@ -96,7 +98,10 @@ export default async function GuestDashboardPage({
             <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#C9A84C' }}>
               {t('welcome')}
             </p>
-            <GuestSignOutButton />
+            <div className="flex items-center gap-2">
+              <LanguageSelector />
+              <GuestSignOutButton />
+            </div>
           </div>
           <h1 className="font-heading text-2xl font-bold mb-4" style={{ color: '#F8F0E8' }}>
             {firstName}!

@@ -9,6 +9,7 @@ import {
   UtensilsCrossed,
   Menu,
   X,
+  Settings,
 } from 'lucide-react'
 import { useState } from 'react'
 import { useTranslations } from 'next-intl'
@@ -40,9 +41,10 @@ function SidebarContent({
 
   const navItems = [
     { href: '/admin/operations', icon: LayoutDashboard, label: tNav('operations') },
-    { href: '/admin/users',      icon: Users,           label: 'Users'             }, // TODO: i18n
-    { href: '/admin/stays',      icon: CalendarDays,    label: 'Stays'             }, // TODO: i18n
+    { href: '/admin/users',      icon: Users,           label: 'Users'             },
+    { href: '/admin/stays',      icon: CalendarDays,    label: 'Stays'             },
     { href: '/admin/menu',       icon: UtensilsCrossed, label: tNav('menu')        },
+    { href: '/admin/settings',   icon: Settings,        label: 'Paramètres & QR'  },
   ]
 
   async function handleLogout() {
@@ -61,11 +63,11 @@ function SidebarContent({
           className="flex size-9 shrink-0 items-center justify-center rounded-xl text-sm font-bold"
           style={{ background: '#C9A84C', color: '#1B2D5B' }}
         >
-          MS
+          H
         </div>
         <div className="overflow-hidden">
           <p className="text-xs font-semibold tracking-widest uppercase" style={{ color: '#C9A84C' }}>
-            My Stay
+            HELIOS Hotel
           </p>
           <p
             className="font-heading text-sm font-medium truncate"
@@ -165,10 +167,10 @@ export function AdminSidebarNav({ hotelName, adminName }: AdminSidebarNavProps) 
             className="flex size-7 items-center justify-center rounded-lg text-xs font-bold"
             style={{ background: '#C9A84C', color: '#1B2D5B' }}
           >
-            MS
+            H
           </div>
           <span className="text-xs font-semibold tracking-widest uppercase" style={{ color: '#C9A84C' }}>
-            My Stay
+            HELIOS Hotel
           </span>
         </div>
 

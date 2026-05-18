@@ -5,6 +5,7 @@
     "orders": "Commandes",
     "requests": "Demandes",
     "chat": "Chat",
+    "feedback": "Avis",
     "expenses": "Dépenses",
     "settings": "Paramètres",
     "dashboard": "Tableau de bord",
@@ -68,6 +69,23 @@
       "title": "Mes Dépenses",
       "total": "Total",
       "empty": "Aucune dépense"
+    },
+    "feedback": {
+      "title": "Votre Avis",
+      "subtitle": "HELIOS Hotel",
+      "ratingLabel": "Note globale",
+      "ratingQuestion": "Comment évaluez-vous votre séjour ?",
+      "ratingRequired": "Veuillez attribuer une note avant de soumettre.",
+      "remarksLabel": "Remarques",
+      "remarksPlaceholder": "Partagez vos remarques sur votre séjour…",
+      "complaintsLabel": "Doléances",
+      "complaintsPlaceholder": "Signalez tout problème ou insatisfaction…",
+      "impressionsLabel": "Impressions finales",
+      "impressionsPlaceholder": "Quelle est votre impression générale de l'hôtel ?",
+      "submit": "Soumettre mon avis",
+      "submitting": "Envoi en cours…",
+      "thankYou": "Merci pour votre retour !",
+      "submittedMsg": "Vos remarques ont bien été transmises à la direction de l'hôtel."
     }
   },
   "staff": {
