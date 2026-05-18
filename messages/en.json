@@ -1,6 +1,7 @@
 {
   "nav": {
     "home": "Home",
+    "info": "Info",
     "menu": "Menu",
     "orders": "Orders",
     "requests": "Requests",
@@ -69,6 +70,10 @@
       "title": "My Expenses",
       "total": "Total",
       "empty": "No expenses yet"
+    },
+    "info": {
+      "title": "Hotel Info",
+      "noInfo": "Info coming soon"
     },
     "feedback": {
       "title": "Your Review",

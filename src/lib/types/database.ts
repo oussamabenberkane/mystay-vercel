@@ -64,6 +64,11 @@ export type Database = {
         Update: { rating?: number | null; remarks?: string | null; complaints?: string | null; impressions?: string | null }
       }
     }
+      hotel_info: {
+        Row: { id: string; hotel_id: string; tagline: string | null; phone: string | null; email: string | null; checkin_time: string | null; checkout_time: string | null; wifi_network: string | null; wifi_password: string | null; room_amenities: string[] | null; hotel_services: string[] | null; restaurant_hours: Json | null; updated_at: string }
+        Insert: { id?: string; hotel_id: string; tagline?: string | null; phone?: string | null; email?: string | null; checkin_time?: string | null; checkout_time?: string | null; wifi_network?: string | null; wifi_password?: string | null; room_amenities?: string[] | null; hotel_services?: string[] | null; restaurant_hours?: Json | null; updated_at?: string }
+        Update: { tagline?: string | null; phone?: string | null; email?: string | null; checkin_time?: string | null; checkout_time?: string | null; wifi_network?: string | null; wifi_password?: string | null; room_amenities?: string[] | null; hotel_services?: string[] | null; restaurant_hours?: Json | null }
+      }
     Views: {
       expenses: {
         Row: { id: string; hotel_id: string; stay_id: string; guest_id: string; amount: number; status: string; created_at: string }

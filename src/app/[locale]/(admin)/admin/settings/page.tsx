@@ -1,7 +1,9 @@
 import { QRCodeSection } from './_components/qr-code-section'
+import { HotelInfoForm } from './_components/hotel-info-form'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { defaultLocale } from '@/lib/i18n/config'
+import { getHotelInfoAction } from '@/lib/actions/hotel-info'
 
 export default async function AdminSettingsPage({
   params,
@@ -23,6 +25,7 @@ export default async function AdminSettingsPage({
   if (!profile || profile.role !== 'admin') redirect(`/${locale ?? defaultLocale}/login`)
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://my-stay.vercel.app'
+  const hotelInfo = await getHotelInfoAction()
 
   return (
     <div className="p-6 max-w-2xl mx-auto space-y-8">
@@ -36,6 +39,8 @@ export default async function AdminSettingsPage({
       </div>
 
       <QRCodeSection appUrl={appUrl} />
+
+      <HotelInfoForm initialData={hotelInfo} />
     </div>
   )
 }

@@ -1,6 +1,7 @@
 {
   "nav": {
     "home": "Accueil",
+    "info": "Infos",
     "menu": "Menu",
     "orders": "Commandes",
     "requests": "Demandes",
@@ -69,6 +70,10 @@
       "title": "Mes Dépenses",
       "total": "Total",
       "empty": "Aucune dépense"
+    },
+    "info": {
+      "title": "Informations",
+      "noInfo": "Informations bientôt disponibles"
     },
     "feedback": {
       "title": "Votre Avis",
