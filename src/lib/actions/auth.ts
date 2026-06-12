@@ -93,6 +93,13 @@ export async function signupAction(formData: {
     return { error: 'Signup failed. Please try again.' }
   }
 
+  // With email confirmation enabled, signUp for an already-registered email
+  // "succeeds" with an obfuscated user that has no identities (anti-enumeration)
+  // — detect it here instead of failing later in profile creation.
+  if (!authData.user?.identities?.length) {
+    return { error: 'An account with this email already exists' }
+  }
+
   // When email confirmation is enabled, signUp returns no session, so a direct
   // insert into profiles would run as anon and be rejected by RLS. The SECURITY
   // DEFINER helper creates the profile in both cases (role forced to client).
