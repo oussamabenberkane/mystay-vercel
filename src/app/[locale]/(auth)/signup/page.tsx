@@ -72,13 +72,17 @@ export default function SignupPage() {
 
   async function onSubmit(data: SignupForm) {
     setServerError(null)
+    // On success the action signs the user in and redirects server-side
+    // (cookie-race-safe, same as login) — it only returns on error or when
+    // email confirmation is pending.
     const result = await signupAction({
       email: data.email, password: data.password,
       fullName: data.fullName, phone: data.phone,
       language: data.language, hotelSlug: data.hotelSlug,
+      locale,
     })
-    if (result.error) { setServerError(result.error); return }
-    if (result.needsEmailConfirmation) { setConfirmEmailSent(true); return }
+    if (result?.error) { setServerError(result.error); return }
+    if (result?.needsEmailConfirmation) { setConfirmEmailSent(true); return }
     router.push(`/${locale}/dashboard`)
   }
 

@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { headers } from 'next/headers'
@@ -17,7 +18,9 @@ function getRoleRedirect(role: Role | null, locale: string): string {
 const authErrorMap: Record<string, string> = {
   'Invalid login credentials': 'Incorrect email or password',
   'User already registered': 'An account with this email already exists',
+  'A user with this email address has already been registered': 'An account with this email already exists',
   'Email not confirmed': 'Please verify your email before logging in',
+  'email rate limit exceeded': 'Too many emails sent — please try again later',
 }
 
 function mapAuthError(message: string): string {
@@ -57,6 +60,10 @@ export async function loginAction(formData: { email: string; password: string; l
   redirect(getRoleRedirect(profile?.role ?? null, locale))
 }
 
+const serviceRoleConfigured = () =>
+  !!process.env.SUPABASE_SERVICE_ROLE_KEY &&
+  !process.env.SUPABASE_SERVICE_ROLE_KEY.includes('placeholder')
+
 export async function signupAction(formData: {
   email: string
   password: string
@@ -64,8 +71,10 @@ export async function signupAction(formData: {
   phone?: string
   language: 'en' | 'fr' | 'ar'
   hotelSlug: string
+  locale?: string
 }): Promise<{ error: string | null; needsEmailConfirmation?: boolean }> {
   const supabase = await createClient()
+  const locale = formData.locale ?? defaultLocale
 
   // hotels RLS only allows authenticated users to read their own hotel, and
   // the signup user doesn't exist yet — resolve the slug via the SECURITY
@@ -79,44 +88,91 @@ export async function signupAction(formData: {
     return { error: 'Hotel not found. Please check your hotel code.' }
   }
 
-  const { data: authData, error: signupError } = await supabase.auth.signUp({
+  let userId: string
+
+  if (serviceRoleConfigured()) {
+    // Create the account pre-confirmed via the service-role client: no
+    // confirmation email is sent (Supabase's built-in SMTP is rate-limited to a
+    // few emails per hour), and the guest can be signed in immediately.
+    const admin = createAdminClient()
+    const { data: created, error: createError } = await admin.auth.admin.createUser({
+      email: formData.email,
+      password: formData.password,
+      email_confirm: true,
+    })
+
+    if (createError || !created.user) {
+      return { error: mapAuthError(createError?.message ?? 'Signup failed. Please try again.') }
+    }
+    userId = created.user.id
+  } else {
+    // Fallback without a service-role key: regular signUp, which sends a
+    // confirmation email if the project has email confirmation enabled.
+    const { data: authData, error: signupError } = await supabase.auth.signUp({
+      email: formData.email,
+      password: formData.password,
+    })
+
+    if (signupError) {
+      return { error: mapAuthError(signupError.message) }
+    }
+    if (!authData.user?.id) {
+      return { error: 'Signup failed. Please try again.' }
+    }
+    // For an already-registered email, signUp "succeeds" with an obfuscated
+    // user that has no identities (anti-enumeration) — detect it here instead
+    // of failing later in profile creation.
+    if (!authData.user.identities?.length) {
+      return { error: 'An account with this email already exists' }
+    }
+    userId = authData.user.id
+
+    // The signup RPC below works as anon, but without a session the user can't
+    // log in until they confirm their email — tell the page to say so.
+    if (!authData.session) {
+      const profileResult = await createSignupProfile(supabase, userId, formData)
+      if (profileResult.error) return profileResult
+      return { error: null, needsEmailConfirmation: true }
+    }
+  }
+
+  const profileResult = await createSignupProfile(supabase, userId, formData)
+  if (profileResult.error) {
+    if (serviceRoleConfigured()) {
+      await createAdminClient().auth.admin.deleteUser(userId)
+    }
+    return profileResult
+  }
+
+  const { error: signInError } = await supabase.auth.signInWithPassword({
     email: formData.email,
     password: formData.password,
   })
 
-  if (signupError) {
-    return { error: mapAuthError(signupError.message) }
+  if (signInError) {
+    return { error: mapAuthError(signInError.message) }
   }
 
-  const userId = authData.user?.id
-  if (!userId) {
-    return { error: 'Signup failed. Please try again.' }
-  }
+  // Same as loginAction: redirect server-side so the auth cookie and the
+  // navigation ship in the same response (avoids the cookie-propagation race).
+  revalidatePath('/', 'layout')
+  redirect(getRoleRedirect('client', locale))
+}
 
-  // With email confirmation enabled, signUp for an already-registered email
-  // "succeeds" with an obfuscated user that has no identities (anti-enumeration)
-  // — detect it here instead of failing later in profile creation.
-  if (!authData.user?.identities?.length) {
-    return { error: 'An account with this email already exists' }
-  }
-
-  // When email confirmation is enabled, signUp returns no session, so a direct
-  // insert into profiles would run as anon and be rejected by RLS. The SECURITY
-  // DEFINER helper creates the profile in both cases (role forced to client).
+async function createSignupProfile(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error: profileError } = await (supabase as any).rpc('create_signup_profile', {
+  supabase: any,
+  userId: string,
+  formData: { hotelSlug: string; fullName: string; phone?: string; language: string }
+): Promise<{ error: string | null }> {
+  const { error } = await supabase.rpc('create_signup_profile', {
     p_user_id: userId,
     p_hotel_slug: formData.hotelSlug,
     p_full_name: formData.fullName,
     p_phone: formData.phone ?? null,
     p_language: formData.language,
   })
-
-  if (profileError) {
-    return { error: 'Failed to create profile. Please contact support.' }
-  }
-
-  return { error: null, needsEmailConfirmation: !authData.session }
+  return { error: error ? 'Failed to create profile. Please contact support.' : null }
 }
 
 export async function logoutAction() {
