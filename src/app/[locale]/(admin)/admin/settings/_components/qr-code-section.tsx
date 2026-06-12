@@ -20,7 +20,7 @@ export function QRCodeSection({ appUrl }: { appUrl: string }) {
   function handleDownload() {
     if (!canvasRef.current) return
     const link = document.createElement('a')
-    link.download = 'helios-hotel-qr.png'
+    link.download = 'my-stay-qr.png'
     link.href = canvasRef.current.toDataURL('image/png')
     link.click()
   }
@@ -51,7 +51,7 @@ export function QRCodeSection({ appUrl }: { appUrl: string }) {
         {/* Hotel label below QR */}
         <div className="text-center">
           <p className="text-[10px] font-bold uppercase tracking-[0.25em]" style={{ color: '#C9A84C' }}>
-            HELIOS Hotel — Béjaïa
+            My Stay
           </p>
           <p className="text-[11px] mt-1" style={{ color: '#7A8BA8' }}>
             Scannez pour accéder à vos services

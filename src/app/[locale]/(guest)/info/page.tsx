@@ -42,7 +42,7 @@ export default async function HotelInfoPage({
             <Info className="size-8" style={{ color: '#C9A84C' }} strokeWidth={1.5} />
           </div>
           <p className="text-[11px] font-bold uppercase tracking-widest mb-2" style={{ color: '#C9A84C' }}>
-            HELIOS Hotel
+            My Stay
           </p>
           <p className="font-heading text-lg font-bold" style={{ color: '#1B2D5B' }}>
             {t('title')}
@@ -75,7 +75,7 @@ export default async function HotelInfoPage({
             style={{ background: '#C9A84C' }}
           />
           <p className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: '#C9A84C' }}>
-            HELIOS Hotel
+            My Stay
           </p>
           <h1 className="font-heading text-2xl font-bold" style={{ color: '#F8F0E8' }}>
             {t('title')}

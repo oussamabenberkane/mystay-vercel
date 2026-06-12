@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod/v4'
-import { useRouter, useParams } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { loginAction } from '@/lib/actions/auth'
@@ -43,7 +43,7 @@ const loginSchema = z.object({
 
 type LoginForm = z.infer<typeof loginSchema>
 
-function HotelCrest() {
+function BrandCrest() {
   return (
     <div className="auth-up-1 relative flex items-center justify-center" style={{ width: 88, height: 88 }}>
       {/* Outer slow-spinning dashed ring */}
@@ -69,7 +69,7 @@ function HotelCrest() {
         className="relative flex items-center justify-center rounded-full"
         style={{ width: 56, height: 56, background: 'rgba(201,168,76,0.1)', border: '1.5px solid #C9A84C' }}
       >
-        <span className="font-heading text-[22px] font-bold text-[#C9A84C] leading-none select-none">H</span>
+        <span className="font-heading text-[20px] font-bold text-[#C9A84C] leading-none select-none tracking-tight">MS</span>
       </div>
       {/* Four cardinal diamonds */}
       {[
@@ -106,7 +106,6 @@ function OrnamentalDivider() {
 }
 
 export default function LoginPage() {
-  const router = useRouter()
   const params = useParams()
   const locale = (params.locale as string) || 'en'
   const [serverError, setServerError] = useState<string | null>(null)
@@ -137,14 +136,12 @@ export default function LoginPage() {
 
   async function onSubmit(data: LoginForm) {
     setServerError(null)
-    const result = await loginAction(data)
-    if (result.error) {
+    // On success the server action redirects (cookie + navigation in one response),
+    // so control only returns here when there's an error.
+    const result = await loginAction({ ...data, locale })
+    if (result?.error) {
       setServerError(result.error)
-      return
     }
-    if (result.role === 'staff') router.push(`/${locale}/staff/orders`)
-    else if (result.role === 'admin') router.push(`/${locale}/admin/operations`)
-    else router.push(`/${locale}/dashboard`)
   }
 
   return (
@@ -176,16 +173,16 @@ export default function LoginPage() {
           ))}
 
           {/* Crest */}
-          <HotelCrest />
+          <BrandCrest />
 
-          {/* Hotel name */}
+          {/* Brand name */}
           <h1 className="auth-up-2 font-heading text-[26px] font-bold text-[#F8F0E8] tracking-[0.05em] mt-4 mb-1">
-            HELIOS Hotel
+            My Stay
           </h1>
           <div className="auth-up-3 flex items-center gap-2">
             <div className="h-px w-5" style={{ background: 'rgba(201,168,76,0.45)' }} />
             <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-[#C9A84C]">
-              Béjaïa · 5 Étoiles · Vue Mer
+              {t('login')}
             </p>
             <div className="h-px w-5" style={{ background: 'rgba(201,168,76,0.45)' }} />
           </div>

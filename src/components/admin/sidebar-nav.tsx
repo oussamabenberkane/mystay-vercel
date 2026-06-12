@@ -65,11 +65,11 @@ function SidebarContent({
           className="flex size-9 shrink-0 items-center justify-center rounded-xl text-sm font-bold"
           style={{ background: '#C9A84C', color: '#1B2D5B' }}
         >
-          H
+          MS
         </div>
         <div className="overflow-hidden">
           <p className="text-xs font-semibold tracking-widest uppercase" style={{ color: '#C9A84C' }}>
-            HELIOS Hotel
+            My Stay
           </p>
           <p
             className="font-heading text-sm font-medium truncate"
@@ -169,10 +169,10 @@ export function AdminSidebarNav({ hotelName, adminName }: AdminSidebarNavProps) 
             className="flex size-7 items-center justify-center rounded-lg text-xs font-bold"
             style={{ background: '#C9A84C', color: '#1B2D5B' }}
           >
-            H
+            MS
           </div>
           <span className="text-xs font-semibold tracking-widest uppercase" style={{ color: '#C9A84C' }}>
-            HELIOS Hotel
+            My Stay
           </span>
         </div>
 

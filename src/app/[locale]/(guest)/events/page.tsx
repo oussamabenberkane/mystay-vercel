@@ -170,7 +170,7 @@ export default function EventsPage() {
           className="text-xs font-semibold uppercase tracking-widest"
           style={{ color: '#C9A84C' }}
         >
-          HELIOS Hotel
+          My Stay
         </p>
         <h1
           className="font-heading text-2xl font-bold leading-tight"
