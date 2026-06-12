@@ -2,11 +2,16 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { revalidatePath } from 'next/cache'
 import { headers } from 'next/headers'
 import { defaultLocale } from '@/lib/i18n/config'
 
-function getLocaleFromHeaders(): string {
-  return defaultLocale
+type Role = 'client' | 'staff' | 'admin'
+
+function getRoleRedirect(role: Role | null, locale: string): string {
+  if (role === 'staff') return `/${locale}/staff/orders`
+  if (role === 'admin') return `/${locale}/admin/operations`
+  return `/${locale}/dashboard`
 }
 
 const authErrorMap: Record<string, string> = {
@@ -19,8 +24,9 @@ function mapAuthError(message: string): string {
   return authErrorMap[message] ?? message
 }
 
-export async function loginAction(formData: { email: string; password: string }) {
+export async function loginAction(formData: { email: string; password: string; locale?: string }) {
   const supabase = await createClient()
+  const locale = formData.locale ?? defaultLocale
 
   const { error } = await supabase.auth.signInWithPassword({
     email: formData.email,
@@ -28,11 +34,11 @@ export async function loginAction(formData: { email: string; password: string })
   })
 
   if (error) {
-    return { role: null, error: mapAuthError(error.message) }
+    return { error: mapAuthError(error.message) }
   }
 
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { role: null, error: 'Authentication failed' }
+  if (!user) return { error: 'Authentication failed' }
 
   const { data: profileData } = await supabase
     .from('profiles')
@@ -40,8 +46,15 @@ export async function loginAction(formData: { email: string; password: string })
     .eq('id', user.id)
     .single()
 
-  const profile = profileData as { role: 'client' | 'staff' | 'admin' } | null
-  return { role: profile?.role ?? null, error: null }
+  const profile = profileData as { role: Role } | null
+
+  // Redirect server-side (not via client router.push) so the auth cookie set by
+  // signInWithPassword and the navigation ship in the SAME response. This avoids a
+  // cookie-propagation race where the destination's server-side getUser() guard runs
+  // before the cookie is committed and bounces the user back to /login — the cause of
+  // logins intermittently failing, especially on mobile Safari.
+  revalidatePath('/', 'layout')
+  redirect(getRoleRedirect(profile?.role ?? null, locale))
 }
 
 export async function signupAction(formData: {
