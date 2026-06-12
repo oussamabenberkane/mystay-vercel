@@ -64,17 +64,18 @@ export async function signupAction(formData: {
   phone?: string
   language: 'en' | 'fr' | 'ar'
   hotelSlug: string
-}) {
+}): Promise<{ error: string | null; needsEmailConfirmation?: boolean }> {
   const supabase = await createClient()
 
-  const { data: hotelData, error: hotelError } = await supabase
-    .from('hotels')
-    .select('id')
-    .eq('slug', formData.hotelSlug)
-    .single()
+  // hotels RLS only allows authenticated users to read their own hotel, and
+  // the signup user doesn't exist yet — resolve the slug via the SECURITY
+  // DEFINER helper instead of a direct select.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: hotelIdData, error: hotelError } = await (supabase as any)
+    .rpc('get_hotel_id_by_slug', { hotel_slug: formData.hotelSlug })
 
-  const hotel = hotelData as { id: string } | null
-  if (hotelError || !hotel) {
+  const hotelId = hotelIdData as string | null
+  if (hotelError || !hotelId) {
     return { error: 'Hotel not found. Please check your hotel code.' }
   }
 
@@ -92,21 +93,23 @@ export async function signupAction(formData: {
     return { error: 'Signup failed. Please try again.' }
   }
 
-  const { error: profileError } = await supabase.from('profiles').insert({
-    id: userId,
-    hotel_id: hotel.id,
-    role: 'client' as const,
-    full_name: formData.fullName,
-    email: formData.email,
-    phone: formData.phone ?? null,
-    language: formData.language,
-  } as any)
+  // When email confirmation is enabled, signUp returns no session, so a direct
+  // insert into profiles would run as anon and be rejected by RLS. The SECURITY
+  // DEFINER helper creates the profile in both cases (role forced to client).
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error: profileError } = await (supabase as any).rpc('create_signup_profile', {
+    p_user_id: userId,
+    p_hotel_slug: formData.hotelSlug,
+    p_full_name: formData.fullName,
+    p_phone: formData.phone ?? null,
+    p_language: formData.language,
+  })
 
   if (profileError) {
     return { error: 'Failed to create profile. Please contact support.' }
   }
 
-  return { error: null }
+  return { error: null, needsEmailConfirmation: !authData.session }
 }
 
 export async function logoutAction() {

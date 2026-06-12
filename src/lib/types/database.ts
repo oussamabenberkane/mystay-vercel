@@ -88,6 +88,14 @@ export type Database = {
         Args: { p_hotel_id: string }
         Returns: Json
       }
+      get_hotel_id_by_slug: {
+        Args: { hotel_slug: string }
+        Returns: string | null
+      }
+      create_signup_profile: {
+        Args: { p_user_id: string; p_hotel_slug: string; p_full_name: string; p_phone?: string | null; p_language?: string }
+        Returns: undefined
+      }
     }
   }
 }

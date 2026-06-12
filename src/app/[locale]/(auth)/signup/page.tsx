@@ -61,6 +61,7 @@ export default function SignupPage() {
   const params = useParams()
   const locale = (params.locale as string) || 'en'
   const [serverError, setServerError] = useState<string | null>(null)
+  const [confirmEmailSent, setConfirmEmailSent] = useState(false)
   const [password, setPassword] = useState('')
   const t = useTranslations('auth')
 
@@ -77,6 +78,7 @@ export default function SignupPage() {
       language: data.language, hotelSlug: data.hotelSlug,
     })
     if (result.error) { setServerError(result.error); return }
+    if (result.needsEmailConfirmation) { setConfirmEmailSent(true); return }
     router.push(`/${locale}/dashboard`)
   }
 
@@ -130,6 +132,14 @@ export default function SignupPage() {
           {serverError && (
             <div className="auth-up-3 mb-4 bg-red-50 text-red-800 rounded-xl px-4 py-3 text-xs leading-relaxed">
               {serverError}
+            </div>
+          )}
+
+          {confirmEmailSent && (
+            <div className="auth-up-3 mb-4 bg-green-50 text-green-800 rounded-xl px-4 py-3 text-xs leading-relaxed">
+              {/* TODO: i18n */}
+              Account created! Check your inbox to confirm your email, then{' '}
+              <Link href={`/${locale}/login`} className="font-bold underline">log in</Link>.
             </div>
           )}
 
