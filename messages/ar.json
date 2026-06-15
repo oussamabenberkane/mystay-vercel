@@ -170,5 +170,37 @@
     "archived": "مؤرشف",
     "normal": "عادي",
     "urgent": "عاجل"
+  },
+  "payment": {
+    "title": "الدفع",
+    "choose": "اختر طريقة الدفع",
+    "payByCard": "الدفع بالبطاقة",
+    "payByCardDesc": "ادفع الآن بأمان عبر CIB أو الذهبية",
+    "payAtReception": "الدفع في الاستقبال",
+    "payAtReceptionDesc": "سدّد هذا المبلغ في مكتب الاستقبال",
+    "pay": "ادفع الآن",
+    "processing": "جارٍ المعالجة…",
+    "redirecting": "جارٍ التحويل إلى الدفع…",
+    "confirmReception": "تم التسجيل — يُدفع في الاستقبال",
+    "unavailable": "الدفع بالبطاقة غير متاح حاليًا",
+    "errorGeneric": "تعذّر بدء الدفع. يرجى المحاولة مرة أخرى.",
+    "successMsg": "تم الدفع بنجاح. شكرًا لك!",
+    "failedMsg": "فشل الدفع أو تم إلغاؤه.",
+    "markPaid": "وضع علامة مدفوع",
+    "markedPaid": "تم وضع علامة مدفوع",
+    "outstanding": "المستحق",
+    "paidLabel": "مدفوع",
+    "statusLabel": "حالة الدفع",
+    "methodLabel": "الطريقة",
+    "status": {
+      "unpaid": "غير مدفوع",
+      "pending": "قيد الانتظار",
+      "paid": "مدفوع",
+      "failed": "فشل"
+    },
+    "method": {
+      "app_card": "بطاقة",
+      "reception": "الاستقبال"
+    }
   }
 }
