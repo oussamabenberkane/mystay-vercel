@@ -170,5 +170,84 @@
     "archived": "مؤرشف",
     "normal": "عادي",
     "urgent": "عاجل"
+  },
+  "adminPromos": {
+    "navLabel": "التسويق",
+    "eyebrow": "المحتوى",
+    "title": "التسويق والعروض",
+    "subtitle": "إدارة اللافتات والعروض السريعة والفنادق المميّزة المعروضة في الصفحة الرئيسية.",
+    "tabs": {
+      "banners": "اللافتات الإعلانية",
+      "flashSales": "العروض السريعة",
+      "showcaseHotels": "الفنادق المميّزة"
+    },
+    "scope": {
+      "global": "عام",
+      "thisHotel": "هذا الفندق"
+    },
+    "fields": {
+      "imageUrl": "رابط الصورة",
+      "title": "العنوان",
+      "name": "الاسم",
+      "linkUrl": "رابط الإحالة",
+      "description": "الوصف",
+      "discountLabel": "ملصق الخصم",
+      "startsAt": "تاريخ البدء",
+      "endsAt": "تاريخ الانتهاء",
+      "sortOrder": "ترتيب العرض",
+      "scope": "الظهور",
+      "location": "الموقع",
+      "indicativePrice": "السعر الإرشادي",
+      "rating": "التقييم"
+    },
+    "common": {
+      "optional": "اختياري",
+      "order": "الترتيب",
+      "hidden": "مخفي",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "cancel": "إلغاء",
+      "create": "إنشاء",
+      "save": "حفظ",
+      "saving": "جارٍ الحفظ…",
+      "show": "إظهار",
+      "hide": "إخفاء",
+      "moveUp": "تحريك لأعلى",
+      "moveDown": "تحريك لأسفل",
+      "irreversible": "لا يمكن التراجع عن هذا الإجراء."
+    },
+    "banners": {
+      "add": "لافتة جديدة",
+      "editTitle": "تعديل اللافتة",
+      "deleteTitle": "حذف هذه اللافتة؟",
+      "empty": "لا توجد لافتات بعد",
+      "untitled": "لافتة بدون عنوان",
+      "count": "{count, plural, zero {لا توجد لافتات} one {لافتة واحدة} two {لافتتان} few {# لافتات} many {# لافتة} other {# لافتة}}"
+    },
+    "flashSales": {
+      "add": "عرض سريع جديد",
+      "editTitle": "تعديل العرض السريع",
+      "deleteTitle": "حذف هذا العرض السريع؟",
+      "empty": "لا توجد عروض سريعة بعد",
+      "count": "{count, plural, zero {لا توجد عروض سريعة} one {عرض سريع واحد} two {عرضان سريعان} few {# عروض سريعة} many {# عرضاً سريعاً} other {# عرض سريع}}"
+    },
+    "showcaseHotels": {
+      "add": "فندق مميّز جديد",
+      "editTitle": "تعديل الفندق المميّز",
+      "deleteTitle": "حذف هذا الفندق المميّز؟",
+      "empty": "لا توجد فنادق مميّزة بعد",
+      "count": "{count, plural, zero {لا توجد فنادق مميّزة} one {فندق مميّز واحد} two {فندقان مميّزان} few {# فنادق مميّزة} many {# فندقاً مميّزاً} other {# فندق مميّز}}"
+    },
+    "toast": {
+      "bannerCreated": "تم إنشاء اللافتة.",
+      "bannerUpdated": "تم تحديث اللافتة.",
+      "bannerDeleted": "تم حذف اللافتة.",
+      "saleCreated": "تم إنشاء العرض السريع.",
+      "saleUpdated": "تم تحديث العرض السريع.",
+      "saleDeleted": "تم حذف العرض السريع.",
+      "hotelCreated": "تم إنشاء الفندق المميّز.",
+      "hotelUpdated": "تم تحديث الفندق المميّز.",
+      "hotelDeleted": "تم حذف الفندق المميّز."
+    }
   }
 }

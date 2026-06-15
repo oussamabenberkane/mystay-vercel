@@ -170,5 +170,84 @@
     "archived": "Archivé",
     "normal": "Normal",
     "urgent": "Urgent"
+  },
+  "adminPromos": {
+    "navLabel": "Marketing",
+    "eyebrow": "Contenu",
+    "title": "Marketing & Promotions",
+    "subtitle": "Gérez les bannières, les ventes flash et les hôtels vitrine affichés sur la page d'accueil.",
+    "tabs": {
+      "banners": "Bannières",
+      "flashSales": "Ventes flash",
+      "showcaseHotels": "Hôtels vitrine"
+    },
+    "scope": {
+      "global": "Global",
+      "thisHotel": "Cet hôtel"
+    },
+    "fields": {
+      "imageUrl": "URL de l'image",
+      "title": "Titre",
+      "name": "Nom",
+      "linkUrl": "URL du lien",
+      "description": "Description",
+      "discountLabel": "Étiquette de réduction",
+      "startsAt": "Début",
+      "endsAt": "Fin",
+      "sortOrder": "Ordre d'affichage",
+      "scope": "Visibilité",
+      "location": "Emplacement",
+      "indicativePrice": "Prix indicatif",
+      "rating": "Note"
+    },
+    "common": {
+      "optional": "optionnel",
+      "order": "Ordre",
+      "hidden": "Masqué",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "cancel": "Annuler",
+      "create": "Créer",
+      "save": "Enregistrer",
+      "saving": "Enregistrement…",
+      "show": "Afficher",
+      "hide": "Masquer",
+      "moveUp": "Monter",
+      "moveDown": "Descendre",
+      "irreversible": "Cette action est irréversible."
+    },
+    "banners": {
+      "add": "Nouvelle bannière",
+      "editTitle": "Modifier la bannière",
+      "deleteTitle": "Supprimer cette bannière ?",
+      "empty": "Aucune bannière pour le moment",
+      "untitled": "Bannière sans titre",
+      "count": "{count, plural, =0 {Aucune bannière} one {# bannière} other {# bannières}}"
+    },
+    "flashSales": {
+      "add": "Nouvelle vente flash",
+      "editTitle": "Modifier la vente flash",
+      "deleteTitle": "Supprimer cette vente flash ?",
+      "empty": "Aucune vente flash pour le moment",
+      "count": "{count, plural, =0 {Aucune vente flash} one {# vente flash} other {# ventes flash}}"
+    },
+    "showcaseHotels": {
+      "add": "Nouvel hôtel vitrine",
+      "editTitle": "Modifier l'hôtel vitrine",
+      "deleteTitle": "Supprimer cet hôtel vitrine ?",
+      "empty": "Aucun hôtel vitrine pour le moment",
+      "count": "{count, plural, =0 {Aucun hôtel vitrine} one {# hôtel vitrine} other {# hôtels vitrine}}"
+    },
+    "toast": {
+      "bannerCreated": "Bannière créée.",
+      "bannerUpdated": "Bannière mise à jour.",
+      "bannerDeleted": "Bannière supprimée.",
+      "saleCreated": "Vente flash créée.",
+      "saleUpdated": "Vente flash mise à jour.",
+      "saleDeleted": "Vente flash supprimée.",
+      "hotelCreated": "Hôtel vitrine créé.",
+      "hotelUpdated": "Hôtel vitrine mis à jour.",
+      "hotelDeleted": "Hôtel vitrine supprimé."
+    }
   }
 }

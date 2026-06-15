@@ -170,5 +170,84 @@
     "archived": "Archived",
     "normal": "Normal",
     "urgent": "Urgent"
+  },
+  "adminPromos": {
+    "navLabel": "Marketing",
+    "eyebrow": "Content",
+    "title": "Marketing & Promotions",
+    "subtitle": "Manage the banners, flash sales and showcase hotels shown on the landing page.",
+    "tabs": {
+      "banners": "Ad Banners",
+      "flashSales": "Flash Sales",
+      "showcaseHotels": "Showcase Hotels"
+    },
+    "scope": {
+      "global": "Global",
+      "thisHotel": "This hotel"
+    },
+    "fields": {
+      "imageUrl": "Image URL",
+      "title": "Title",
+      "name": "Name",
+      "linkUrl": "Link URL",
+      "description": "Description",
+      "discountLabel": "Discount label",
+      "startsAt": "Starts at",
+      "endsAt": "Ends at",
+      "sortOrder": "Sort order",
+      "scope": "Visibility",
+      "location": "Location",
+      "indicativePrice": "Indicative price",
+      "rating": "Rating"
+    },
+    "common": {
+      "optional": "optional",
+      "order": "Order",
+      "hidden": "Hidden",
+      "edit": "Edit",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "create": "Create",
+      "save": "Save",
+      "saving": "Saving…",
+      "show": "Show",
+      "hide": "Hide",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "irreversible": "This action cannot be undone."
+    },
+    "banners": {
+      "add": "New banner",
+      "editTitle": "Edit banner",
+      "deleteTitle": "Delete this banner?",
+      "empty": "No banners yet",
+      "untitled": "Untitled banner",
+      "count": "{count, plural, =0 {No banners} one {# banner} other {# banners}}"
+    },
+    "flashSales": {
+      "add": "New flash sale",
+      "editTitle": "Edit flash sale",
+      "deleteTitle": "Delete this flash sale?",
+      "empty": "No flash sales yet",
+      "count": "{count, plural, =0 {No flash sales} one {# flash sale} other {# flash sales}}"
+    },
+    "showcaseHotels": {
+      "add": "New showcase hotel",
+      "editTitle": "Edit showcase hotel",
+      "deleteTitle": "Delete this showcase hotel?",
+      "empty": "No showcase hotels yet",
+      "count": "{count, plural, =0 {No showcase hotels} one {# showcase hotel} other {# showcase hotels}}"
+    },
+    "toast": {
+      "bannerCreated": "Banner created.",
+      "bannerUpdated": "Banner updated.",
+      "bannerDeleted": "Banner deleted.",
+      "saleCreated": "Flash sale created.",
+      "saleUpdated": "Flash sale updated.",
+      "saleDeleted": "Flash sale deleted.",
+      "hotelCreated": "Showcase hotel created.",
+      "hotelUpdated": "Showcase hotel updated.",
+      "hotelDeleted": "Showcase hotel deleted."
+    }
   }
 }
