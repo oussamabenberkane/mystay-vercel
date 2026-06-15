@@ -24,7 +24,11 @@ export default async function AdminSettingsPage({
   const profile = profileData as { role: string } | null
   if (!profile || profile.role !== 'admin') redirect(`/${locale ?? defaultLocale}/login`)
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://my-stay.vercel.app'
+  // Public production base URL the QR points at. Drives an absolute https link
+  // that loads the app for an unauthenticated visitor (middleware sends them to
+  // /{locale}/login from the locale root). Locale-prefixed and trailing-slash safe.
+  const baseUrl = (process.env.NEXT_PUBLIC_APP_URL ?? 'https://my-stay.vercel.app').replace(/\/+$/, '')
+  const appUrl = `${baseUrl}/${locale ?? defaultLocale}`
   const hotelInfo = await getHotelInfoAction()
 
   return (
