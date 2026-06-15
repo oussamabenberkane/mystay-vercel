@@ -49,7 +49,9 @@ export default async function StaysPage({
   const guests = (guestsResult.data ?? []) as any[]
   const rooms = (roomsResult.data ?? []) as any[]
 
-  const activeCount = stays.filter((s) => s.status === 'active').length
+  const activeCount = stays.filter(
+    (s) => s.status === 'active' || s.status === 'checked_in'
+  ).length
 
   return (
     <div className="p-6 md:p-8 space-y-6">

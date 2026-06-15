@@ -20,11 +20,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ConfirmDialog } from '@/components/admin/confirm-dialog'
 import { createStayAction, archiveStayAction } from '@/lib/actions/admin-stays'
 
+type StayStatus = 'active' | 'archived' | 'reserved' | 'checked_in' | 'checked_out'
+
 type Stay = {
   id: string
-  status: 'active' | 'archived'
+  status: StayStatus
   check_in: string
   check_out: string
+  checked_in_at: string | null
+  checked_out_at: string | null
   created_at: string
   rooms: { number: string; type: string } | null
   profiles: { full_name: string; email: string | null } | null
@@ -42,19 +46,37 @@ const newStaySchema = z.object({
 
 type NewStayForm = z.infer<typeof newStaySchema>
 
-function StatusBadge({ status }: { status: 'active' | 'archived' }) {
+// Live / in-house statuses recognised across the app (ordering, stats).
+const LIVE_STATUSES: StayStatus[] = ['active', 'checked_in']
+
+const STATUS_META: Record<StayStatus, { label: string; bg: string; fg: string }> = {
+  active: { label: 'Checked in', bg: 'rgba(22,163,74,0.10)', fg: '#15803d' },
+  checked_in: { label: 'Checked in', bg: 'rgba(22,163,74,0.10)', fg: '#15803d' },
+  reserved: { label: 'Reserved', bg: 'rgba(201,168,76,0.14)', fg: '#9a7d2e' },
+  checked_out: { label: 'Checked out', bg: 'rgba(27,45,91,0.07)', fg: '#7A8BA8' },
+  archived: { label: 'Archived', bg: 'rgba(27,45,91,0.07)', fg: '#7A8BA8' },
+}
+
+function StatusBadge({ status }: { status: StayStatus }) {
+  const meta = STATUS_META[status] ?? STATUS_META.archived
   return (
     <span
       className="inline-flex items-center rounded-lg px-2.5 py-1 text-xs font-semibold"
-      style={
-        status === 'active'
-          ? { background: 'rgba(22,163,74,0.10)', color: '#15803d' }
-          : { background: 'rgba(27,45,91,0.07)', color: '#7A8BA8' }
-      }
+      style={{ background: meta.bg, color: meta.fg }}
     >
-      {status === 'active' ? 'Active' : 'Archived'}
+      {meta.label}
     </span>
   )
+}
+
+function formatStamp(iso: string | null) {
+  if (!iso) return '—'
+  return new Date(iso).toLocaleString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 }
 
 interface StaysClientProps {
@@ -67,7 +89,7 @@ export function StaysClient({ stays, guests, rooms }: StaysClientProps) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [search, setSearch] = useState('')
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'archived'>('all')
+  const [statusFilter, setStatusFilter] = useState<'all' | 'in_house' | 'reserved' | 'checked_out'>('all')
   const [newOpen, setNewOpen] = useState(false)
   const [archiveTarget, setArchiveTarget] = useState<Stay | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
@@ -89,7 +111,12 @@ export function StaysClient({ stays, guests, rooms }: StaysClientProps) {
     const matchSearch =
       guestName.toLowerCase().includes(search.toLowerCase()) ||
       roomNum.includes(search)
-    const matchStatus = statusFilter === 'all' || s.status === statusFilter
+    const matchStatus =
+      statusFilter === 'all' ||
+      (statusFilter === 'in_house' && LIVE_STATUSES.includes(s.status)) ||
+      (statusFilter === 'reserved' && s.status === 'reserved') ||
+      (statusFilter === 'checked_out' &&
+        (s.status === 'checked_out' || s.status === 'archived'))
     return matchSearch && matchStatus
   })
 
@@ -136,8 +163,9 @@ export function StaysClient({ stays, guests, rooms }: StaysClientProps) {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Stays</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="archived">Archived</SelectItem>
+            <SelectItem value="in_house">Checked in</SelectItem>
+            <SelectItem value="reserved">Reserved</SelectItem>
+            <SelectItem value="checked_out">Checked out</SelectItem>
           </SelectContent>
         </Select>
 
@@ -164,7 +192,7 @@ export function StaysClient({ stays, guests, rooms }: StaysClientProps) {
           <table className="w-full text-sm">
             <thead>
               <tr style={{ background: 'rgba(248,240,232,0.5)', borderBottom: '1px solid rgba(27,45,91,0.06)' }}>
-                {['Guest', 'Room', 'Check-in', 'Check-out', 'Status', ''].map((h) => (
+                {['Guest', 'Room', 'Check-in', 'Check-out', 'Checked in', 'Checked out', 'Status', ''].map((h) => (
                   <th
                     key={h}
                     className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider"
@@ -178,7 +206,7 @@ export function StaysClient({ stays, guests, rooms }: StaysClientProps) {
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-5 py-12 text-center text-sm" style={{ color: '#7A8BA8' }}>
+                  <td colSpan={8} className="px-5 py-12 text-center text-sm" style={{ color: '#7A8BA8' }}>
                     No stays found
                   </td>
                 </tr>
@@ -210,11 +238,17 @@ export function StaysClient({ stays, guests, rooms }: StaysClientProps) {
                     <td className="px-5 py-3.5" style={{ color: '#7A8BA8' }}>
                       {new Date(stay.check_out).toLocaleDateString()}
                     </td>
+                    <td className="px-5 py-3.5 whitespace-nowrap" style={{ color: '#7A8BA8' }}>
+                      {formatStamp(stay.checked_in_at)}
+                    </td>
+                    <td className="px-5 py-3.5 whitespace-nowrap" style={{ color: '#7A8BA8' }}>
+                      {formatStamp(stay.checked_out_at)}
+                    </td>
                     <td className="px-5 py-3.5">
                       <StatusBadge status={stay.status} />
                     </td>
                     <td className="px-5 py-3.5">
-                      {stay.status === 'active' && (
+                      {LIVE_STATUSES.includes(stay.status) && (
                         <button
                           onClick={() => setArchiveTarget(stay)}
                           className="flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors hover:bg-black/5"
