@@ -30,6 +30,8 @@ function mapOrder(o: any): StaffOrder {
     total_amount: o.total_amount,
     notes: o.notes ?? null,
     created_at: o.created_at,
+    payment_status: (o.payment_status ?? 'unpaid') as 'unpaid' | 'pending' | 'paid',
+    payment_method: (o.payment_method ?? null) as 'app_card' | 'reception' | null,
     order_items: (o.order_items ?? []).map((oi: { id: string; quantity: number; unit_price: number; menu_items: { name: string } | null }) => ({
       id: oi.id,
       quantity: oi.quantity,
@@ -150,10 +152,25 @@ export default function StaffOrdersPage() {
           filter: `hotel_id=eq.${hotelId}`,
         },
         (payload) => {
-          const updated = payload.new as { id: string; status: OrderStatus }
+          const updated = payload.new as {
+            id: string
+            status: OrderStatus
+            payment_status?: 'unpaid' | 'pending' | 'paid'
+            payment_method?: 'app_card' | 'reception' | null
+          }
           setOrders((prev) =>
             prev.map((o) =>
-              o.id === updated.id ? { ...o, status: updated.status } : o
+              o.id === updated.id
+                ? {
+                    ...o,
+                    status: updated.status,
+                    payment_status: updated.payment_status ?? o.payment_status,
+                    payment_method:
+                      updated.payment_method !== undefined
+                        ? updated.payment_method
+                        : o.payment_method,
+                  }
+                : o
             )
           )
         }

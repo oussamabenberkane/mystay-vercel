@@ -1,9 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { Clock, User, MapPin, ChevronDown, ChevronUp } from 'lucide-react'
+import { Clock, User, MapPin, ChevronDown, ChevronUp, CheckCircle2 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { OrderStatusBadge } from '@/components/guest/order-status-badge'
+import { PaymentStatusBadge } from '@/components/shared/payment-status-badge'
 import { updateOrderStatusAction, type OrderStatus } from '@/lib/actions/room-service'
+import { markReceptionPaidAction } from '@/lib/actions/payments'
 import { cn } from '@/lib/utils'
 import { formatCurrency } from '@/lib/utils/format'
 
@@ -20,6 +23,8 @@ export type StaffOrder = {
   total_amount: number
   notes: string | null
   created_at: string
+  payment_status: 'unpaid' | 'pending' | 'paid'
+  payment_method: 'app_card' | 'reception' | null
   order_items: OrderItem[]
   stays: {
     rooms: { number: string; type: string } | null
@@ -53,12 +58,28 @@ export function StaffOrderCard({
   order: StaffOrder
   onStatusChange: (id: string, status: OrderStatus) => void
 }) {
+  const t = useTranslations('payment')
   const [loading, setLoading] = useState(false)
   const [expanded, setExpanded] = useState(false)
+  const [payLoading, setPayLoading] = useState(false)
+  // Optimistic "paid" override; otherwise the prop (incl. realtime updates) wins.
+  const [paidOptimistic, setPaidOptimistic] = useState(false)
+  const paymentStatus = paidOptimistic ? 'paid' : order.payment_status
 
   const transition = STATUS_TRANSITIONS[order.status]
   const roomNumber = order.stays?.rooms?.number ?? '–'
   const guestName = order.profiles?.full_name ?? 'Guest'
+
+  // Staff can settle a reception payment (or any not-yet-paid order) at the desk.
+  const canMarkPaid =
+    paymentStatus !== 'paid' && order.payment_method !== 'app_card'
+
+  async function handleMarkPaid() {
+    setPayLoading(true)
+    const { error } = await markReceptionPaidAction(order.id)
+    if (!error) setPaidOptimistic(true)
+    setPayLoading(false)
+  }
 
   async function handleAdvance() {
     if (!transition) return
@@ -86,7 +107,7 @@ export function StaffOrderCard({
       {/* Header */}
       <div className="flex items-start justify-between px-5 pt-5 pb-4">
         <div className="space-y-1">
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <span
               className="font-heading text-base font-semibold"
               style={{ color: '#1B2D5B' }}
@@ -94,6 +115,7 @@ export function StaffOrderCard({
               #{order.id.slice(-6).toUpperCase()}
             </span>
             <OrderStatusBadge status={order.status} />
+            <PaymentStatusBadge status={paymentStatus} method={order.payment_method} />
           </div>
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs" style={{ color: '#7A8BA8' }}>
             <span className="flex items-center gap-1">
@@ -179,6 +201,24 @@ export function StaffOrderCard({
             style={{ borderColor: 'rgba(27,45,91,0.15)', color: '#7A8BA8' }}
           >
             Cancel
+          </button>
+        </div>
+      )}
+
+      {/* Payment settlement (reception / unpaid) */}
+      {canMarkPaid && (
+        <div
+          className="border-t px-5 py-3"
+          style={{ borderColor: 'rgba(27,45,91,0.07)' }}
+        >
+          <button
+            onClick={handleMarkPaid}
+            disabled={payLoading}
+            className="flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl py-2.5 text-sm font-semibold transition-all duration-150 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+            style={{ background: 'rgba(27,154,89,0.12)', color: '#1B9A59' }}
+          >
+            <CheckCircle2 className="size-4" />
+            {payLoading ? '...' : t('markPaid')}
           </button>
         </div>
       )}
