@@ -145,7 +145,11 @@ export async function checkInAction(
       return { data: null, error: 'You are already checked in' }
     }
 
-    const { error: updateError } = await supabase
+    // Loosely-typed client for the update (matches repo convention; the typed
+    // stays Update infers `never` for the cast satellite columns).
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const db = supabase as any
+    const { error: updateError } = await db
       .from('stays')
       .update({
         status: 'active',
@@ -205,7 +209,11 @@ export async function checkOutAction(
       return { data: null, error: 'You must check in before checking out' }
     }
 
-    const { error: updateError } = await supabase
+    // Loosely-typed client for the update (matches repo convention; the typed
+    // stays Update infers `never` for the cast satellite columns).
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const db = supabase as any
+    const { error: updateError } = await db
       .from('stays')
       .update({
         status: 'checked_out',
