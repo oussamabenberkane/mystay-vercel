@@ -170,5 +170,28 @@
     "archived": "Archived",
     "normal": "Normal",
     "urgent": "Urgent"
+  },
+  "loyalty": {
+    "title": "Loyalty",
+    "subtitle": "Loyalty Rewards",
+    "pointsAvailable": "points available",
+    "points": "pts",
+    "offersTitle": "Redeemable Offers",
+    "noOffers": "No offers available right now",
+    "redeem": "Redeem",
+    "notEnough": "Not enough",
+    "historyTitle": "Points History",
+    "noHistory": "No activity yet — start earning points!",
+    "earned": "Points earned",
+    "redeemed": "Points redeemed",
+    "confirmTitle": "Redeem this offer?",
+    "confirmBody": "This will deduct {cost} points from your balance.",
+    "cancel": "Cancel",
+    "confirmRedeem": "Redeem",
+    "redeemSuccess": "Redeemed: {title}",
+    "redeemError": "Could not redeem this offer. Please try again.",
+    "insufficientBalance": "You don't have enough points for this offer.",
+    "offerInactive": "This offer is no longer available.",
+    "offerNotFound": "This offer could not be found."
   }
 }

@@ -170,5 +170,28 @@
     "archived": "Archivé",
     "normal": "Normal",
     "urgent": "Urgent"
+  },
+  "loyalty": {
+    "title": "Fidélité",
+    "subtitle": "Récompenses fidélité",
+    "pointsAvailable": "points disponibles",
+    "points": "pts",
+    "offersTitle": "Offres à échanger",
+    "noOffers": "Aucune offre disponible pour le moment",
+    "redeem": "Échanger",
+    "notEnough": "Insuffisant",
+    "historyTitle": "Historique des points",
+    "noHistory": "Aucune activité pour le moment — commencez à gagner des points !",
+    "earned": "Points gagnés",
+    "redeemed": "Points échangés",
+    "confirmTitle": "Échanger cette offre ?",
+    "confirmBody": "Cela déduira {cost} points de votre solde.",
+    "cancel": "Annuler",
+    "confirmRedeem": "Échanger",
+    "redeemSuccess": "Échangé : {title}",
+    "redeemError": "Impossible d'échanger cette offre. Veuillez réessayer.",
+    "insufficientBalance": "Vous n'avez pas assez de points pour cette offre.",
+    "offerInactive": "Cette offre n'est plus disponible.",
+    "offerNotFound": "Cette offre est introuvable."
   }
 }
