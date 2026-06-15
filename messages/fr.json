@@ -170,5 +170,49 @@
     "archived": "Archivé",
     "normal": "Normal",
     "urgent": "Urgent"
+  },
+  "landing": {
+    "splash": {
+      "kicker": "Votre Séjour, Sublimé",
+      "skip": "Passer"
+    },
+    "nav": {
+      "login": "Connexion",
+      "signup": "S'inscrire"
+    },
+    "hero": {
+      "kicker": "Bienvenue sur My Stay",
+      "title": "Tout ce que votre séjour mérite, au même endroit",
+      "subtitle": "Room service, demandes et votre note — tout depuis votre téléphone. Découvrez nos hôtels partenaires et nos offres exclusives.",
+      "primaryCta": "Commencer",
+      "secondaryCta": "Se connecter"
+    },
+    "flash": {
+      "kicker": "Durée Limitée",
+      "heading": "Ventes Flash",
+      "endsIn": "Se termine dans",
+      "endingSoon": "Bientôt fini",
+      "days": "Jours",
+      "hours": "Hrs",
+      "minutes": "Min",
+      "seconds": "Sec"
+    },
+    "hotels": {
+      "kicker": "À Découvrir",
+      "heading": "Nos Hôtels Partenaires",
+      "from": "À partir de",
+      "perNight": "nuit",
+      "viewCta": "Découvrir"
+    },
+    "cta": {
+      "kicker": "Quand Vous Voulez",
+      "title": "Commencez votre séjour en quelques secondes",
+      "subtitle": "Connectez-vous avec votre code de réservation, ou créez un compte pour commencer.",
+      "signup": "Créer un compte",
+      "login": "Se connecter"
+    },
+    "footer": {
+      "tagline": "Sécurisé · Privé · Exceptionnel"
+    }
   }
 }
