@@ -83,7 +83,11 @@ export async function getStayStatusAction(): Promise<{
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return { stay: null, error: 'Not authenticated' }
 
-    const { data, error } = await supabase
+    // Relational select: use the loosely-typed client (no Relationships in
+    // database.ts), matching the repo convention in room-service/admin-stays.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const db = supabase as any
+    const { data, error } = await db
       .from('stays')
       .select(
         'id, hotel_id, guest_id, status, check_in, check_out, checked_in_at, checked_out_at, rooms(number, type)'
