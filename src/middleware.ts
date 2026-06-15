@@ -11,6 +11,11 @@ const intlMiddleware = createIntlMiddleware({
 
 const publicPaths = ['/login', '/signup', '/forgot-password', '/reset-password']
 
+// Pre-auth surfaces reachable while logged out: the splash (locale root '/')
+// and the marketing landing page. Authenticated users are still redirected to
+// their role home below.
+const preAuthPaths = ['/', '/landing']
+
 type Role = 'client' | 'staff' | 'admin'
 
 function getRoleRedirect(role: Role, locale: string): string {
@@ -28,6 +33,13 @@ function getRequiredRole(path: string): Role | null {
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
+
+  // Never run auth-redirect / intl logic for API route handlers. The matcher
+  // already excludes `/api`, but this is a defensive backstop so an
+  // unauthenticated provider callback (e.g. the Chargily payment webhook) can
+  // never be redirected to /login if the matcher is ever changed.
+  if (pathname.startsWith('/api')) return NextResponse.next()
+
   const firstSegment = pathname.split('/')[1] || ''
   const locale = (locales as readonly string[]).includes(firstSegment) ? firstSegment : defaultLocale
 
@@ -41,9 +53,12 @@ export async function middleware(request: NextRequest) {
   const { supabaseResponse, user, supabase } = await updateSession(request)
 
   const isPublicPath = publicPaths.some(p => pathnameWithoutLocale.startsWith(p))
+  const isPreAuthPath =
+    pathnameWithoutLocale === '/' ||
+    preAuthPaths.some(p => p !== '/' && pathnameWithoutLocale.startsWith(p))
 
-  // Redirect unauthenticated users to login
-  if (!user && !isPublicPath && pathnameWithoutLocale !== '/') {
+  // Redirect unauthenticated users to login (splash + landing stay reachable)
+  if (!user && !isPublicPath && !isPreAuthPath) {
     const url = request.nextUrl.clone()
     url.pathname = `/${locale}/login`
     return NextResponse.redirect(url)
@@ -63,8 +78,9 @@ export async function middleware(request: NextRequest) {
     // pass through — page-level auth guards will handle it, and this
     // prevents an infinite redirect loop.
     if (role) {
-      // Redirect authenticated users away from auth pages and root
-      if (isPublicPath || pathnameWithoutLocale === '/') {
+      // Redirect authenticated users away from auth pages and the pre-auth
+      // surfaces (splash root + landing) to their role home.
+      if (isPublicPath || isPreAuthPath) {
         const url = request.nextUrl.clone()
         url.pathname = getRoleRedirect(role, locale)
         return NextResponse.redirect(url)
@@ -95,6 +111,9 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|sw.js|manifest\\.json|\\.well-known|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|json)$).*)',
+    // `api` is excluded so route handlers (e.g. the Chargily payment webhook,
+    // /api/push) never hit the auth-redirect logic — an unauthenticated
+    // provider POST must reach its handler, not be 307'd to /login.
+    '/((?!api|_next/static|_next/image|favicon.ico|sw.js|manifest\\.json|\\.well-known|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|json)$).*)',
   ],
 }
