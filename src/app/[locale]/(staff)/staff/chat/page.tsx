@@ -103,7 +103,7 @@ export default function StaffChatPage() {
   }, [])
 
   return (
-    <div className="flex overflow-hidden" style={{ height: '100vh' }}>
+    <div className="flex overflow-hidden" style={{ height: '100dvh' }}>
       {/* Left panel: conversation list */}
       <div
         className={`flex flex-col border-r shrink-0 w-full md:w-80 ${

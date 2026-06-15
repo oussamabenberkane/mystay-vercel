@@ -213,7 +213,18 @@ export default function GuestChatPage() {
   return (
     <div
       className="flex flex-col overflow-hidden"
-      style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: '64px' }}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        // Sit exactly on top of the bottom nav (64px tall + its safe-area inset),
+        // and use the dynamic viewport height so the keyboard / mobile browser
+        // chrome can't push the input out of view.
+        bottom: 'calc(64px + env(safe-area-inset-bottom))',
+        height: 'calc(100dvh - 64px - env(safe-area-inset-bottom))',
+        minHeight: 0,
+      }}
     >
       {/* Header */}
       <div
@@ -282,7 +293,7 @@ export default function GuestChatPage() {
       {/* Messages */}
       <div
         ref={messagesRef}
-        className="flex-1 overflow-y-auto px-4 py-5"
+        className="min-h-0 flex-1 overflow-y-auto px-4 py-5"
         style={{
           background: '#F8F0E8',
           backgroundImage: `

@@ -276,7 +276,7 @@ export function ChatPanel({ stayId, roomNumber, guestName, checkIn, checkOut, on
 
       {/* Messages */}
       <div
-        className="flex-1 overflow-y-auto px-4 py-4"
+        className="min-h-0 flex-1 overflow-y-auto px-4 py-4"
         style={{ background: '#F8F0E8' }}
       >
         {loading ? (
