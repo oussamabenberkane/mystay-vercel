@@ -8,6 +8,7 @@ import {
   CalendarDays,
   UtensilsCrossed,
   Megaphone,
+  Gift,
   Menu,
   X,
   Settings,
@@ -46,6 +47,7 @@ function SidebarContent({
     { href: '/admin/stays',      icon: CalendarDays,    label: 'Stays'             },
     { href: '/admin/menu',          icon: UtensilsCrossed, label: tNav('menu')        },
     { href: '/admin/announcements', icon: Megaphone,       label: 'Annonces'          },
+    { href: '/admin/loyalty',       icon: Gift,            label: 'Fidélité'          },
     { href: '/admin/settings',      icon: Settings,        label: 'Paramètres & QR'  },
   ]
 
