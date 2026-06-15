@@ -157,6 +157,21 @@
     "noResults": "Aucun résultat",
     "required": "Ce champ est obligatoire"
   },
+  "checkin": {
+    "title": "Arrivée / Départ",
+    "statusReserved": "Réservé",
+    "statusCheckedIn": "Arrivé",
+    "statusCheckedOut": "Parti",
+    "checkedInAt": "Arrivée",
+    "checkedOutAt": "Départ",
+    "reservedHint": "Votre chambre est prête. Enregistrez votre arrivée pour commencer votre séjour.",
+    "checkedInHint": "Profitez de votre séjour ! Enregistrez votre départ ici à votre départ.",
+    "checkedOutHint": "Merci d'avoir séjourné chez nous. Au plaisir de vous revoir.",
+    "checkInButton": "Enregistrer l'arrivée",
+    "checkOutButton": "Enregistrer le départ",
+    "processing": "Veuillez patienter…",
+    "checkedOutConfirm": "Votre départ est enregistré"
+  },
   "status": {
     "pending": "En attente",
     "confirmed": "Confirmé",

@@ -157,6 +157,21 @@
     "noResults": "لا توجد نتائج",
     "required": "هذا الحقل مطلوب"
   },
+  "checkin": {
+    "title": "تسجيل الوصول / المغادرة",
+    "statusReserved": "محجوز",
+    "statusCheckedIn": "تم تسجيل الوصول",
+    "statusCheckedOut": "تم تسجيل المغادرة",
+    "checkedInAt": "تسجيل الوصول",
+    "checkedOutAt": "تسجيل المغادرة",
+    "reservedHint": "غرفتك جاهزة. سجّل وصولك لبدء إقامتك.",
+    "checkedInHint": "نتمنى لك إقامة ممتعة! سجّل مغادرتك من هنا عند المغادرة.",
+    "checkedOutHint": "شكرًا لإقامتك معنا. نتطلع إلى رؤيتك مرة أخرى.",
+    "checkInButton": "تسجيل الوصول",
+    "checkOutButton": "تسجيل المغادرة",
+    "processing": "يرجى الانتظار…",
+    "checkedOutConfirm": "تم تسجيل مغادرتك"
+  },
   "status": {
     "pending": "قيد الانتظار",
     "confirmed": "مؤكد",
