@@ -170,5 +170,49 @@
     "archived": "Archived",
     "normal": "Normal",
     "urgent": "Urgent"
+  },
+  "landing": {
+    "splash": {
+      "kicker": "Your Stay, Elevated",
+      "skip": "Skip"
+    },
+    "nav": {
+      "login": "Login",
+      "signup": "Sign Up"
+    },
+    "hero": {
+      "kicker": "Welcome to My Stay",
+      "title": "Everything your stay deserves, in one place",
+      "subtitle": "Room service, requests, and your bill — all from your phone. Discover our partner hotels and exclusive offers.",
+      "primaryCta": "Get Started",
+      "secondaryCta": "Sign In"
+    },
+    "flash": {
+      "kicker": "Limited Time",
+      "heading": "Flash Sales",
+      "endsIn": "Ends in",
+      "endingSoon": "Ending soon",
+      "days": "Days",
+      "hours": "Hrs",
+      "minutes": "Min",
+      "seconds": "Sec"
+    },
+    "hotels": {
+      "kicker": "Discover",
+      "heading": "Our Partner Hotels",
+      "from": "From",
+      "perNight": "night",
+      "viewCta": "Discover"
+    },
+    "cta": {
+      "kicker": "Ready When You Are",
+      "title": "Begin your stay in seconds",
+      "subtitle": "Sign in with your reservation code, or create an account to get started.",
+      "signup": "Create Account",
+      "login": "Sign In"
+    },
+    "footer": {
+      "tagline": "Secure · Private · Exceptional"
+    }
   }
 }

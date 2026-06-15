@@ -1,5 +1,7 @@
 import { redirect } from 'next/navigation'
+import { defaultLocale } from '@/lib/i18n/config'
 
 export default function RootPage() {
-  redirect('/en/login')
+  // No-locale root → default-locale splash (which auto-advances to landing).
+  redirect(`/${defaultLocale}`)
 }
