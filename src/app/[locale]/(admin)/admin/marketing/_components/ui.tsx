@@ -61,7 +61,6 @@ export function FieldLabel({
 const inputStyle = {
   borderColor: 'rgba(27,45,91,0.15)',
   color: '#1B2D5B',
-  // @ts-expect-error CSS variable for focus ring
   '--tw-ring-color': '#C9A84C',
 } as React.CSSProperties
 
