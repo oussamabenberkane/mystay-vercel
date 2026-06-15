@@ -8,7 +8,7 @@ Produced by **agent-00**. This is the single source of truth for every new table
 - All timestamps are `timestamptz`, serialised as ISO strings on the client.
 - Server actions never throw — return `{ data, error }`.
 
-Migration files (written, **NOT yet applied to the live DB** — see end):
+Migration files (**applied to the live DB** on 2026-06-15, ref `iewxxozfyknuyhhfuapf`):
 - `006_cms_landing.sql` — ad_banners, flash_sales, showcase_hotels + RLS (incl. anon read).
 - `007_loyalty.sql` — loyalty_accounts, loyalty_transactions, loyalty_offers + RLS + 2 RPCs.
 - `008_stays_checkin.sql` — stays check-in/out columns + widened status constraint.
