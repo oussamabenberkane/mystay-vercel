@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { sendPushToUser } from '@/lib/utils/push'
+import { awardOrderPointsAction } from '@/lib/actions/loyalty'
 
 export type OrderStatus =
   | 'pending'
@@ -100,7 +101,7 @@ export async function updateOrderStatusAction(
       .update({ status })
       .eq('id', orderId)
       .eq('hotel_id', profile.hotel_id)
-      .select('guest_id')
+      .select('guest_id, total_amount')
       .single()
 
     if (!error && order?.guest_id) {
@@ -112,6 +113,16 @@ export async function updateOrderStatusAction(
       const notif = pushMap[status]
       if (notif) {
         sendPushToUser(order.guest_id, { ...notif, url: '/orders' })
+      }
+
+      // Loyalty earn hook — award points when an order is completed (delivered).
+      // Best-effort: a loyalty failure must NEVER break the order status update.
+      if (status === 'delivered') {
+        try {
+          await awardOrderPointsAction(order.guest_id, orderId, Number(order.total_amount ?? 0))
+        } catch {
+          // swallow — loyalty is non-critical to order flow
+        }
       }
     }
 

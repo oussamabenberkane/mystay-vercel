@@ -11,6 +11,7 @@ import {
   Calendar,
   Star,
   Info,
+  Award,
 } from 'lucide-react'
 import { OrderStatusBadge } from '@/components/guest/order-status-badge'
 import { GuestSignOutButton } from '../_components/sign-out-button'
@@ -75,6 +76,7 @@ export default async function GuestDashboardPage({
     { href: '/chat',     label: 'Chat',           icon: MessageCircle,   description: 'Contacter la réception'  },
     { href: '/info',     label: 'Infos Hôtel',   icon: Info,            description: 'Wifi, horaires, services' },
     { href: '/feedback', label: 'Votre Avis',    icon: Star,            description: 'Remarques & impressions'  },
+    { href: '/loyalty',  label: 'Fidélité',      icon: Award,           description: 'Points & offres' },
   ]
 
   return (

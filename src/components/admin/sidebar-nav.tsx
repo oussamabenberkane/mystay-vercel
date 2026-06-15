@@ -9,6 +9,7 @@ import {
   UtensilsCrossed,
   Megaphone,
   Sparkles,
+  Gift,
   Menu,
   X,
   Settings,
@@ -49,6 +50,7 @@ function SidebarContent({
     { href: '/admin/menu',          icon: UtensilsCrossed, label: tNav('menu')        },
     { href: '/admin/announcements', icon: Megaphone,       label: 'Annonces'          },
     { href: '/admin/marketing',     icon: Sparkles,        label: tPromos('navLabel') },
+    { href: '/admin/loyalty',       icon: Gift,            label: 'Fidélité'          },
     { href: '/admin/settings',      icon: Settings,        label: 'Paramètres & QR'  },
   ]
 

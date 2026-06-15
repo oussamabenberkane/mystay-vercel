@@ -293,5 +293,28 @@
       "hotelUpdated": "تم تحديث الفندق المميّز.",
       "hotelDeleted": "تم حذف الفندق المميّز."
     }
+  },
+  "loyalty": {
+    "title": "الولاء",
+    "subtitle": "مكافآت الولاء",
+    "pointsAvailable": "نقطة متاحة",
+    "points": "نقطة",
+    "offersTitle": "عروض قابلة للاستبدال",
+    "noOffers": "لا توجد عروض متاحة حالياً",
+    "redeem": "استبدال",
+    "notEnough": "غير كافٍ",
+    "historyTitle": "سجل النقاط",
+    "noHistory": "لا يوجد نشاط بعد — ابدأ بكسب النقاط!",
+    "earned": "نقاط مكتسبة",
+    "redeemed": "نقاط مستبدلة",
+    "confirmTitle": "هل تريد استبدال هذا العرض؟",
+    "confirmBody": "سيتم خصم {cost} نقطة من رصيدك.",
+    "cancel": "إلغاء",
+    "confirmRedeem": "استبدال",
+    "redeemSuccess": "تم الاستبدال: {title}",
+    "redeemError": "تعذّر استبدال هذا العرض. يرجى المحاولة مرة أخرى.",
+    "insufficientBalance": "ليس لديك نقاط كافية لهذا العرض.",
+    "offerInactive": "هذا العرض لم يعد متاحاً.",
+    "offerNotFound": "تعذّر العثور على هذا العرض."
   }
 }
