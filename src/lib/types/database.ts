@@ -19,9 +19,9 @@ export type Database = {
         Update: { number?: string; type?: string; floor?: number | null }
       }
       stays: {
-        Row: { id: string; hotel_id: string; guest_id: string; room_id: string; check_in: string; check_out: string; status: 'active' | 'archived'; created_at: string }
-        Insert: { id?: string; hotel_id: string; guest_id: string; room_id: string; check_in: string; check_out: string; status?: 'active' | 'archived' }
-        Update: { status?: 'active' | 'archived'; check_out?: string }
+        Row: { id: string; hotel_id: string; guest_id: string; room_id: string; check_in: string; check_out: string; status: 'active' | 'archived' | 'reserved' | 'checked_in' | 'checked_out'; checked_in_at: string | null; checked_out_at: string | null; created_at: string }
+        Insert: { id?: string; hotel_id: string; guest_id: string; room_id: string; check_in: string; check_out: string; status?: 'active' | 'archived' | 'reserved' | 'checked_in' | 'checked_out'; checked_in_at?: string | null; checked_out_at?: string | null }
+        Update: { status?: 'active' | 'archived' | 'reserved' | 'checked_in' | 'checked_out'; check_out?: string; checked_in_at?: string | null; checked_out_at?: string | null }
       }
       menu_categories: {
         Row: { id: string; hotel_id: string; name: string; sort_order: number; created_at: string }
@@ -34,9 +34,9 @@ export type Database = {
         Update: { name?: string; description?: string | null; price?: number; image_url?: string | null; is_available?: boolean; sort_order?: number; category_id?: string }
       }
       orders: {
-        Row: { id: string; hotel_id: string; stay_id: string; guest_id: string; status: 'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled'; total_amount: number; notes: string | null; created_at: string; updated_at: string }
-        Insert: { id?: string; hotel_id: string; stay_id: string; guest_id: string; status?: string; total_amount: number; notes?: string | null }
-        Update: { status?: string; notes?: string | null }
+        Row: { id: string; hotel_id: string; stay_id: string; guest_id: string; status: 'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled'; total_amount: number; notes: string | null; payment_status: 'unpaid' | 'pending' | 'paid'; payment_method: 'app_card' | 'reception' | null; created_at: string; updated_at: string }
+        Insert: { id?: string; hotel_id: string; stay_id: string; guest_id: string; status?: string; total_amount: number; notes?: string | null; payment_status?: 'unpaid' | 'pending' | 'paid'; payment_method?: 'app_card' | 'reception' | null }
+        Update: { status?: string; notes?: string | null; payment_status?: 'unpaid' | 'pending' | 'paid'; payment_method?: 'app_card' | 'reception' | null }
       }
       order_items: {
         Row: { id: string; order_id: string; menu_item_id: string; quantity: number; unit_price: number; created_at: string }
@@ -76,7 +76,7 @@ export type Database = {
       }
     Views: {
       expenses: {
-        Row: { id: string; hotel_id: string; stay_id: string; guest_id: string; amount: number; status: string; created_at: string }
+        Row: { id: string; hotel_id: string; stay_id: string; guest_id: string; amount: number; status: string; created_at: string; payment_status: 'unpaid' | 'pending' | 'paid'; payment_method: 'app_card' | 'reception' | null }
       }
     }
     Functions: {
