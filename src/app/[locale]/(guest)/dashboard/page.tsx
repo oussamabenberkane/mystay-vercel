@@ -17,6 +17,8 @@ import { OrderStatusBadge } from '@/components/guest/order-status-badge'
 import { GuestSignOutButton } from '../_components/sign-out-button'
 import { LanguageSelector } from '@/components/shared/language-selector'
 import { formatCurrency } from '@/lib/utils/format'
+import { getStayStatusAction } from '@/lib/actions/stay-status'
+import { CheckInCard } from './_components/check-in-card'
 
 function formatDate(d: string) {
   return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
@@ -45,6 +47,10 @@ export default async function GuestDashboardPage({
 
   const stayResult = await (supabase as any).rpc('get_active_stay', { p_guest_id: user.id })
   const activeStay = stayResult.data?.[0] ?? null
+
+  // Check-in/out card: surfaces reserved + checked-out stays that
+  // get_active_stay (status='active' only) does not return.
+  const { stay: checkInStay } = await getStayStatusAction()
 
   const [ordersResult, expensesResult] = await Promise.all([
     activeStay
@@ -135,6 +141,9 @@ export default async function GuestDashboardPage({
             </p>
           )}
         </div>
+
+        {/* Check-in / check-out */}
+        {checkInStay && <CheckInCard stay={checkInStay} locale={locale} />}
 
         {/* Total expenses summary */}
         {totalExpenses > 0 && (

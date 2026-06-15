@@ -157,6 +157,21 @@
     "noResults": "No results found",
     "required": "This field is required"
   },
+  "checkin": {
+    "title": "Check-in / Check-out",
+    "statusReserved": "Reserved",
+    "statusCheckedIn": "Checked in",
+    "statusCheckedOut": "Checked out",
+    "checkedInAt": "Checked in",
+    "checkedOutAt": "Checked out",
+    "reservedHint": "Your room is ready. Check in to start your stay.",
+    "checkedInHint": "Enjoy your stay! Check out from here when you leave.",
+    "checkedOutHint": "Thank you for staying with us. We hope to see you again.",
+    "checkInButton": "Check in",
+    "checkOutButton": "Check out",
+    "processing": "Please wait…",
+    "checkedOutConfirm": "You're all checked out"
+  },
   "status": {
     "pending": "Pending",
     "confirmed": "Confirmed",
