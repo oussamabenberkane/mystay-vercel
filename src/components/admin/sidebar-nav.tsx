@@ -8,6 +8,7 @@ import {
   CalendarDays,
   UtensilsCrossed,
   Megaphone,
+  Sparkles,
   Menu,
   X,
   Settings,
@@ -39,6 +40,7 @@ function SidebarContent({
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const tNav = useTranslations('nav')
   const tAuth = useTranslations('auth')
+  const tPromos = useTranslations('adminPromos')
 
   const navItems = [
     { href: '/admin/operations', icon: LayoutDashboard, label: tNav('operations') },
@@ -46,6 +48,7 @@ function SidebarContent({
     { href: '/admin/stays',      icon: CalendarDays,    label: 'Stays'             },
     { href: '/admin/menu',          icon: UtensilsCrossed, label: tNav('menu')        },
     { href: '/admin/announcements', icon: Megaphone,       label: 'Annonces'          },
+    { href: '/admin/marketing',     icon: Sparkles,        label: tPromos('navLabel') },
     { href: '/admin/settings',      icon: Settings,        label: 'Paramètres & QR'  },
   ]
 
