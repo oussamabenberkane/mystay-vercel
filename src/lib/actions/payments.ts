@@ -23,13 +23,17 @@ const CHARGILY_BASE_URL =
     ? 'https://pay.chargily.net/api/v2'
     : 'https://pay.chargily.net/test/api/v2'
 
-/** Feature flag — true only when a real Chargily secret key is present. */
-export const chargilyConfigured =
+/**
+ * Feature flag — true only when a real Chargily secret key is present.
+ * Module-local: a `'use server'` file may only EXPORT async functions, so this
+ * stays internal and is surfaced via the async `isChargilyConfigured()` below.
+ */
+const chargilyConfigured =
   !!process.env.CHARGILY_SECRET_KEY &&
   !process.env.CHARGILY_SECRET_KEY.startsWith('your_') &&
   !process.env.CHARGILY_SECRET_KEY.startsWith('test_placeholder')
 
-/** Exposed to client components so the card option can be hidden when unconfigured. */
+/** Surfaced to server pages / client components to gate the card option. */
 export async function isChargilyConfigured(): Promise<boolean> {
   return chargilyConfigured
 }
