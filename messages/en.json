@@ -331,5 +331,37 @@
     "insufficientBalance": "You don't have enough points for this offer.",
     "offerInactive": "This offer is no longer available.",
     "offerNotFound": "This offer could not be found."
+  },
+  "payment": {
+    "title": "Payment",
+    "choose": "Choose how to pay",
+    "payByCard": "Pay by card",
+    "payByCardDesc": "Pay now securely with CIB or Edahabia",
+    "payAtReception": "Pay at reception",
+    "payAtReceptionDesc": "Settle this charge at the front desk",
+    "pay": "Pay now",
+    "processing": "Processing…",
+    "redirecting": "Redirecting to payment…",
+    "confirmReception": "Recorded — pay this at the reception desk",
+    "unavailable": "Card payment is currently unavailable",
+    "errorGeneric": "Payment could not be started. Please try again.",
+    "successMsg": "Payment successful. Thank you!",
+    "failedMsg": "Payment failed or was cancelled.",
+    "markPaid": "Mark as paid",
+    "markedPaid": "Marked as paid",
+    "outstanding": "Outstanding",
+    "paidLabel": "Paid",
+    "statusLabel": "Payment status",
+    "methodLabel": "Method",
+    "status": {
+      "unpaid": "Unpaid",
+      "pending": "Pending",
+      "paid": "Paid",
+      "failed": "Failed"
+    },
+    "method": {
+      "app_card": "Card",
+      "reception": "Reception"
+    }
   }
 }

@@ -331,5 +331,37 @@
     "insufficientBalance": "Vous n'avez pas assez de points pour cette offre.",
     "offerInactive": "Cette offre n'est plus disponible.",
     "offerNotFound": "Cette offre est introuvable."
+  },
+  "payment": {
+    "title": "Paiement",
+    "choose": "Choisissez votre mode de paiement",
+    "payByCard": "Payer par carte",
+    "payByCardDesc": "Payez maintenant en toute sécurité avec CIB ou Edahabia",
+    "payAtReception": "Payer à la réception",
+    "payAtReceptionDesc": "Réglez ce montant à l’accueil",
+    "pay": "Payer maintenant",
+    "processing": "Traitement…",
+    "redirecting": "Redirection vers le paiement…",
+    "confirmReception": "Enregistré — à régler à la réception",
+    "unavailable": "Le paiement par carte est actuellement indisponible",
+    "errorGeneric": "Le paiement n’a pas pu démarrer. Veuillez réessayer.",
+    "successMsg": "Paiement réussi. Merci !",
+    "failedMsg": "Le paiement a échoué ou a été annulé.",
+    "markPaid": "Marquer comme payé",
+    "markedPaid": "Marqué comme payé",
+    "outstanding": "À régler",
+    "paidLabel": "Payé",
+    "statusLabel": "Statut du paiement",
+    "methodLabel": "Mode",
+    "status": {
+      "unpaid": "Non payé",
+      "pending": "En attente",
+      "paid": "Payé",
+      "failed": "Échoué"
+    },
+    "method": {
+      "app_card": "Carte",
+      "reception": "Réception"
+    }
   }
 }

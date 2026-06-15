@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import { StatsCard } from '@/components/admin/stats-card'
 import { OrderStatusBadge } from '@/components/guest/order-status-badge'
+import { PaymentStatusBadge } from '@/components/shared/payment-status-badge'
 import { RequestStatusBadge } from '@/components/shared/request-status-badge'
 import { PriorityBadge } from '@/components/shared/priority-badge'
 import { RefreshButton } from './_components/refresh-button'
@@ -63,7 +64,7 @@ export default async function OperationsPage({
     (supabase as any).rpc('get_hotel_stats', { p_hotel_id: hotelId }),
     supabase
       .from('orders')
-      .select('id, status, total_amount, created_at, stays(rooms(number)), profiles!guest_id(full_name)')
+      .select('id, status, total_amount, created_at, payment_status, payment_method, stays(rooms(number)), profiles!guest_id(full_name)')
       .eq('hotel_id', hotelId)
       .order('created_at', { ascending: false })
       .limit(10),
@@ -175,6 +176,10 @@ export default async function OperationsPage({
                       </p>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
+                      <PaymentStatusBadge
+                        status={order.payment_status ?? 'unpaid'}
+                        method={order.payment_method ?? null}
+                      />
                       <OrderStatusBadge status={order.status} />
                       <span className="text-sm font-semibold" style={{ color: '#1B2D5B' }}>
                         {formatCurrency(order.total_amount)}
