@@ -2,32 +2,11 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { LOYALTY, pointsForOrderAmount } from '@/lib/loyalty/config'
 
-/* -------------------------------------------------------------------------- */
-/*  Earning rule — single tunable place                                       */
-/* -------------------------------------------------------------------------- */
-
-/**
- * Loyalty configuration. Tune the earning rules here, in ONE place.
- * - pointsPerCurrencyUnit: points earned per 1 unit of order `total_amount`.
- * - checkInBonus: fixed points awarded once on guest check-in.
- */
-export const LOYALTY = {
-  /** Points earned per 1 currency unit (DZD) of order total. */
-  pointsPerCurrencyUnit: 1,
-  /** Fixed bonus points awarded on check-in. */
-  checkInBonus: 100,
-} as const
-
-/**
- * Convert a completed order's `total_amount` to earned loyalty points.
- * Floored to a non-negative integer (the RPC requires a positive integer to
- * actually credit; 0 is treated as "nothing to award").
- */
-export function pointsForOrderAmount(total: number): number {
-  if (!Number.isFinite(total) || total <= 0) return 0
-  return Math.max(0, Math.floor(total * LOYALTY.pointsPerCurrencyUnit))
-}
+// Earning rules (LOYALTY config + pointsForOrderAmount) live in the single
+// tunable place: src/lib/loyalty/config.ts (a 'use server' file may only export
+// async functions, so the config/rule logic is kept there and imported here).
 
 /* -------------------------------------------------------------------------- */
 /*  Types                                                                      */
