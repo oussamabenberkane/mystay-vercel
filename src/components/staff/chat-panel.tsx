@@ -11,7 +11,6 @@ import {
   type MessageWithSender,
 } from '@/lib/actions/chat'
 import { useAuthStore } from '@/lib/store/auth-store'
-import { createClient } from '@/lib/supabase/client'
 
 type Props = {
   stayId: string
@@ -31,15 +30,6 @@ function formatDate(dateStr: string): string {
     month: 'short',
     year: 'numeric',
   })
-}
-
-function findLastOptimistic(messages: ExtendedMessage[], senderId: string, content: string): number {
-  for (let i = messages.length - 1; i >= 0; i--) {
-    if (messages[i].isOptimistic && messages[i].sender_id === senderId && messages[i].content === content) {
-      return i
-    }
-  }
-  return -1
 }
 
 export function ChatPanel({ stayId, roomNumber, guestName, checkIn, checkOut, onBack }: Props) {
@@ -127,7 +117,8 @@ export function ChatPanel({ stayId, roomNumber, guestName, checkIn, checkOut, on
     })
   }, [stayId, scrollToBottom])
 
-  // Polling fallback — 2s
+  // Message sync — 2s polling (sole transport; realtime WebSockets are blocked
+  // in some deployment/network environments, so we rely on polling only).
   useEffect(() => {
     if (!stayId) return
     const interval = setInterval(async () => {
@@ -139,6 +130,12 @@ export function ChatPanel({ stayId, roomNumber, guestName, checkIn, checkOut, on
       )
 
       incoming.forEach((m) => shownIdsRef.current.add(m.id))
+
+      // Mark our own server-confirmed messages as shown so they survive once
+      // their optimistic placeholder is reconciled away below.
+      polled.forEach((m) => {
+        if (m.sender_id === profileRef.current?.id) shownIdsRef.current.add(m.id)
+      })
 
       setMessages((prev) => {
         const optimistics = prev.filter((m) => m.isOptimistic)
@@ -155,41 +152,6 @@ export function ChatPanel({ stayId, roomNumber, guestName, checkIn, checkOut, on
     }, 2000)
     return () => clearInterval(interval)
   }, [stayId, showIncoming])
-
-  // Realtime subscription
-  useEffect(() => {
-    const supabase = createClient()
-    const channel = supabase
-      .channel(`chat-panel:${stayId}`)
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'messages', filter: `stay_id=eq.${stayId}` },
-        (payload) => {
-          const newMsg = payload.new as MessageWithSender
-          if (shownIdsRef.current.has(newMsg.id)) return
-          shownIdsRef.current.add(newMsg.id)
-
-          if (newMsg.sender_id === profileRef.current?.id) {
-            setMessages((prev) => {
-              if (prev.some((m) => m.id === newMsg.id)) return prev
-              const optIdx = findLastOptimistic(prev, newMsg.sender_id, newMsg.content)
-              if (optIdx >= 0) {
-                const updated = [...prev]
-                updated[optIdx] = { ...newMsg }
-                return updated
-              }
-              return [...prev, newMsg]
-            })
-            scrollToBottom()
-          } else {
-            showIncoming([newMsg])
-          }
-        }
-      )
-      .subscribe()
-
-    return () => { supabase.removeChannel(channel) }
-  }, [stayId, showIncoming, scrollToBottom])
 
   const handleSend = useCallback(
     async (content: string) => {

@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react'
 import { CalendarDays } from 'lucide-react'
 import { useTranslations } from 'next-intl'
-import { createClient } from '@/lib/supabase/client'
 import { getAnnouncementsAction } from '@/lib/actions/announcements'
 
 type Announcement = {
@@ -115,7 +114,8 @@ export default function EventsPage() {
     return () => { mounted = false }
   }, [])
 
-  // Polling fallback — covers environments where WebSocket/Realtime is unavailable
+  // Polling is the sole transport — Realtime WebSockets are blocked in some
+  // deployment/network environments, so we poll for announcement changes.
   useEffect(() => {
     let mounted = true
     const interval = setInterval(async () => {
@@ -125,37 +125,6 @@ export default function EventsPage() {
     return () => {
       mounted = false
       clearInterval(interval)
-    }
-  }, [])
-
-  useEffect(() => {
-    const supabase = createClient()
-    const channel = supabase
-      .channel('announcements:hotel')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'announcements' },
-        (payload) => {
-          if (payload.eventType === 'INSERT') {
-            const row = payload.new as Announcement
-            if (row.is_active) {
-              setItems((prev) => [row, ...prev])
-            }
-          } else if (payload.eventType === 'UPDATE') {
-            const row = payload.new as Announcement
-            setItems((prev) =>
-              prev.map((a) => (a.id === row.id ? row : a)).filter((a) => a.is_active)
-            )
-          } else if (payload.eventType === 'DELETE') {
-            const row = payload.old as { id: string }
-            setItems((prev) => prev.filter((a) => a.id !== row.id))
-          }
-        }
-      )
-      .subscribe()
-
-    return () => {
-      supabase.removeChannel(channel)
     }
   }, [])
 

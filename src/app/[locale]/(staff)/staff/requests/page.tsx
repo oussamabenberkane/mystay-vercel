@@ -5,7 +5,6 @@ import { Bell, ClipboardList } from 'lucide-react'
 import { StaffRequestCard, type StaffServiceRequest } from '@/components/staff/request-card'
 import { RequestStatusBadge } from '@/components/shared/request-status-badge'
 import { getStaffServiceRequestsAction, type RequestStatus, type RequestType } from '@/lib/actions/service-requests'
-import { createClient } from '@/lib/supabase/client'
 import { useAuthStore } from '@/lib/store/auth-store'
 
 type StatusFilter = 'all' | 'pending' | 'in_progress' | 'completed'
@@ -66,6 +65,9 @@ export default function StaffRequestsPage() {
   const [toasts, setToasts] = useState<ToastMsg[]>([])
   const [newIds, setNewIds] = useState<Set<string>>(new Set())
   const seenIdsRef = useRef<Set<string>>(new Set())
+  // Gate toasts until the initial load has established a baseline, so we don't
+  // alert on requests that already existed when the page opened.
+  const readyRef = useRef(false)
 
   function showToast(message: string) {
     const id = Date.now()
@@ -80,64 +82,15 @@ export default function StaffRequestsPage() {
       mapped.forEach((r) => seenIdsRef.current.add(r.id))
       setRequests(mapped)
       setLoading(false)
+      readyRef.current = true
     }
     init()
   }, [])
 
-  useEffect(() => {
-    if (!profile?.hotel_id) return
-    const supabase = createClient()
-    const channel = supabase
-      .channel(`hotel-requests:${profile.hotel_id}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'service_requests',
-          filter: `hotel_id=eq.${profile.hotel_id}`,
-        },
-        async (payload) => {
-          const { requests: raw } = await getStaffServiceRequestsAction()
-          const mapped = raw as StaffServiceRequest[]
-          const incoming = new Set(mapped.map((r) => r.id).filter((id) => !seenIdsRef.current.has(id)))
-          mapped.forEach((r) => seenIdsRef.current.add(r.id))
-          setRequests(mapped)
-          if (incoming.size > 0) {
-            setNewIds(incoming)
-            setTimeout(() => setNewIds(new Set()), 600)
-          }
-
-          const incomingPayload = payload.new as { priority: string; type: string }
-          if (incomingPayload.priority === 'urgent') {
-            showToast(`🚨 Urgent request — needs ${incomingPayload.type}`)
-            try { new Audio('/notification.mp3').play().catch(() => {}) } catch { /* no audio */ }
-          } else {
-            showToast(`New ${incomingPayload.type} request received`)
-          }
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'service_requests',
-          filter: `hotel_id=eq.${profile.hotel_id}`,
-        },
-        (payload) => {
-          const updated = payload.new as { id: string; status: RequestStatus }
-          setRequests((prev) =>
-            prev.map((r) => (r.id === updated.id ? { ...r, status: updated.status } : r))
-          )
-        }
-      )
-      .subscribe()
-
-    return () => { supabase.removeChannel(channel) }
-  }, [profile?.hotel_id])
-
-  // Polling fallback — 2s interval, animates new cards with msg-rise
+  // Polling is the sole transport — Realtime WebSockets are blocked in some
+  // deployment/network environments. 2s interval; animates new cards with
+  // msg-rise and raises the urgent/new-request toasts (and audio) that were
+  // previously realtime-only.
   useEffect(() => {
     if (!profile?.hotel_id) return
     let mounted = true
@@ -145,12 +98,20 @@ export default function StaffRequestsPage() {
       const { requests: raw } = await getStaffServiceRequestsAction()
       if (!mounted) return
       const mapped = raw as StaffServiceRequest[]
-      const incoming = new Set(mapped.map((r) => r.id).filter((id) => !seenIdsRef.current.has(id)))
+      const incoming = mapped.filter((r) => !seenIdsRef.current.has(r.id))
       mapped.forEach((r) => seenIdsRef.current.add(r.id))
       setRequests(mapped)
-      if (incoming.size > 0) {
-        setNewIds(incoming)
+      if (incoming.length > 0 && readyRef.current) {
+        setNewIds(new Set(incoming.map((r) => r.id)))
         setTimeout(() => { if (mounted) setNewIds(new Set()) }, 600)
+        for (const r of incoming) {
+          if (r.priority === 'urgent') {
+            showToast(`🚨 Urgent request — needs ${r.type}`)
+            try { new Audio('/notification.mp3').play().catch(() => {}) } catch { /* no audio */ }
+          } else {
+            showToast(`New ${r.type} request received`)
+          }
+        }
       }
     }, 2000)
 

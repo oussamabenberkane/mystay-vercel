@@ -1,13 +1,12 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Radio, ClipboardList } from 'lucide-react'
+import { ClipboardList } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { StaffOrderCard, type StaffOrder } from '@/components/staff/order-card'
 import { OrderStatusBadge } from '@/components/guest/order-status-badge'
 import { getStaffOrdersAction } from '@/lib/actions/room-service'
 import { useAuthStore } from '@/lib/store/auth-store'
-import { createClient } from '@/lib/supabase/client'
 import type { OrderStatus } from '@/lib/actions/room-service'
 
 type FilterTab = 'all' | 'pending' | 'active' | 'completed'
@@ -115,74 +114,9 @@ export default function StaffOrdersPage() {
     load()
   }, [])
 
-  // Real-time subscription keyed on hotel_id from auth store
-  useEffect(() => {
-    const hotelId = profile?.hotel_id
-    if (!hotelId) return
-
-    const supabase = createClient()
-    const channel = supabase
-      .channel(`hotel-orders:${hotelId}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'orders',
-          filter: `hotel_id=eq.${hotelId}`,
-        },
-        async () => {
-          const { orders: raw } = await getStaffOrdersAction()
-          const mapped = (raw ?? []).map(mapOrder)
-          const incoming = new Set(mapped.map((o) => o.id).filter((id) => !seenIdsRef.current.has(id)))
-          mapped.forEach((o) => seenIdsRef.current.add(o.id))
-          setOrders(mapped)
-          if (incoming.size > 0) {
-            setNewIds(incoming)
-            setTimeout(() => setNewIds(new Set()), 600)
-          }
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'orders',
-          filter: `hotel_id=eq.${hotelId}`,
-        },
-        (payload) => {
-          const updated = payload.new as {
-            id: string
-            status: OrderStatus
-            payment_status?: 'unpaid' | 'pending' | 'paid'
-            payment_method?: 'app_card' | 'reception' | null
-          }
-          setOrders((prev) =>
-            prev.map((o) =>
-              o.id === updated.id
-                ? {
-                    ...o,
-                    status: updated.status,
-                    payment_status: updated.payment_status ?? o.payment_status,
-                    payment_method:
-                      updated.payment_method !== undefined
-                        ? updated.payment_method
-                        : o.payment_method,
-                  }
-                : o
-            )
-          )
-        }
-      )
-      .subscribe()
-
-    return () => {
-      supabase.removeChannel(channel)
-    }
-  }, [profile?.hotel_id])
-
-  // Polling fallback — 2s interval, animates new cards with msg-rise
+  // Polling is the sole transport — Realtime WebSockets are blocked in some
+  // deployment/network environments. 2s interval, animates new cards with
+  // msg-rise.
   useEffect(() => {
     const hotelId = profile?.hotel_id
     if (!hotelId) return
