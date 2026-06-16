@@ -7,8 +7,17 @@ import { LogIn, LogOut, CheckCircle2, Clock, DoorOpen } from 'lucide-react'
 import {
   checkInAction,
   checkOutAction,
+  getStayStatusAction,
   type GuestStay,
 } from '@/lib/actions/stay-status'
+
+// Surface a "still working" cue after this long, and give up (recoverable) after
+// the hard timeout — Supabase latency can legitimately reach ~10s, so the
+// timeout sits comfortably above that to avoid false alarms on slow-but-OK ops.
+const SLOW_HINT_MS = 4000
+const TIMEOUT_MS = 15000
+
+type StayActionResult = { data: GuestStay | null; error: string | null }
 
 type Phase = 'reserved' | 'checked_in' | 'checked_out'
 
@@ -38,35 +47,50 @@ export function CheckInCard({ stay, locale }: { stay: GuestStay; locale: string 
   const [isPending, startTransition] = useTransition()
   const [current, setCurrent] = useState<GuestStay>(stay)
   const [error, setError] = useState<string | null>(null)
+  const [slow, setSlow] = useState(false)
 
   const phase = phaseOf(current)
   const isRtl = locale === 'ar'
 
-  function runCheckIn() {
+  function run(action: (id: string) => Promise<StayActionResult>) {
     setError(null)
+    setSlow(false)
     startTransition(async () => {
-      const result = await checkInAction(current.id)
-      if (result.error) {
-        setError(result.error)
-        return
+      const slowTimer = setTimeout(() => setSlow(true), SLOW_HINT_MS)
+      try {
+        const result = await Promise.race<StayActionResult>([
+          action(current.id),
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error('__timeout__')), TIMEOUT_MS)
+          ),
+        ])
+        if (result.error) {
+          setError(result.error)
+          return
+        }
+        if (result.data) setCurrent(result.data)
+        router.refresh()
+      } catch {
+        // The action itself never throws (it returns { error }); reaching here
+        // means our client-side timeout fired. Pull the latest server truth in
+        // case the mutation actually landed, then surface a retry.
+        setError(t('timeoutError'))
+        try {
+          const refreshed = await getStayStatusAction()
+          if (refreshed.stay) setCurrent(refreshed.stay)
+        } catch {
+          // ignore — keep showing the timeout error so the user can retry
+        }
+        router.refresh()
+      } finally {
+        clearTimeout(slowTimer)
+        setSlow(false)
       }
-      if (result.data) setCurrent(result.data)
-      router.refresh()
     })
   }
 
-  function runCheckOut() {
-    setError(null)
-    startTransition(async () => {
-      const result = await checkOutAction(current.id)
-      if (result.error) {
-        setError(result.error)
-        return
-      }
-      if (result.data) setCurrent(result.data)
-      router.refresh()
-    })
-  }
+  const runCheckIn = () => run(checkInAction)
+  const runCheckOut = () => run(checkOutAction)
 
   const statusMeta: Record<Phase, { label: string; bg: string; fg: string }> = {
     reserved: { label: t('statusReserved'), bg: 'rgba(201,168,76,0.14)', fg: '#9a7d2e' },
@@ -139,6 +163,12 @@ export function CheckInCard({ stay, locale }: { stay: GuestStay; locale: string 
           style={{ background: 'rgba(192,57,43,0.08)', color: '#C0392B' }}
         >
           {error}
+        </p>
+      )}
+
+      {slow && isPending && (
+        <p className="text-xs mb-4" style={{ color: '#7A8BA8' }}>
+          {t('slowHint')}
         </p>
       )}
 
