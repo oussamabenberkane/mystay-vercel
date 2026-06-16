@@ -27,7 +27,7 @@ function getRoleRedirect(role: Role, locale: string): string {
 function getRequiredRole(path: string): Role | null {
   if (path.startsWith('/staff/')) return 'staff'
   if (path.startsWith('/admin/')) return 'admin'
-  if (path.startsWith('/dashboard') || path.startsWith('/menu') || path.startsWith('/orders') || path.startsWith('/requests') || path.startsWith('/chat') || path.startsWith('/expenses') || path.startsWith('/feedback') || path.startsWith('/info') || path.startsWith('/events')) return 'client'
+  if (path.startsWith('/dashboard') || path.startsWith('/menu') || path.startsWith('/orders') || path.startsWith('/requests') || path.startsWith('/chat') || path.startsWith('/expenses') || path.startsWith('/feedback') || path.startsWith('/info') || path.startsWith('/events') || path.startsWith('/loyalty')) return 'client'
   return null
 }
 

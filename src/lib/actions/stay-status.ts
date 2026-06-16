@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { awardCheckInBonusAction } from '@/lib/actions/loyalty'
 import { revalidatePath } from 'next/cache'
 
 /**
@@ -160,9 +161,15 @@ export async function checkInAction(
 
     if (updateError) return { data: null, error: updateError.message }
 
-    // WAVE 2: await awardCheckInBonusAction(stayId) from '@/lib/actions/loyalty' (agent-03)
-    // Fire the loyalty check-in bonus here on success. That helper lives in a
-    // separate worktree and is intentionally NOT imported yet (would break this build).
+    // Award the loyalty check-in bonus (agent-03). Best-effort: a loyalty
+    // failure must never block or fail the check-in itself, so we swallow any
+    // error/throw. The action itself never throws (returns { error }), but we
+    // wrap defensively all the same.
+    try {
+      await awardCheckInBonusAction(stayId)
+    } catch {
+      // ignore — loyalty is non-critical to check-in
+    }
 
     revalidatePath('/', 'layout')
 
