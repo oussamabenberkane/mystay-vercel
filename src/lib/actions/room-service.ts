@@ -119,7 +119,7 @@ export async function updateOrderStatusAction(
       // Best-effort: a loyalty failure must NEVER break the order status update.
       if (status === 'delivered') {
         try {
-          await awardOrderPointsAction(order.guest_id, orderId, Number(order.total_amount ?? 0))
+          await awardOrderPointsAction(orderId)
         } catch {
           // swallow — loyalty is non-critical to order flow
         }

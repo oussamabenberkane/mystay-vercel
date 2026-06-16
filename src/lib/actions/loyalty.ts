@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
 import { LOYALTY, pointsForOrderAmount } from '@/lib/loyalty/config'
 
@@ -161,30 +162,41 @@ export async function redeemOfferAction(offerId: string): Promise<{
 
 /**
  * Award points for a completed (delivered) room-service order, proportional to
- * its `total_amount`. Best-effort: returns `{ error }` but is designed to be
- * called in a try/catch wrapper from the order-status hook so a loyalty failure
- * NEVER breaks the order update. Runs as the guest acting on their own account,
- * which the SECURITY DEFINER RPC permits.
+ * its `total_amount`.
  *
- * @param guestId  the order's guest_id
+ * Security: the amount and recipient are derived from the authoritative `orders`
+ * row server-side (never from a client-supplied argument), points are only
+ * credited when the order is actually `delivered`, and the award RPC is
+ * idempotent per order id — so this is safe even though it is an exported
+ * (client-callable) server action. Crediting goes through the service-role
+ * client because the RPC is now restricted to the trusted server only.
+ *
+ * Best-effort: returns `{ error }` and never throws, so a loyalty failure never
+ * breaks the order-status update that calls it.
+ *
  * @param orderId  the order id (recorded as ref_id, ref_type='order')
- * @param total    the order's total_amount
  */
 export async function awardOrderPointsAction(
-  guestId: string,
-  orderId: string,
-  total: number
+  orderId: string
 ): Promise<{ balance: number | null; error: string | null }> {
   try {
-    const points = pointsForOrderAmount(total)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const adb = createAdminClient() as any
+
+    const { data: order, error: orderError } = await adb
+      .from('orders')
+      .select('guest_id, total_amount, status')
+      .eq('id', orderId)
+      .maybeSingle()
+
+    if (orderError) return { balance: null, error: orderError.message }
+    if (!order || order.status !== 'delivered') return { balance: null, error: null }
+
+    const points = pointsForOrderAmount(Number(order.total_amount ?? 0))
     if (points <= 0) return { balance: null, error: null }
 
-    const supabase = await createClient()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const db = supabase as any
-
-    const { data, error } = await db.rpc('award_loyalty_points', {
-      p_guest_id: guestId,
+    const { data, error } = await adb.rpc('award_loyalty_points', {
+      p_guest_id: order.guest_id,
       p_points: points,
       p_reason: 'Order completed',
       p_ref_type: 'order',
@@ -199,17 +211,18 @@ export async function awardOrderPointsAction(
 }
 
 /**
- * Award the fixed check-in bonus to the current guest (or a guest derived from
- * the given stay). Exported for agent-04 to call at the check-in call site in
- * Wave 2 — the points logic lives here, the wiring lives there.
+ * Award the fixed check-in bonus for the current guest's checked-in stay.
+ * Called from the guest check-in action (stay-status.ts) right after check-in.
  *
- * EXACT SIGNATURE for agent-04 / Wave 2:
- *   awardCheckInBonusAction(stayId?: string): Promise<{ balance: number | null; error: string | null }>
+ * Security: the bonus is only credited for a stay that belongs to the caller
+ * (`guest_id = auth.uid()`) and is genuinely checked in (`checked_in_at` set);
+ * the amount is a fixed server constant; and the award RPC is idempotent per
+ * stay id, so the bonus can be earned at most once per stay (no farming).
+ * Crediting goes through the service-role client (the RPC is server-only now).
  *
- * - With NO argument: awards to the currently authenticated guest (auth.uid()).
- * - With `stayId`: resolves the stay's guest_id (must belong to the caller's
- *   hotel; the RPC enforces same-hotel + role/self authorisation) and awards to
- *   that guest. Uses ref_type='checkin', ref_id=stayId when provided.
+ * @param stayId  optional — the stay being checked in. When omitted, the
+ *                caller's most recent checked-in stay is used. Recorded as
+ *                ref_id with ref_type='checkin'.
  */
 export async function awardCheckInBonusAction(stayId?: string): Promise<{
   balance: number | null
@@ -221,30 +234,26 @@ export async function awardCheckInBonusAction(stayId?: string): Promise<{
     if (!user) return { balance: null, error: 'Not authenticated' }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const db = supabase as any
+    const adb = createAdminClient() as any
 
-    let guestId = user.id
-    let refId: string | null = null
+    // Only the caller's own, genuinely checked-in stay qualifies.
+    let query = adb
+      .from('stays')
+      .select('id, guest_id, checked_in_at')
+      .eq('guest_id', user.id)
+      .not('checked_in_at', 'is', null)
+    if (stayId) query = query.eq('id', stayId)
 
-    if (stayId) {
-      const { data: stay, error: stayError } = await db
-        .from('stays')
-        .select('id, guest_id')
-        .eq('id', stayId)
-        .maybeSingle()
+    const { data: stay, error: stayError } = await query.maybeSingle()
+    if (stayError) return { balance: null, error: stayError.message }
+    if (!stay || !stay.checked_in_at) return { balance: null, error: null }
 
-      if (stayError) return { balance: null, error: stayError.message }
-      if (!stay) return { balance: null, error: 'Stay not found' }
-      guestId = stay.guest_id
-      refId = stay.id
-    }
-
-    const { data, error } = await db.rpc('award_loyalty_points', {
-      p_guest_id: guestId,
+    const { data, error } = await adb.rpc('award_loyalty_points', {
+      p_guest_id: stay.guest_id,
       p_points: LOYALTY.checkInBonus,
       p_reason: 'Check-in bonus',
       p_ref_type: 'checkin',
-      p_ref_id: refId,
+      p_ref_id: stay.id,
     })
 
     if (error) return { balance: null, error: error.message }
