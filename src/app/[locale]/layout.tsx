@@ -3,6 +3,7 @@ import { getMessages } from 'next-intl/server'
 import { notFound } from 'next/navigation'
 import { locales } from '@/lib/i18n/config'
 import { AuthProvider } from '@/components/providers/auth-provider'
+import { HtmlLangDir } from '@/components/shared/html-lang-dir'
 
 export default async function LocaleLayout({
   children,
@@ -20,6 +21,7 @@ export default async function LocaleLayout({
   return (
     <div lang={locale} dir={dir} className="min-h-screen">
       <NextIntlClientProvider messages={messages}>
+        <HtmlLangDir locale={locale} />
         <AuthProvider>
           {children}
         </AuthProvider>

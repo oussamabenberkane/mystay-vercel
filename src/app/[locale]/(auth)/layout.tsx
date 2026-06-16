@@ -1,15 +1,11 @@
-import Link from 'next/link'
-import { locales } from '@/lib/i18n/config'
+import { AuthLocaleSwitch } from './_components/auth-locale-switch'
 
 export default async function AuthLayout({
   children,
-  params,
 }: {
   children: React.ReactNode
   params: Promise<{ locale: string }>
 }) {
-  const { locale } = await params
-
   const bgPattern = `url("data:image/svg+xml,%3Csvg width='44' height='44' viewBox='0 0 44 44' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M22 2L42 22L22 42L2 22Z' fill='none' stroke='rgba(201%2C168%2C76%2C0.09)' stroke-width='0.6'/%3E%3C/svg%3E")`
 
   return (
@@ -32,29 +28,7 @@ export default async function AuthLayout({
       </div>
 
       {/* Language switcher */}
-      <div className="absolute top-5 right-5 flex items-center gap-1 z-20">
-        {locales.map((l) => {
-          const isArabic = l === 'ar'
-          const href = isArabic ? `/${locale}/login` : `/${l}/login`
-          return (
-            <Link
-              key={l}
-              href={href}
-              className={`relative px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] transition-all duration-200 ${
-                l === locale
-                  ? 'bg-[#1B2D5B] text-[#C9A84C] shadow-sm'
-                  : isArabic
-                  ? 'text-[rgba(27,45,91,0.25)] cursor-not-allowed'
-                  : 'text-[rgba(27,45,91,0.45)] hover:text-[#1B2D5B]'
-              }`}
-              aria-disabled={isArabic}
-              tabIndex={isArabic ? -1 : undefined}
-            >
-              {l}
-            </Link>
-          )
-        })}
-      </div>
+      <AuthLocaleSwitch />
 
       {/* Global animations for all auth pages */}
       <style>{`
