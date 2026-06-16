@@ -11,7 +11,6 @@ import {
   Sparkles,
   Gift,
   Menu,
-  X,
   Settings,
 } from 'lucide-react'
 import { useState } from 'react'
@@ -41,17 +40,18 @@ function SidebarContent({
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const tNav = useTranslations('nav')
   const tAuth = useTranslations('auth')
+  const tAdmin = useTranslations('admin')
   const tPromos = useTranslations('adminPromos')
 
   const navItems = [
-    { href: '/admin/operations', icon: LayoutDashboard, label: tNav('operations') },
-    { href: '/admin/users',      icon: Users,           label: 'Users'             },
-    { href: '/admin/stays',      icon: CalendarDays,    label: 'Stays'             },
-    { href: '/admin/menu',          icon: UtensilsCrossed, label: tNav('menu')        },
-    { href: '/admin/announcements', icon: Megaphone,       label: 'Annonces'          },
-    { href: '/admin/marketing',     icon: Sparkles,        label: tPromos('navLabel') },
-    { href: '/admin/loyalty',       icon: Gift,            label: 'Fidélité'          },
-    { href: '/admin/settings',      icon: Settings,        label: 'Paramètres & QR'  },
+    { href: '/admin/operations', icon: LayoutDashboard, label: tNav('operations')   },
+    { href: '/admin/users',      icon: Users,           label: tNav('users')        },
+    { href: '/admin/stays',      icon: CalendarDays,    label: tNav('stays')        },
+    { href: '/admin/menu',          icon: UtensilsCrossed, label: tNav('menu')          },
+    { href: '/admin/announcements', icon: Megaphone,       label: tNav('announcements') },
+    { href: '/admin/marketing',     icon: Sparkles,        label: tPromos('navLabel')   },
+    { href: '/admin/loyalty',       icon: Gift,            label: tNav('loyalty')       },
+    { href: '/admin/settings',      icon: Settings,        label: tNav('settings')      },
   ]
 
   async function handleLogout() {
@@ -88,7 +88,7 @@ function SidebarContent({
       {/* Nav label */}
       <div className="px-6 pt-5 pb-2">
         <p className="text-[10px] font-semibold uppercase tracking-widest" style={{ color: 'rgba(248,240,232,0.35)' }}>
-          Admin Portal
+          {tAdmin('portal')}
         </p>
       </div>
 
@@ -129,7 +129,7 @@ function SidebarContent({
           {adminName}
         </p>
         <p className="text-[11px] mb-3" style={{ color: 'rgba(248,240,232,0.35)' }}>
-          Administrator
+          {tAdmin('administrator')}
         </p>
         <button
           onClick={handleLogout}

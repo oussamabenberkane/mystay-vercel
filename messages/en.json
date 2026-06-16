@@ -14,7 +14,11 @@
     "operations": "Operations",
     "guests": "Guests",
     "staff": "Staff",
-    "reports": "Reports"
+    "reports": "Reports",
+    "users": "Users",
+    "stays": "Stays",
+    "announcements": "Announcements",
+    "loyalty": "Loyalty"
   },
   "auth": {
     "login": "Login",
@@ -27,7 +31,13 @@
     "loginTitle": "Welcome Back",
     "loginSubtitle": "Sign in to your account",
     "noAccount": "Don't have an account?",
-    "haveAccount": "Already have an account?"
+    "haveAccount": "Already have an account?",
+    "signingIn": "Signing in…",
+    "dev": {
+      "testAccounts": "Test Accounts",
+      "tapAgain": "Tap again to sign in →",
+      "tagline": "Secure · Private · Exceptional"
+    }
   },
   "guest": {
     "dashboard": {
@@ -36,7 +46,22 @@
       "checkIn": "Check-in",
       "checkOut": "Check-out",
       "room": "Room",
-      "quickActions": "Quick Actions"
+      "quickActions": "Quick Actions",
+      "noActiveStayInline": "No active stay — contact reception for assistance.",
+      "currentBalance": "Current Balance",
+      "viewBill": "View Bill",
+      "recentOrders": "Recent Orders",
+      "viewAll": "View all",
+      "noActiveStayTitle": "No Active Stay",
+      "noActiveStayBody": "Please contact hotel reception to get checked in.",
+      "actions": {
+        "roomService": { "label": "Room Service", "desc": "Order meals & drinks" },
+        "requests": { "label": "Requests", "desc": "Housekeeping & services" },
+        "chat": { "label": "Chat", "desc": "Contact reception" },
+        "info": { "label": "Hotel Info", "desc": "Wifi, hours, services" },
+        "feedback": { "label": "Your Review", "desc": "Remarks & impressions" },
+        "loyalty": { "label": "Loyalty", "desc": "Points & offers" }
+      }
     },
     "menu": {
       "title": "Room Service Menu",
@@ -65,7 +90,12 @@
       "title": "Chat with Reception",
       "placeholder": "Type a message...",
       "send": "Send",
-      "empty": "Start a conversation"
+      "empty": "Start a conversation",
+      "concierge": "Hotel Concierge",
+      "available": "Available",
+      "noStayTitle": "No active stay found",
+      "noStayBody": "Please contact reception to activate your stay.",
+      "emptyBody": "Our concierge team is here to help with anything you need during your stay."
     },
     "expenses": {
       "title": "My Expenses",
@@ -115,8 +145,28 @@
     }
   },
   "admin": {
+    "portal": "Admin Portal",
+    "administrator": "Administrator",
     "operations": {
-      "title": "Operations Overview"
+      "title": "Operations Overview",
+      "liveOverview": "Live Overview",
+      "activeStays": "Active Stays",
+      "activeStaysSub": "guests checked in",
+      "ordersToday": "Orders Today",
+      "ordersTodaySub": "room service orders",
+      "pendingOrders": "Pending Orders",
+      "revenueToday": "Revenue Today",
+      "revenueTodaySub": "from room service",
+      "recentActivity": "Recent Activity",
+      "roomServiceOrders": "Room Service Orders",
+      "serviceRequests": "Service Requests",
+      "noOrders": "No orders yet today",
+      "noRequests": "No service requests",
+      "unknown": "Unknown",
+      "justNow": "just now",
+      "minutesAgo": "{count}m ago",
+      "hoursAgo": "{count}h ago",
+      "daysAgo": "{count}d ago"
     },
     "guests": {
       "title": "Guests",
@@ -170,7 +220,10 @@
     "checkInButton": "Check in",
     "checkOutButton": "Check out",
     "processing": "Please wait…",
-    "checkedOutConfirm": "You're all checked out"
+    "checkedOutConfirm": "You're all checked out",
+    "slowHint": "Still working… this can take a few seconds.",
+    "timeoutError": "This is taking longer than expected. Please check your connection and try again.",
+    "retry": "Try again"
   },
   "status": {
     "pending": "Pending",
@@ -363,5 +416,77 @@
       "app_card": "Card",
       "reception": "Reception"
     }
+  },
+  "adminLoyalty": {
+    "eyebrow": "Loyalty",
+    "title": "Loyalty Offers",
+    "count": "{count, plural, =0 {No offers} one {# offer} other {# offers}}",
+    "add": "New offer",
+    "empty": "No offers yet",
+    "hidden": "Hidden",
+    "edit": "Edit",
+    "show": "Show",
+    "hide": "Hide",
+    "delete": "Delete",
+    "deleteTitle": "Delete this offer?",
+    "irreversible": "This action cannot be undone.",
+    "cancel": "Cancel",
+    "offerCreated": "Offer created successfully.",
+    "offerUpdated": "Offer updated.",
+    "offerDeleted": "Offer deleted.",
+    "editTitle": "Edit offer",
+    "fieldTitle": "Title",
+    "titlePlaceholder": "E.g. Complimentary breakfast…",
+    "fieldDescription": "Description",
+    "optional": "(optional)",
+    "descriptionPlaceholder": "Offer details…",
+    "fieldPointsCost": "Points cost",
+    "pointsPlaceholder": "E.g. 500",
+    "saving": "Saving…",
+    "save": "Save",
+    "create": "Create offer"
+  },
+  "adminSettings": {
+    "heading": "Settings",
+    "subtitle": "Hotel configuration and tools",
+    "qr": {
+      "title": "Guest QR Code",
+      "subtitle": "Place in rooms — guests scan to access the app",
+      "scanHint": "Scan to access your services",
+      "download": "Download PNG"
+    },
+    "info": {
+      "title": "Hotel Information",
+      "subtitle": "Visible to all signed-in guests",
+      "saved": "Information saved successfully.",
+      "sectionGeneral": "General",
+      "tagline": "Tagline",
+      "taglinePlaceholder": "Béjaïa · 5 Stars · Sea View",
+      "sectionContact": "Contact",
+      "phone": "Phone",
+      "email": "Email",
+      "sectionHours": "Arrival / Departure Times",
+      "checkin": "Check-in",
+      "checkout": "Check-out",
+      "sectionWifi": "Wi-Fi",
+      "wifiNetwork": "Network",
+      "wifiPassword": "Password",
+      "wifiPasswordPlaceholder": "password",
+      "sectionRestaurants": "Restaurants & Hours",
+      "restaurantNamePlaceholder": "Restaurant name",
+      "restaurantHoursPlaceholder": "12pm–3pm · 7pm–11pm",
+      "addRestaurant": "Add a restaurant",
+      "sectionAmenities": "Room Amenities (comma separated)",
+      "amenitiesPlaceholder": "Air conditioning, Wi-Fi, Television, Safe…",
+      "sectionServices": "Hotel Services (comma separated)",
+      "servicesPlaceholder": "Pool, Spa & Hammam, Secure parking…",
+      "saving": "Saving…",
+      "submit": "Save information"
+    }
+  },
+  "messageInput": {
+    "placeholder": "Type a message…",
+    "sendHint": "Press Enter to send · Shift+Enter for new line",
+    "sendAria": "Send message"
   }
 }

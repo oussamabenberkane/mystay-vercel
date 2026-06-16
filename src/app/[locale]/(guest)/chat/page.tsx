@@ -13,18 +13,8 @@ import {
 } from '@/lib/actions/chat'
 import { getActiveStayAction } from '@/lib/actions/room-service'
 import { useAuthStore } from '@/lib/store/auth-store'
-import { createClient } from '@/lib/supabase/client'
 
 type ExtendedMessage = MessageWithSender & { isOptimistic?: boolean }
-
-function findLastOptimistic(messages: ExtendedMessage[], senderId: string, content: string): number {
-  for (let i = messages.length - 1; i >= 0; i--) {
-    if (messages[i].isOptimistic && messages[i].sender_id === senderId && messages[i].content === content) {
-      return i
-    }
-  }
-  return -1
-}
 
 export default function GuestChatPage() {
   const profile = useAuthStore((s) => s.profile)
@@ -116,7 +106,8 @@ export default function GuestChatPage() {
     init()
   }, [scrollToBottom])
 
-  // Polling fallback — 2s
+  // Message sync — 2s polling (sole transport; realtime WebSockets are blocked
+  // in some deployment/network environments, so we rely on polling only).
   useEffect(() => {
     if (!stayId) return
     const interval = setInterval(async () => {
@@ -128,6 +119,12 @@ export default function GuestChatPage() {
       )
 
       incoming.forEach((m) => shownIdsRef.current.add(m.id))
+
+      // Mark our own server-confirmed messages as shown so they survive once
+      // their optimistic placeholder is reconciled away below.
+      polled.forEach((m) => {
+        if (m.sender_id === profileRef.current?.id) shownIdsRef.current.add(m.id)
+      })
 
       setMessages((prev) => {
         const optimistics = prev.filter((m) => m.isOptimistic)
@@ -144,42 +141,6 @@ export default function GuestChatPage() {
     }, 2000)
     return () => clearInterval(interval)
   }, [stayId, showIncoming])
-
-  // Realtime subscription
-  useEffect(() => {
-    if (!stayId) return
-    const supabase = createClient()
-    const channel = supabase
-      .channel(`chat:${stayId}`)
-      .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'messages', filter: `stay_id=eq.${stayId}` },
-        (payload) => {
-          const newMsg = payload.new as MessageWithSender
-          if (shownIdsRef.current.has(newMsg.id)) return
-          shownIdsRef.current.add(newMsg.id)
-
-          if (newMsg.sender_id === profileRef.current?.id) {
-            setMessages((prev) => {
-              if (prev.some((m) => m.id === newMsg.id)) return prev
-              const optIdx = findLastOptimistic(prev, newMsg.sender_id, newMsg.content)
-              if (optIdx >= 0) {
-                const updated = [...prev]
-                updated[optIdx] = { ...newMsg }
-                return updated
-              }
-              return [...prev, newMsg]
-            })
-            scrollToBottom()
-          } else {
-            showIncoming([newMsg])
-          }
-        }
-      )
-      .subscribe()
-
-    return () => { supabase.removeChannel(channel) }
-  }, [stayId, showIncoming, scrollToBottom])
 
   const handleSend = useCallback(
     async (content: string) => {
@@ -250,7 +211,7 @@ export default function GuestChatPage() {
               className="text-[9px] font-semibold uppercase tracking-[0.15em]"
               style={{ color: 'rgba(201,168,76,0.7)' }}
             >
-              Hotel Concierge
+              {t('concierge')}
             </p>
             <p
               className="font-heading text-[16px] font-bold leading-tight"
@@ -275,7 +236,7 @@ export default function GuestChatPage() {
               className="text-[11px] font-medium"
               style={{ color: 'rgba(248,240,232,0.6)' }}
             >
-              Available
+              {t('available')}
             </span>
           </div>
         </div>
@@ -322,10 +283,10 @@ export default function GuestChatPage() {
         ) : !stayId ? (
           <div className="flex flex-col items-center justify-center py-20 text-center px-6">
             <p className="font-heading text-base font-semibold" style={{ color: '#1B2D5B' }}>
-              No active stay found
+              {t('noStayTitle')}
             </p>
             <p className="mt-1.5 text-sm" style={{ color: '#7A8BA8' }}>
-              Please contact reception to activate your stay.
+              {t('noStayBody')}
             </p>
           </div>
         ) : messages.length === 0 && !isTyping ? (
@@ -344,7 +305,7 @@ export default function GuestChatPage() {
               {t('empty')}
             </p>
             <p className="mt-2 text-sm leading-relaxed" style={{ color: '#7A8BA8' }}>
-              Our concierge team is here to help with anything you need during your stay.
+              {t('emptyBody')}
             </p>
           </div>
         ) : (
@@ -364,7 +325,7 @@ export default function GuestChatPage() {
                 />
               </div>
             ))}
-            {isTyping && <TypingIndicator senderName="Hotel Concierge" />}
+            {isTyping && <TypingIndicator senderName={t('concierge')} />}
           </div>
         )}
       </div>

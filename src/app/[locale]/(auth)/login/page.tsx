@@ -252,8 +252,7 @@ export default function LoginPage() {
                     <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
                       <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" strokeDasharray="28" strokeDashoffset="7" />
                     </svg>
-                    {/* TODO: i18n */}
-                    Signing in…
+                    {t('signingIn')}
                   </span>
                 ) : t('login')}
               </button>
@@ -286,7 +285,7 @@ export default function LoginPage() {
                     DEV
                   </span>
                   <span className="text-[9px] font-bold uppercase tracking-[0.2em]" style={{ color: 'rgba(27,45,91,0.35)' }}>
-                    Test Accounts
+                    {t('dev.testAccounts')}
                   </span>
                 </div>
                 <div className="flex-1 h-px" style={{ background: 'rgba(27,45,91,0.07)' }} />
@@ -379,7 +378,7 @@ export default function LoginPage() {
                           </ul>
                           {isTapped && (
                             <p className="md:hidden mt-3 pt-2.5 text-[10px] font-bold text-center tracking-wide" style={{ color: 'rgba(201,168,76,0.8)', borderTop: '1px solid rgba(201,168,76,0.15)' }}>
-                              Tap again to sign in →
+                              {t('dev.tapAgain')}
                             </p>
                           )}
                         </div>
@@ -412,7 +411,7 @@ export default function LoginPage() {
       <p className="auth-up-6 mt-4 text-center text-[9px] font-semibold uppercase tracking-[0.3em]"
         style={{ color: 'rgba(27,45,91,0.3)' }}
       >
-        Secure · Private · Exceptional
+        {t('dev.tagline')}
       </p>
     </div>
   )

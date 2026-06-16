@@ -14,7 +14,11 @@
     "operations": "Opérations",
     "guests": "Clients",
     "staff": "Personnel",
-    "reports": "Rapports"
+    "reports": "Rapports",
+    "users": "Utilisateurs",
+    "stays": "Séjours",
+    "announcements": "Annonces",
+    "loyalty": "Fidélité"
   },
   "auth": {
     "login": "Connexion",
@@ -27,7 +31,13 @@
     "loginTitle": "Bon retour",
     "loginSubtitle": "Connectez-vous à votre compte",
     "noAccount": "Pas encore de compte ?",
-    "haveAccount": "Déjà un compte ?"
+    "haveAccount": "Déjà un compte ?",
+    "signingIn": "Connexion en cours…",
+    "dev": {
+      "testAccounts": "Comptes de test",
+      "tapAgain": "Touchez à nouveau pour vous connecter →",
+      "tagline": "Sécurisé · Privé · Exceptionnel"
+    }
   },
   "guest": {
     "dashboard": {
@@ -36,7 +46,22 @@
       "checkIn": "Arrivée",
       "checkOut": "Départ",
       "room": "Chambre",
-      "quickActions": "Actions rapides"
+      "quickActions": "Actions rapides",
+      "noActiveStayInline": "Aucun séjour actif — contactez la réception pour assistance.",
+      "currentBalance": "Solde actuel",
+      "viewBill": "Voir la note",
+      "recentOrders": "Commandes récentes",
+      "viewAll": "Tout voir",
+      "noActiveStayTitle": "Aucun séjour actif",
+      "noActiveStayBody": "Veuillez contacter la réception de l'hôtel pour enregistrer votre arrivée.",
+      "actions": {
+        "roomService": { "label": "Room Service", "desc": "Commander repas & boissons" },
+        "requests": { "label": "Demandes", "desc": "Ménage & services" },
+        "chat": { "label": "Chat", "desc": "Contacter la réception" },
+        "info": { "label": "Infos Hôtel", "desc": "Wifi, horaires, services" },
+        "feedback": { "label": "Votre Avis", "desc": "Remarques & impressions" },
+        "loyalty": { "label": "Fidélité", "desc": "Points & offres" }
+      }
     },
     "menu": {
       "title": "Menu Room Service",
@@ -65,7 +90,12 @@
       "title": "Chat avec la réception",
       "placeholder": "Tapez un message...",
       "send": "Envoyer",
-      "empty": "Commencer une conversation"
+      "empty": "Commencer une conversation",
+      "concierge": "Conciergerie",
+      "available": "Disponible",
+      "noStayTitle": "Aucun séjour actif",
+      "noStayBody": "Veuillez contacter la réception pour activer votre séjour.",
+      "emptyBody": "Notre équipe de conciergerie est là pour vous aider en tout ce dont vous avez besoin pendant votre séjour."
     },
     "expenses": {
       "title": "Mes Dépenses",
@@ -115,8 +145,28 @@
     }
   },
   "admin": {
+    "portal": "Portail Admin",
+    "administrator": "Administrateur",
     "operations": {
-      "title": "Vue d'ensemble des opérations"
+      "title": "Vue d'ensemble des opérations",
+      "liveOverview": "Vue en temps réel",
+      "activeStays": "Séjours actifs",
+      "activeStaysSub": "clients enregistrés",
+      "ordersToday": "Commandes aujourd'hui",
+      "ordersTodaySub": "commandes room service",
+      "pendingOrders": "Commandes en attente",
+      "revenueToday": "Revenus aujourd'hui",
+      "revenueTodaySub": "du room service",
+      "recentActivity": "Activité récente",
+      "roomServiceOrders": "Commandes Room Service",
+      "serviceRequests": "Demandes de service",
+      "noOrders": "Aucune commande aujourd'hui",
+      "noRequests": "Aucune demande de service",
+      "unknown": "Inconnu",
+      "justNow": "à l'instant",
+      "minutesAgo": "il y a {count} min",
+      "hoursAgo": "il y a {count} h",
+      "daysAgo": "il y a {count} j"
     },
     "guests": {
       "title": "Clients",
@@ -170,7 +220,10 @@
     "checkInButton": "Enregistrer l'arrivée",
     "checkOutButton": "Enregistrer le départ",
     "processing": "Veuillez patienter…",
-    "checkedOutConfirm": "Votre départ est enregistré"
+    "checkedOutConfirm": "Votre départ est enregistré",
+    "slowHint": "Toujours en cours… cela peut prendre quelques secondes.",
+    "timeoutError": "Cela prend plus de temps que prévu. Veuillez vérifier votre connexion et réessayer.",
+    "retry": "Réessayer"
   },
   "status": {
     "pending": "En attente",
@@ -363,5 +416,77 @@
       "app_card": "Carte",
       "reception": "Réception"
     }
+  },
+  "adminLoyalty": {
+    "eyebrow": "Fidélité",
+    "title": "Offres de fidélité",
+    "count": "{count, plural, =0 {Aucune offre} one {# offre} other {# offres}}",
+    "add": "Nouvelle offre",
+    "empty": "Aucune offre pour le moment",
+    "hidden": "Masquée",
+    "edit": "Modifier",
+    "show": "Afficher",
+    "hide": "Masquer",
+    "delete": "Supprimer",
+    "deleteTitle": "Supprimer l'offre ?",
+    "irreversible": "Cette action est irréversible.",
+    "cancel": "Annuler",
+    "offerCreated": "Offre créée avec succès.",
+    "offerUpdated": "Offre mise à jour.",
+    "offerDeleted": "Offre supprimée.",
+    "editTitle": "Modifier l'offre",
+    "fieldTitle": "Titre",
+    "titlePlaceholder": "Ex : Petit-déjeuner offert…",
+    "fieldDescription": "Description",
+    "optional": "(optionnel)",
+    "descriptionPlaceholder": "Détails de l'offre…",
+    "fieldPointsCost": "Coût en points",
+    "pointsPlaceholder": "Ex : 500",
+    "saving": "Enregistrement…",
+    "save": "Enregistrer",
+    "create": "Créer l'offre"
+  },
+  "adminSettings": {
+    "heading": "Paramètres",
+    "subtitle": "Configuration et outils de l'hôtel",
+    "qr": {
+      "title": "Code QR Clients",
+      "subtitle": "À placer dans les chambres — les clients scannent pour accéder à l'app",
+      "scanHint": "Scannez pour accéder à vos services",
+      "download": "Télécharger PNG"
+    },
+    "info": {
+      "title": "Informations de l'hôtel",
+      "subtitle": "Visible par tous les clients connectés",
+      "saved": "Informations enregistrées avec succès.",
+      "sectionGeneral": "Général",
+      "tagline": "Slogan (tagline)",
+      "taglinePlaceholder": "Béjaïa · 5 Étoiles · Vue Mer",
+      "sectionContact": "Contact",
+      "phone": "Téléphone",
+      "email": "Email",
+      "sectionHours": "Horaires d'arrivée / départ",
+      "checkin": "Check-in",
+      "checkout": "Check-out",
+      "sectionWifi": "Wi-Fi",
+      "wifiNetwork": "Réseau",
+      "wifiPassword": "Mot de passe",
+      "wifiPasswordPlaceholder": "motdepasse",
+      "sectionRestaurants": "Restaurants & Horaires",
+      "restaurantNamePlaceholder": "Nom du restaurant",
+      "restaurantHoursPlaceholder": "12h–15h · 19h–23h",
+      "addRestaurant": "Ajouter un restaurant",
+      "sectionAmenities": "Équipements chambre (séparés par virgule)",
+      "amenitiesPlaceholder": "Climatisation, Wi-Fi, Télévision, Coffre-fort…",
+      "sectionServices": "Services de l'hôtel (séparés par virgule)",
+      "servicesPlaceholder": "Piscine, Spa & Hammam, Parking sécurisé…",
+      "saving": "Enregistrement…",
+      "submit": "Enregistrer les informations"
+    }
+  },
+  "messageInput": {
+    "placeholder": "Tapez un message…",
+    "sendHint": "Appuyez sur Entrée pour envoyer · Maj+Entrée pour un saut de ligne",
+    "sendAria": "Envoyer le message"
   }
 }

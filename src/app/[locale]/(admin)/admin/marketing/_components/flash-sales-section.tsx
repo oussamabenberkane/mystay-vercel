@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
 import { ArrowDown, ArrowUp, Eye, EyeOff, Pencil, Tag, Trash2 } from 'lucide-react'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
 import {
@@ -50,9 +50,9 @@ function localInputToIso(value: string): string | null {
   return d.toISOString()
 }
 
-function formatRange(starts: string | null, ends: string | null): string | null {
+function formatRange(starts: string | null, ends: string | null, locale: string): string | null {
   const fmt = (iso: string) =>
-    new Date(iso).toLocaleString('fr-FR', {
+    new Date(iso).toLocaleString(locale, {
       day: 'numeric',
       month: 'short',
       hour: '2-digit',
@@ -66,6 +66,7 @@ function formatRange(starts: string | null, ends: string | null): string | null 
 
 export function FlashSalesSection({ initial }: { initial: FlashSale[] }) {
   const t = useTranslations('adminPromos')
+  const locale = useLocale()
   const { toasts, showToast } = useToasts()
 
   const [items, setItems] = useState<FlashSale[]>(sortSales(initial))
@@ -193,7 +194,7 @@ export function FlashSalesSection({ initial }: { initial: FlashSale[] }) {
       ) : (
         <div className="space-y-4">
           {items.map((item) => {
-            const range = formatRange(item.starts_at, item.ends_at)
+            const range = formatRange(item.starts_at, item.ends_at, locale)
             return (
               <div
                 key={item.id}

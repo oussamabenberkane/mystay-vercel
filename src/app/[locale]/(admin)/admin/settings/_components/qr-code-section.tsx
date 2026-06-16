@@ -2,9 +2,11 @@
 
 import { useEffect, useRef, useState } from 'react'
 import QRCode from 'qrcode'
+import { useTranslations } from 'next-intl'
 import { Download, QrCode } from 'lucide-react'
 
 export function QRCodeSection({ appUrl }: { appUrl: string }) {
+  const t = useTranslations('adminSettings.qr')
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [generated, setGenerated] = useState(false)
 
@@ -32,9 +34,9 @@ export function QRCodeSection({ appUrl }: { appUrl: string }) {
           <QrCode className="size-5" style={{ color: '#1B2D5B' }} />
         </div>
         <div>
-          <p className="font-semibold text-sm" style={{ color: '#1B2D5B' }}>Code QR Clients</p>
+          <p className="font-semibold text-sm" style={{ color: '#1B2D5B' }}>{t('title')}</p>
           <p className="text-xs" style={{ color: '#7A8BA8' }}>
-            À placer dans les chambres — les clients scannent pour accéder à l'app
+            {t('subtitle')}
           </p>
         </div>
       </div>
@@ -54,7 +56,7 @@ export function QRCodeSection({ appUrl }: { appUrl: string }) {
             My Stay
           </p>
           <p className="text-[11px] mt-1" style={{ color: '#7A8BA8' }}>
-            Scannez pour accéder à vos services
+            {t('scanHint')}
           </p>
           <p className="text-[10px] mt-0.5 font-mono" style={{ color: '#7A8BA8', opacity: 0.7 }}>
             {appUrl}
@@ -69,7 +71,7 @@ export function QRCodeSection({ appUrl }: { appUrl: string }) {
           style={{ background: '#1B2D5B', color: '#F8F0E8' }}
         >
           <Download className="size-4" style={{ color: '#C9A84C' }} />
-          Télécharger PNG
+          {t('download')}
         </button>
       </div>
     </div>

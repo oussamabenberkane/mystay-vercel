@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import { Send } from 'lucide-react'
 
 type Props = {
@@ -9,7 +10,8 @@ type Props = {
   placeholder?: string
 }
 
-export function MessageInput({ onSend, disabled, placeholder = 'Type a messageâ€¦' }: Props) {
+export function MessageInput({ onSend, disabled, placeholder }: Props) {
+  const t = useTranslations('messageInput')
   const [value, setValue] = useState('')
   const [focused, setFocused] = useState(false)
   const ref = useRef<HTMLTextAreaElement>(null)
@@ -65,7 +67,7 @@ export function MessageInput({ onSend, disabled, placeholder = 'Type a messageâ€
           onKeyDown={handleKeyDown}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          placeholder={placeholder}
+          placeholder={placeholder ?? t('placeholder')}
           className="flex-1 resize-none bg-transparent text-sm leading-relaxed outline-none placeholder:opacity-50"
           style={{
             color: '#1B2D5B',
@@ -86,7 +88,7 @@ export function MessageInput({ onSend, disabled, placeholder = 'Type a messageâ€
             border: canSend ? 'none' : '1.5px solid rgba(27,45,91,0.15)',
             marginBottom: '1px',
           }}
-          aria-label="Send message"
+          aria-label={t('sendAria')}
         >
           <Send
             className="size-3.5"
@@ -99,7 +101,7 @@ export function MessageInput({ onSend, disabled, placeholder = 'Type a messageâ€
       </div>
 
       <p className="mt-1.5 text-center text-[10px]" style={{ color: 'rgba(27,45,91,0.25)' }}>
-        Press Enter to send Â· Shift+Enter for new line
+        {t('sendHint')}
       </p>
     </div>
   )

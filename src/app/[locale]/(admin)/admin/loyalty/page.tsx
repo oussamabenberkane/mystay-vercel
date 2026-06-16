@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { getTranslations } from 'next-intl/server'
 import { defaultLocale } from '@/lib/i18n/config'
 import { getLoyaltyOffersAdminAction } from '@/lib/actions/loyalty'
 import { LoyaltyAdminClient } from './_components/loyalty-admin-client'
@@ -10,6 +11,7 @@ export default async function AdminLoyaltyPage({
   params: Promise<{ locale: string }>
 }) {
   const { locale } = await params
+  const t = await getTranslations('adminLoyalty')
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -33,13 +35,13 @@ export default async function AdminLoyaltyPage({
           className="text-xs font-semibold uppercase tracking-widest mb-1"
           style={{ color: '#C9A84C' }}
         >
-          Fidélité
+          {t('eyebrow')}
         </p>
         <h1 className="font-heading text-3xl font-bold" style={{ color: '#1B2D5B' }}>
-          Offres de fidélité
+          {t('title')}
         </h1>
         <p className="mt-1 text-sm" style={{ color: '#7A8BA8' }}>
-          {offers.length} offre{offers.length !== 1 ? 's' : ''}
+          {t('count', { count: offers.length })}
         </p>
       </div>
 

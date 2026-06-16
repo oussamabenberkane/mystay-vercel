@@ -2,6 +2,7 @@ import { QRCodeSection } from './_components/qr-code-section'
 import { HotelInfoForm } from './_components/hotel-info-form'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { getTranslations } from 'next-intl/server'
 import { defaultLocale } from '@/lib/i18n/config'
 import { getHotelInfoAction } from '@/lib/actions/hotel-info'
 
@@ -11,6 +12,7 @@ export default async function AdminSettingsPage({
   params: Promise<{ locale: string }>
 }) {
   const { locale } = await params
+  const t = await getTranslations('adminSettings')
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -35,10 +37,10 @@ export default async function AdminSettingsPage({
     <div className="p-6 max-w-2xl mx-auto space-y-8">
       <div>
         <h1 className="text-2xl font-bold" style={{ color: '#1B2D5B' }}>
-          Paramètres — My Stay
+          {t('heading')} — My Stay
         </h1>
         <p className="text-sm mt-1" style={{ color: '#7A8BA8' }}>
-          Configuration et outils de l'hôtel
+          {t('subtitle')}
         </p>
       </div>
 

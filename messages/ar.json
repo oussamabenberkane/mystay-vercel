@@ -14,7 +14,11 @@
     "operations": "العمليات",
     "guests": "النزلاء",
     "staff": "الموظفون",
-    "reports": "التقارير"
+    "reports": "التقارير",
+    "users": "المستخدمون",
+    "stays": "الإقامات",
+    "announcements": "الإعلانات",
+    "loyalty": "الولاء"
   },
   "auth": {
     "login": "تسجيل الدخول",
@@ -27,7 +31,13 @@
     "loginTitle": "مرحباً بعودتك",
     "loginSubtitle": "سجّل الدخول إلى حسابك",
     "noAccount": "ليس لديك حساب؟",
-    "haveAccount": "لديك حساب بالفعل؟"
+    "haveAccount": "لديك حساب بالفعل؟",
+    "signingIn": "جارٍ تسجيل الدخول…",
+    "dev": {
+      "testAccounts": "حسابات تجريبية",
+      "tapAgain": "انقر مرة أخرى لتسجيل الدخول ←",
+      "tagline": "آمن · خاص · استثنائي"
+    }
   },
   "guest": {
     "dashboard": {
@@ -36,7 +46,22 @@
       "checkIn": "تاريخ الوصول",
       "checkOut": "تاريخ المغادرة",
       "room": "الغرفة",
-      "quickActions": "إجراءات سريعة"
+      "quickActions": "إجراءات سريعة",
+      "noActiveStayInline": "لا توجد إقامة نشطة — يرجى التواصل مع الاستقبال للمساعدة.",
+      "currentBalance": "الرصيد الحالي",
+      "viewBill": "عرض الفاتورة",
+      "recentOrders": "الطلبات الأخيرة",
+      "viewAll": "عرض الكل",
+      "noActiveStayTitle": "لا توجد إقامة نشطة",
+      "noActiveStayBody": "يرجى التواصل مع استقبال الفندق لتسجيل وصولك.",
+      "actions": {
+        "roomService": { "label": "خدمة الغرف", "desc": "اطلب الوجبات والمشروبات" },
+        "requests": { "label": "الطلبات", "desc": "التنظيف والخدمات" },
+        "chat": { "label": "المحادثة", "desc": "التواصل مع الاستقبال" },
+        "info": { "label": "معلومات الفندق", "desc": "الواي فاي والمواعيد والخدمات" },
+        "feedback": { "label": "تقييمك", "desc": "الملاحظات والانطباعات" },
+        "loyalty": { "label": "الولاء", "desc": "النقاط والعروض" }
+      }
     },
     "menu": {
       "title": "قائمة خدمة الغرف",
@@ -65,7 +90,12 @@
       "title": "التحدث مع الاستقبال",
       "placeholder": "اكتب رسالة...",
       "send": "إرسال",
-      "empty": "ابدأ محادثة"
+      "empty": "ابدأ محادثة",
+      "concierge": "خدمة الاستقبال",
+      "available": "متاح",
+      "noStayTitle": "لا توجد إقامة نشطة",
+      "noStayBody": "يرجى التواصل مع الاستقبال لتفعيل إقامتك.",
+      "emptyBody": "فريق خدمة الاستقبال هنا لمساعدتك في كل ما تحتاجه خلال إقامتك."
     },
     "expenses": {
       "title": "مصروفاتي",
@@ -115,8 +145,28 @@
     }
   },
   "admin": {
+    "portal": "بوابة الإدارة",
+    "administrator": "مسؤول",
     "operations": {
-      "title": "نظرة عامة على العمليات"
+      "title": "نظرة عامة على العمليات",
+      "liveOverview": "نظرة مباشرة",
+      "activeStays": "الإقامات النشطة",
+      "activeStaysSub": "نزلاء مسجّلون",
+      "ordersToday": "طلبات اليوم",
+      "ordersTodaySub": "طلبات خدمة الغرف",
+      "pendingOrders": "الطلبات المعلقة",
+      "revenueToday": "إيرادات اليوم",
+      "revenueTodaySub": "من خدمة الغرف",
+      "recentActivity": "النشاط الأخير",
+      "roomServiceOrders": "طلبات خدمة الغرف",
+      "serviceRequests": "طلبات الخدمة",
+      "noOrders": "لا توجد طلبات اليوم بعد",
+      "noRequests": "لا توجد طلبات خدمة",
+      "unknown": "غير معروف",
+      "justNow": "الآن",
+      "minutesAgo": "منذ {count} دقيقة",
+      "hoursAgo": "منذ {count} ساعة",
+      "daysAgo": "منذ {count} يوم"
     },
     "guests": {
       "title": "النزلاء",
@@ -170,7 +220,10 @@
     "checkInButton": "تسجيل الوصول",
     "checkOutButton": "تسجيل المغادرة",
     "processing": "يرجى الانتظار…",
-    "checkedOutConfirm": "تم تسجيل مغادرتك"
+    "checkedOutConfirm": "تم تسجيل مغادرتك",
+    "slowHint": "ما زال قيد المعالجة… قد يستغرق ذلك بضع ثوانٍ.",
+    "timeoutError": "يستغرق هذا وقتاً أطول من المتوقع. يرجى التحقق من اتصالك والمحاولة مرة أخرى.",
+    "retry": "حاول مرة أخرى"
   },
   "status": {
     "pending": "قيد الانتظار",
@@ -363,5 +416,77 @@
       "app_card": "بطاقة",
       "reception": "الاستقبال"
     }
+  },
+  "adminLoyalty": {
+    "eyebrow": "الولاء",
+    "title": "عروض الولاء",
+    "count": "{count, plural, zero {لا توجد عروض} one {عرض واحد} two {عرضان} few {# عروض} many {# عرضاً} other {# عرض}}",
+    "add": "عرض جديد",
+    "empty": "لا توجد عروض بعد",
+    "hidden": "مخفي",
+    "edit": "تعديل",
+    "show": "إظهار",
+    "hide": "إخفاء",
+    "delete": "حذف",
+    "deleteTitle": "حذف العرض؟",
+    "irreversible": "لا يمكن التراجع عن هذا الإجراء.",
+    "cancel": "إلغاء",
+    "offerCreated": "تم إنشاء العرض بنجاح.",
+    "offerUpdated": "تم تحديث العرض.",
+    "offerDeleted": "تم حذف العرض.",
+    "editTitle": "تعديل العرض",
+    "fieldTitle": "العنوان",
+    "titlePlaceholder": "مثال: إفطار مجاني…",
+    "fieldDescription": "الوصف",
+    "optional": "(اختياري)",
+    "descriptionPlaceholder": "تفاصيل العرض…",
+    "fieldPointsCost": "التكلفة بالنقاط",
+    "pointsPlaceholder": "مثال: 500",
+    "saving": "جارٍ الحفظ…",
+    "save": "حفظ",
+    "create": "إنشاء العرض"
+  },
+  "adminSettings": {
+    "heading": "الإعدادات",
+    "subtitle": "إعدادات وأدوات الفندق",
+    "qr": {
+      "title": "رمز QR للنزلاء",
+      "subtitle": "ضعه في الغرف — يمسحه النزلاء للوصول إلى التطبيق",
+      "scanHint": "امسح للوصول إلى خدماتك",
+      "download": "تنزيل PNG"
+    },
+    "info": {
+      "title": "معلومات الفندق",
+      "subtitle": "مرئية لجميع النزلاء المسجّلين",
+      "saved": "تم حفظ المعلومات بنجاح.",
+      "sectionGeneral": "عام",
+      "tagline": "الشعار",
+      "taglinePlaceholder": "بجاية · 5 نجوم · إطلالة على البحر",
+      "sectionContact": "التواصل",
+      "phone": "الهاتف",
+      "email": "البريد الإلكتروني",
+      "sectionHours": "مواعيد الوصول / المغادرة",
+      "checkin": "تسجيل الوصول",
+      "checkout": "تسجيل المغادرة",
+      "sectionWifi": "الواي فاي",
+      "wifiNetwork": "الشبكة",
+      "wifiPassword": "كلمة المرور",
+      "wifiPasswordPlaceholder": "كلمة المرور",
+      "sectionRestaurants": "المطاعم والمواعيد",
+      "restaurantNamePlaceholder": "اسم المطعم",
+      "restaurantHoursPlaceholder": "12م–3م · 7م–11م",
+      "addRestaurant": "إضافة مطعم",
+      "sectionAmenities": "مرافق الغرفة (مفصولة بفواصل)",
+      "amenitiesPlaceholder": "تكييف، واي فاي، تلفزيون، خزنة…",
+      "sectionServices": "خدمات الفندق (مفصولة بفواصل)",
+      "servicesPlaceholder": "مسبح، سبا وحمّام، موقف آمن…",
+      "saving": "جارٍ الحفظ…",
+      "submit": "حفظ المعلومات"
+    }
+  },
+  "messageInput": {
+    "placeholder": "اكتب رسالة…",
+    "sendHint": "اضغط Enter للإرسال · Shift+Enter لسطر جديد",
+    "sendAria": "إرسال الرسالة"
   }
 }

@@ -20,20 +20,22 @@ import { formatCurrency } from '@/lib/utils/format'
 
 type HotelStats = {
   active_stays: number
-  orders_today: number
+  total_orders_today: number
   pending_orders: number
   pending_requests: number
   revenue_today: number
 }
 
-function timeAgo(date: string) {
+type OpsTranslator = Awaited<ReturnType<typeof getTranslations<'admin.operations'>>>
+
+function timeAgo(date: string, t: OpsTranslator) {
   const diff = Date.now() - new Date(date).getTime()
   const mins = Math.floor(diff / 60000)
-  if (mins < 1) return 'just now'
-  if (mins < 60) return `${mins}m ago`
+  if (mins < 1) return t('justNow')
+  if (mins < 60) return t('minutesAgo', { count: mins })
   const hrs = Math.floor(mins / 60)
-  if (hrs < 24) return `${hrs}h ago`
-  return `${Math.floor(hrs / 24)}d ago`
+  if (hrs < 24) return t('hoursAgo', { count: hrs })
+  return t('daysAgo', { count: Math.floor(hrs / 24) })
 }
 
 export default async function OperationsPage({
@@ -78,7 +80,7 @@ export default async function OperationsPage({
 
   const stats = (statsResult.data as HotelStats | null) ?? {
     active_stays: 0,
-    orders_today: 0,
+    total_orders_today: 0,
     pending_orders: 0,
     pending_requests: 0,
     revenue_today: 0,
@@ -94,8 +96,7 @@ export default async function OperationsPage({
       <div className="flex items-center justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#C9A84C' }}>
-            {/* TODO: i18n */}
-            Live Overview
+            {t('liveOverview')}
           </p>
           <h1 className="font-heading text-3xl font-bold" style={{ color: '#1B2D5B' }}>
             {t('title')}
@@ -107,30 +108,30 @@ export default async function OperationsPage({
       {/* Stats grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatsCard
-          title="Active Stays"
+          title={t('activeStays')}
           value={stats.active_stays}
           icon={BedDouble}
-          subtitle="guests checked in"
+          subtitle={t('activeStaysSub')}
         />
         <StatsCard
-          title="Orders Today"
-          value={stats.orders_today}
+          title={t('ordersToday')}
+          value={stats.total_orders_today}
           icon={ShoppingBag}
-          subtitle="room service orders"
+          subtitle={t('ordersTodaySub')}
         />
         <StatsCard
-          title="Pending Orders"
+          title={t('pendingOrders')}
           value={stats.pending_orders}
           icon={Clock}
           variant={stats.pending_orders > 0 ? 'danger' : 'default'}
           badge={stats.pending_orders > 0 ? stats.pending_orders : undefined}
         />
         <StatsCard
-          title="Revenue Today"
+          title={t('revenueToday')}
           value={formatCurrency(stats.revenue_today)}
           icon={DollarSign}
           variant="warning"
-          subtitle="from room service"
+          subtitle={t('revenueTodaySub')}
         />
       </div>
 
@@ -140,22 +141,22 @@ export default async function OperationsPage({
         <div className="card-warm overflow-hidden">
           <div className="px-6 py-4" style={{ borderBottom: '1px solid rgba(27,45,91,0.06)' }}>
             <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#C9A84C' }}>
-              Recent Activity
+              {t('recentActivity')}
             </p>
             <h2 className="font-heading text-lg font-semibold mt-0.5" style={{ color: '#1B2D5B' }}>
-              Room Service Orders
+              {t('roomServiceOrders')}
             </h2>
           </div>
 
           {orders.length === 0 ? (
             <div className="px-6 py-12 text-center">
-              <p className="text-sm" style={{ color: '#7A8BA8' }}>No orders yet today</p>
+              <p className="text-sm" style={{ color: '#7A8BA8' }}>{t('noOrders')}</p>
             </div>
           ) : (
             <div className="divide-y" style={{ borderColor: 'rgba(27,45,91,0.05)' }}>
               {orders.map((order) => {
                 const roomNumber = order.stays?.rooms?.number ?? '—'
-                const guestName = order.profiles?.full_name ?? 'Unknown'
+                const guestName = order.profiles?.full_name ?? t('unknown')
                 return (
                   <div
                     key={order.id}
@@ -172,7 +173,7 @@ export default async function OperationsPage({
                         {guestName}
                       </p>
                       <p className="text-xs" style={{ color: '#7A8BA8' }}>
-                        {timeAgo(order.created_at)}
+                        {timeAgo(order.created_at, t)}
                       </p>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
@@ -196,22 +197,22 @@ export default async function OperationsPage({
         <div className="card-warm overflow-hidden">
           <div className="px-6 py-4" style={{ borderBottom: '1px solid rgba(27,45,91,0.06)' }}>
             <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#C9A84C' }}>
-              Recent Activity
+              {t('recentActivity')}
             </p>
             <h2 className="font-heading text-lg font-semibold mt-0.5" style={{ color: '#1B2D5B' }}>
-              Service Requests
+              {t('serviceRequests')}
             </h2>
           </div>
 
           {requests.length === 0 ? (
             <div className="px-6 py-12 text-center">
-              <p className="text-sm" style={{ color: '#7A8BA8' }}>No service requests</p>
+              <p className="text-sm" style={{ color: '#7A8BA8' }}>{t('noRequests')}</p>
             </div>
           ) : (
             <div className="divide-y" style={{ borderColor: 'rgba(27,45,91,0.05)' }}>
               {requests.map((req) => {
                 const roomNumber = req.stays?.rooms?.number ?? '—'
-                const guestName = req.profiles?.full_name ?? 'Unknown'
+                const guestName = req.profiles?.full_name ?? t('unknown')
                 const typeLabel = ['cleaning', 'towels', 'maintenance', 'other'].includes(req.type)
                   ? tRequests(req.type)
                   : req.type
@@ -231,7 +232,7 @@ export default async function OperationsPage({
                         {typeLabel}
                       </p>
                       <p className="text-xs" style={{ color: '#7A8BA8' }}>
-                        {guestName} · {timeAgo(req.created_at)}
+                        {guestName} · {timeAgo(req.created_at, t)}
                       </p>
                     </div>
                     <div className="flex items-center gap-1.5 shrink-0">

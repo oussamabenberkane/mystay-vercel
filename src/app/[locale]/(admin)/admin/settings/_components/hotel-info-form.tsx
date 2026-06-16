@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { useTranslations } from 'next-intl'
 import { upsertHotelInfoAction, type HotelInfoRow, type RestaurantHour } from '@/lib/actions/hotel-info'
 import { Plus, Trash2, Save, Hotel } from 'lucide-react'
 
@@ -33,6 +34,7 @@ function toFormState(info: HotelInfoRow | null): FormState {
 }
 
 export function HotelInfoForm({ initialData }: { initialData: HotelInfoRow | null }) {
+  const t = useTranslations('adminSettings.info')
   const [form, setForm] = useState<FormState>(() => toFormState(initialData))
   const [isPending, startTransition] = useTransition()
   const [toast, setToast] = useState<{ type: 'success' | 'error'; msg: string } | null>(null)
@@ -85,7 +87,7 @@ export function HotelInfoForm({ initialData }: { initialData: HotelInfoRow | nul
       if (result.error) {
         setToast({ type: 'error', msg: result.error })
       } else {
-        setToast({ type: 'success', msg: 'Informations enregistrées avec succès.' })
+        setToast({ type: 'success', msg: t('saved') })
       }
       setTimeout(() => setToast(null), 3500)
     })
@@ -106,9 +108,9 @@ export function HotelInfoForm({ initialData }: { initialData: HotelInfoRow | nul
           <Hotel className="size-5" style={{ color: '#1B2D5B' }} />
         </div>
         <div>
-          <p className="font-semibold text-sm" style={{ color: '#1B2D5B' }}>Informations de l'hôtel</p>
+          <p className="font-semibold text-sm" style={{ color: '#1B2D5B' }}>{t('title')}</p>
           <p className="text-xs" style={{ color: '#7A8BA8' }}>
-            Visible par tous les clients connectés
+            {t('subtitle')}
           </p>
         </div>
       </div>
@@ -129,22 +131,22 @@ export function HotelInfoForm({ initialData }: { initialData: HotelInfoRow | nul
       <form onSubmit={handleSubmit} className="space-y-6">
 
         {/* General */}
-        <Section label="Général">
-          <Field label="Slogan (tagline)">
+        <Section label={t('sectionGeneral')}>
+          <Field label={t('tagline')}>
             <input
               className={inputCls}
               style={inputStyle}
               value={form.tagline}
               onChange={e => set('tagline', e.target.value)}
-              placeholder="Béjaïa · 5 Étoiles · Vue Mer"
+              placeholder={t('taglinePlaceholder')}
             />
           </Field>
         </Section>
 
         {/* Contact */}
-        <Section label="Contact">
+        <Section label={t('sectionContact')}>
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Téléphone">
+            <Field label={t('phone')}>
               <input
                 className={inputCls}
                 style={inputStyle}
@@ -153,7 +155,7 @@ export function HotelInfoForm({ initialData }: { initialData: HotelInfoRow | nul
                 placeholder="+213 34 000 000"
               />
             </Field>
-            <Field label="Email">
+            <Field label={t('email')}>
               <input
                 className={inputCls}
                 style={inputStyle}
@@ -167,9 +169,9 @@ export function HotelInfoForm({ initialData }: { initialData: HotelInfoRow | nul
         </Section>
 
         {/* Horaires */}
-        <Section label="Horaires d'arrivée / départ">
+        <Section label={t('sectionHours')}>
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Check-in">
+            <Field label={t('checkin')}>
               <input
                 className={inputCls}
                 style={inputStyle}
@@ -178,7 +180,7 @@ export function HotelInfoForm({ initialData }: { initialData: HotelInfoRow | nul
                 placeholder="14:00"
               />
             </Field>
-            <Field label="Check-out">
+            <Field label={t('checkout')}>
               <input
                 className={inputCls}
                 style={inputStyle}
@@ -191,9 +193,9 @@ export function HotelInfoForm({ initialData }: { initialData: HotelInfoRow | nul
         </Section>
 
         {/* Wi-Fi */}
-        <Section label="Wi-Fi">
+        <Section label={t('sectionWifi')}>
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Réseau">
+            <Field label={t('wifiNetwork')}>
               <input
                 className={inputCls}
                 style={inputStyle}
@@ -202,20 +204,20 @@ export function HotelInfoForm({ initialData }: { initialData: HotelInfoRow | nul
                 placeholder="HOTEL_GUEST"
               />
             </Field>
-            <Field label="Mot de passe">
+            <Field label={t('wifiPassword')}>
               <input
                 className={inputCls}
                 style={inputStyle}
                 value={form.wifi_password}
                 onChange={e => set('wifi_password', e.target.value)}
-                placeholder="motdepasse"
+                placeholder={t('wifiPasswordPlaceholder')}
               />
             </Field>
           </div>
         </Section>
 
         {/* Restaurants */}
-        <Section label="Restaurants & Horaires">
+        <Section label={t('sectionRestaurants')}>
           <div className="space-y-2">
             {form.restaurant_hours.map((r, i) => (
               <div key={i} className="flex gap-2 items-center">
@@ -224,14 +226,14 @@ export function HotelInfoForm({ initialData }: { initialData: HotelInfoRow | nul
                   style={inputStyle}
                   value={r.name}
                   onChange={e => setRestaurant(i, 'name', e.target.value)}
-                  placeholder="Nom du restaurant"
+                  placeholder={t('restaurantNamePlaceholder')}
                 />
                 <input
                   className={`${inputCls} flex-1`}
                   style={inputStyle}
                   value={r.hours}
                   onChange={e => setRestaurant(i, 'hours', e.target.value)}
-                  placeholder="12h–15h · 19h–23h"
+                  placeholder={t('restaurantHoursPlaceholder')}
                 />
                 <button
                   type="button"
@@ -249,34 +251,34 @@ export function HotelInfoForm({ initialData }: { initialData: HotelInfoRow | nul
               style={{ background: 'rgba(201,168,76,0.1)', color: '#C9A84C' }}
             >
               <Plus className="size-3.5" />
-              Ajouter un restaurant
+              {t('addRestaurant')}
             </button>
           </div>
         </Section>
 
         {/* Équipements chambre */}
-        <Section label="Équipements chambre (séparés par virgule)">
+        <Section label={t('sectionAmenities')}>
           <Field label="">
             <textarea
               className={`${inputCls} resize-none`}
               style={{ ...inputStyle, minHeight: '80px' }}
               value={form.room_amenities}
               onChange={e => set('room_amenities', e.target.value)}
-              placeholder="Climatisation, Wi-Fi, Télévision, Coffre-fort…"
+              placeholder={t('amenitiesPlaceholder')}
               rows={3}
             />
           </Field>
         </Section>
 
         {/* Services */}
-        <Section label="Services de l'hôtel (séparés par virgule)">
+        <Section label={t('sectionServices')}>
           <Field label="">
             <textarea
               className={`${inputCls} resize-none`}
               style={{ ...inputStyle, minHeight: '80px' }}
               value={form.hotel_services}
               onChange={e => set('hotel_services', e.target.value)}
-              placeholder="Piscine, Spa & Hammam, Parking sécurisé…"
+              placeholder={t('servicesPlaceholder')}
               rows={3}
             />
           </Field>
@@ -289,7 +291,7 @@ export function HotelInfoForm({ initialData }: { initialData: HotelInfoRow | nul
           style={{ background: '#1B2D5B', color: '#F8F0E8' }}
         >
           <Save className="size-4" style={{ color: '#C9A84C' }} />
-          {isPending ? 'Enregistrement…' : 'Enregistrer les informations'}
+          {isPending ? t('saving') : t('submit')}
         </button>
       </form>
     </div>

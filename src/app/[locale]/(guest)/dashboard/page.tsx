@@ -20,8 +20,8 @@ import { formatCurrency } from '@/lib/utils/format'
 import { getStayStatusAction } from '@/lib/actions/stay-status'
 import { CheckInCard } from './_components/check-in-card'
 
-function formatDate(d: string) {
-  return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+function formatDate(d: string, locale: string) {
+  return new Date(d).toLocaleDateString(locale, { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
 export default async function GuestDashboardPage({
@@ -75,15 +75,14 @@ export default async function GuestDashboardPage({
 
   const firstName = profile.full_name.split(' ')[0]
 
-  // TODO: i18n — quick action labels/descriptions have no matching translation keys
   const quickActions = [
-    { href: '/menu',     label: 'Room Service', icon: UtensilsCrossed, description: 'Commander repas & boissons' },
-    { href: '/requests', label: 'Demandes',      icon: Bell,            description: 'Ménage & services'        },
-    { href: '/chat',     label: 'Chat',           icon: MessageCircle,   description: 'Contacter la réception'  },
-    { href: '/info',     label: 'Infos Hôtel',   icon: Info,            description: 'Wifi, horaires, services' },
-    { href: '/feedback', label: 'Votre Avis',    icon: Star,            description: 'Remarques & impressions'  },
-    { href: '/loyalty',  label: 'Fidélité',      icon: Award,           description: 'Points & offres' },
-  ]
+    { href: '/menu',     key: 'roomService', icon: UtensilsCrossed },
+    { href: '/requests', key: 'requests',    icon: Bell            },
+    { href: '/chat',     key: 'chat',        icon: MessageCircle   },
+    { href: '/info',     key: 'info',        icon: Info            },
+    { href: '/feedback', key: 'feedback',    icon: Star            },
+    { href: '/loyalty',  key: 'loyalty',     icon: Award           },
+  ] as const
 
   return (
     <div className="min-h-screen pb-24" style={{ background: '#F8F0E8' }}>
@@ -130,14 +129,13 @@ export default async function GuestDashboardPage({
               <div className="flex items-center gap-2">
                 <Calendar className="size-4 shrink-0" style={{ color: '#C9A84C' }} />
                 <span className="text-sm" style={{ color: 'rgba(248,240,232,0.75)' }}>
-                  {t('checkIn')}: {formatDate(activeStay.check_in)} → {t('checkOut')}: {formatDate(activeStay.check_out)}
+                  {t('checkIn')}: {formatDate(activeStay.check_in, locale)} → {t('checkOut')}: {formatDate(activeStay.check_out, locale)}
                 </span>
               </div>
             </div>
           ) : (
             <p className="text-sm" style={{ color: 'rgba(248,240,232,0.6)' }}>
-              {/* TODO: i18n */}
-              No active stay — contact reception for assistance.
+              {t('noActiveStayInline')}
             </p>
           )}
         </div>
@@ -153,8 +151,7 @@ export default async function GuestDashboardPage({
           >
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: '#C9A84C' }}>
-                {/* TODO: i18n */}
-                Current Balance
+                {t('currentBalance')}
               </p>
               <p className="font-heading text-2xl font-bold mt-0.5" style={{ color: '#1B2D5B' }}>
                 {formatCurrency(totalExpenses)}
@@ -165,8 +162,7 @@ export default async function GuestDashboardPage({
               className="text-xs font-semibold rounded-xl px-4 py-2 transition-colors"
               style={{ background: '#C9A84C', color: '#1B2D5B' }}
             >
-              {/* TODO: i18n */}
-              View Bill
+              {t('viewBill')}
             </Link>
           </div>
         )}
@@ -177,7 +173,7 @@ export default async function GuestDashboardPage({
             {t('quickActions')}
           </p>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {quickActions.map(({ href, label, icon: Icon, description }) => (
+            {quickActions.map(({ href, key, icon: Icon }) => (
               <Link
                 key={href}
                 href={`/${locale}${href}`}
@@ -190,10 +186,10 @@ export default async function GuestDashboardPage({
                   <Icon className="size-5" style={{ color: '#1B2D5B' }} strokeWidth={1.8} />
                 </div>
                 <p className="font-semibold text-sm" style={{ color: '#1B2D5B' }}>
-                  {label}
+                  {t(`actions.${key}.label`)}
                 </p>
                 <p className="text-xs mt-0.5" style={{ color: '#7A8BA8' }}>
-                  {description}
+                  {t(`actions.${key}.desc`)}
                 </p>
               </Link>
             ))}
@@ -205,16 +201,14 @@ export default async function GuestDashboardPage({
           <div>
             <div className="flex items-center justify-between mb-3">
               <p className="text-[11px] font-semibold uppercase tracking-widest" style={{ color: '#7A8BA8' }}>
-                {/* TODO: i18n */}
-                Recent Orders
+                {t('recentOrders')}
               </p>
               <Link
                 href={`/${locale}/orders`}
                 className="text-xs font-medium transition-opacity hover:opacity-70"
                 style={{ color: '#C9A84C' }}
               >
-                {/* TODO: i18n */}
-                View all
+                {t('viewAll')}
               </Link>
             </div>
             <div className="card-warm divide-y" style={{ borderColor: 'rgba(27,45,91,0.05)' }}>
@@ -225,7 +219,7 @@ export default async function GuestDashboardPage({
                       Order #{order.id.slice(-6).toUpperCase()}
                     </p>
                     <p className="text-xs mt-0.5" style={{ color: '#7A8BA8' }}>
-                      {new Date(order.created_at).toLocaleDateString('en-US', {
+                      {new Date(order.created_at).toLocaleDateString(locale, {
                         month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
                       })}
                     </p>
@@ -247,12 +241,10 @@ export default async function GuestDashboardPage({
           <div className="card-warm p-6 text-center">
             <BedDouble className="size-10 mx-auto mb-3" style={{ color: '#C9A84C', opacity: 0.6 }} />
             <p className="font-heading text-lg font-semibold" style={{ color: '#1B2D5B' }}>
-              {/* TODO: i18n */}
-              No Active Stay
+              {t('noActiveStayTitle')}
             </p>
             <p className="text-sm mt-1" style={{ color: '#7A8BA8' }}>
-              {/* TODO: i18n */}
-              Please contact hotel reception to get checked in.
+              {t('noActiveStayBody')}
             </p>
           </div>
         )}

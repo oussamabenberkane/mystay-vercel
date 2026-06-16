@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import { useLocale } from 'next-intl'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -69,9 +70,9 @@ function StatusBadge({ status }: { status: StayStatus }) {
   )
 }
 
-function formatStamp(iso: string | null) {
+function formatStamp(iso: string | null, locale: string) {
   if (!iso) return '—'
-  return new Date(iso).toLocaleString(undefined, {
+  return new Date(iso).toLocaleString(locale, {
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
@@ -87,6 +88,7 @@ interface StaysClientProps {
 
 export function StaysClient({ stays, guests, rooms }: StaysClientProps) {
   const router = useRouter()
+  const locale = useLocale()
   const [isPending, startTransition] = useTransition()
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'in_house' | 'reserved' | 'checked_out'>('all')
@@ -233,16 +235,16 @@ export function StaysClient({ stays, guests, rooms }: StaysClientProps) {
                       )}
                     </td>
                     <td className="px-5 py-3.5" style={{ color: '#7A8BA8' }}>
-                      {new Date(stay.check_in).toLocaleDateString()}
+                      {new Date(stay.check_in).toLocaleDateString(locale)}
                     </td>
                     <td className="px-5 py-3.5" style={{ color: '#7A8BA8' }}>
-                      {new Date(stay.check_out).toLocaleDateString()}
+                      {new Date(stay.check_out).toLocaleDateString(locale)}
                     </td>
                     <td className="px-5 py-3.5 whitespace-nowrap" style={{ color: '#7A8BA8' }}>
-                      {formatStamp(stay.checked_in_at)}
+                      {formatStamp(stay.checked_in_at, locale)}
                     </td>
                     <td className="px-5 py-3.5 whitespace-nowrap" style={{ color: '#7A8BA8' }}>
-                      {formatStamp(stay.checked_out_at)}
+                      {formatStamp(stay.checked_out_at, locale)}
                     </td>
                     <td className="px-5 py-3.5">
                       <StatusBadge status={stay.status} />

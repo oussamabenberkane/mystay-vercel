@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Eye, EyeOff, Gift, Pencil, Plus, Sparkles, Trash2 } from 'lucide-react'
 import {
   Sheet,
@@ -23,6 +24,7 @@ interface LoyaltyAdminClientProps {
 }
 
 export function LoyaltyAdminClient({ initialOffers }: LoyaltyAdminClientProps) {
+  const t = useTranslations('adminLoyalty')
   const [items, setItems] = useState<LoyaltyOffer[]>(initialOffers)
   const [sheetOpen, setSheetOpen] = useState(false)
   const [editing, setEditing] = useState<LoyaltyOffer | null>(null)
@@ -77,7 +79,7 @@ export function LoyaltyAdminClient({ initialOffers }: LoyaltyAdminClientProps) {
         showToast(result.error, true)
       } else if (result.offer) {
         setItems((prev) => prev.map((o) => (o.id === editing.id ? result.offer! : o)))
-        showToast('Offre mise à jour.')
+        showToast(t('offerUpdated'))
         setSheetOpen(false)
         resetForm()
       }
@@ -91,7 +93,7 @@ export function LoyaltyAdminClient({ initialOffers }: LoyaltyAdminClientProps) {
         showToast(result.error, true)
       } else if (result.offer) {
         setItems((prev) => [result.offer!, ...prev])
-        showToast('Offre créée avec succès.')
+        showToast(t('offerCreated'))
         setSheetOpen(false)
         resetForm()
       }
@@ -116,7 +118,7 @@ export function LoyaltyAdminClient({ initialOffers }: LoyaltyAdminClientProps) {
       showToast(result.error, true)
     } else {
       setItems((prev) => prev.filter((o) => o.id !== id))
-      showToast('Offre supprimée.')
+      showToast(t('offerDeleted'))
     }
     setDeleteTarget(null)
   }
@@ -147,7 +149,7 @@ export function LoyaltyAdminClient({ initialOffers }: LoyaltyAdminClientProps) {
       {/* Toolbar */}
       <div className="flex items-center justify-between">
         <p className="text-sm" style={{ color: '#7A8BA8' }}>
-          {items.length} offre{items.length !== 1 ? 's' : ''}
+          {t('count', { count: items.length })}
         </p>
         <button
           onClick={openCreate}
@@ -155,7 +157,7 @@ export function LoyaltyAdminClient({ initialOffers }: LoyaltyAdminClientProps) {
           style={{ background: '#1B2D5B', color: '#F8F0E8' }}
         >
           <Plus className="size-4" style={{ color: '#C9A84C' }} />
-          Nouvelle offre
+          {t('add')}
         </button>
       </div>
 
@@ -167,7 +169,7 @@ export function LoyaltyAdminClient({ initialOffers }: LoyaltyAdminClientProps) {
         >
           <Gift className="size-10 mb-3" style={{ color: '#C9A84C', opacity: 0.4 }} />
           <p className="text-sm" style={{ color: '#7A8BA8' }}>
-            Aucune offre pour le moment
+            {t('empty')}
           </p>
         </div>
       ) : (
@@ -197,7 +199,7 @@ export function LoyaltyAdminClient({ initialOffers }: LoyaltyAdminClientProps) {
                           className="rounded-full px-2 py-0.5 text-[10px] font-semibold"
                           style={{ background: 'rgba(27,45,91,0.06)', color: '#7A8BA8' }}
                         >
-                          Masquée
+                          {t('hidden')}
                         </span>
                       )}
                     </div>
@@ -216,7 +218,7 @@ export function LoyaltyAdminClient({ initialOffers }: LoyaltyAdminClientProps) {
                       onClick={() => openEdit(item)}
                       className="flex size-8 items-center justify-center rounded-lg transition-colors hover:bg-black/5"
                       style={{ color: '#1B2D5B' }}
-                      title="Modifier"
+                      title={t('edit')}
                     >
                       <Pencil className="size-4" />
                     </button>
@@ -224,7 +226,7 @@ export function LoyaltyAdminClient({ initialOffers }: LoyaltyAdminClientProps) {
                       onClick={() => handleToggle(item)}
                       className="flex size-8 items-center justify-center rounded-lg transition-colors hover:bg-black/5"
                       style={{ color: item.is_active ? '#16a34a' : '#7A8BA8' }}
-                      title={item.is_active ? 'Masquer' : 'Afficher'}
+                      title={item.is_active ? t('hide') : t('show')}
                     >
                       {item.is_active ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
                     </button>
@@ -232,7 +234,7 @@ export function LoyaltyAdminClient({ initialOffers }: LoyaltyAdminClientProps) {
                       onClick={() => setDeleteTarget(item.id)}
                       className="flex size-8 items-center justify-center rounded-lg transition-colors hover:bg-red-50"
                       style={{ color: '#C0392B' }}
-                      title="Supprimer"
+                      title={t('delete')}
                     >
                       <Trash2 className="size-4" />
                     </button>
@@ -252,10 +254,10 @@ export function LoyaltyAdminClient({ initialOffers }: LoyaltyAdminClientProps) {
             style={{ boxShadow: '0 8px 40px rgba(27,45,91,0.14)' }}
           >
             <p className="font-heading text-lg font-bold mb-2" style={{ color: '#1B2D5B' }}>
-              Supprimer l&apos;offre ?
+              {t('deleteTitle')}
             </p>
             <p className="text-sm mb-6" style={{ color: '#7A8BA8' }}>
-              Cette action est irréversible.
+              {t('irreversible')}
             </p>
             <div className="flex gap-3">
               <button
@@ -263,14 +265,14 @@ export function LoyaltyAdminClient({ initialOffers }: LoyaltyAdminClientProps) {
                 className="flex-1 cursor-pointer rounded-xl border py-2.5 text-sm font-semibold transition-colors hover:bg-gray-50"
                 style={{ borderColor: 'rgba(27,45,91,0.12)', color: '#7A8BA8' }}
               >
-                Annuler
+                {t('cancel')}
               </button>
               <button
                 onClick={() => handleDelete(deleteTarget)}
                 className="flex-1 cursor-pointer rounded-xl py-2.5 text-sm font-semibold transition-colors hover:opacity-90"
                 style={{ background: '#C0392B', color: '#FFF' }}
               >
-                Supprimer
+                {t('delete')}
               </button>
             </div>
           </div>
@@ -290,10 +292,10 @@ export function LoyaltyAdminClient({ initialOffers }: LoyaltyAdminClientProps) {
 
           <SheetHeader className="px-6 pb-2 pt-1">
             <p className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#C9A84C' }}>
-              Fidélité
+              {t('eyebrow')}
             </p>
             <SheetTitle className="font-heading text-xl font-bold" style={{ color: '#1B2D5B' }}>
-              {editing ? 'Modifier l\'offre' : 'Nouvelle offre'}
+              {editing ? t('editTitle') : t('add')}
             </SheetTitle>
           </SheetHeader>
 
@@ -301,13 +303,13 @@ export function LoyaltyAdminClient({ initialOffers }: LoyaltyAdminClientProps) {
             {/* Title */}
             <div>
               <p className="mb-2 text-xs font-semibold uppercase tracking-widest" style={{ color: '#7A8BA8' }}>
-                Titre
+                {t('fieldTitle')}
               </p>
               <input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
-                placeholder="Ex: Petit-déjeuner offert…"
+                placeholder={t('titlePlaceholder')}
                 className="w-full rounded-xl border px-4 py-3 text-sm outline-none transition-all focus:ring-2"
                 style={{
                   borderColor: 'rgba(27,45,91,0.15)',
@@ -321,13 +323,13 @@ export function LoyaltyAdminClient({ initialOffers }: LoyaltyAdminClientProps) {
             {/* Description */}
             <div>
               <p className="mb-2 text-xs font-semibold uppercase tracking-widest" style={{ color: '#7A8BA8' }}>
-                Description <span className="normal-case font-normal">(optionnel)</span>
+                {t('fieldDescription')} <span className="normal-case font-normal">{t('optional')}</span>
               </p>
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={3}
-                placeholder="Détails de l'offre…"
+                placeholder={t('descriptionPlaceholder')}
                 className="w-full resize-none rounded-xl border px-4 py-3 text-sm outline-none transition-all focus:ring-2"
                 style={{
                   borderColor: 'rgba(27,45,91,0.15)',
@@ -341,7 +343,7 @@ export function LoyaltyAdminClient({ initialOffers }: LoyaltyAdminClientProps) {
             {/* Points cost */}
             <div>
               <p className="mb-2 text-xs font-semibold uppercase tracking-widest" style={{ color: '#7A8BA8' }}>
-                Coût en points
+                {t('fieldPointsCost')}
               </p>
               <input
                 type="number"
@@ -350,7 +352,7 @@ export function LoyaltyAdminClient({ initialOffers }: LoyaltyAdminClientProps) {
                 value={pointsCost}
                 onChange={(e) => setPointsCost(e.target.value)}
                 required
-                placeholder="Ex: 500"
+                placeholder={t('pointsPlaceholder')}
                 className="w-full rounded-xl border px-4 py-3 text-sm outline-none transition-all focus:ring-2"
                 style={{
                   borderColor: 'rgba(27,45,91,0.15)',
@@ -368,7 +370,7 @@ export function LoyaltyAdminClient({ initialOffers }: LoyaltyAdminClientProps) {
               className="w-full cursor-pointer rounded-2xl py-4 text-sm font-semibold transition-all hover:opacity-90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
               style={{ background: '#1B2D5B', color: '#F8F0E8', minHeight: '52px' }}
             >
-              {submitting ? 'Enregistrement…' : editing ? 'Enregistrer' : 'Créer l\'offre'}
+              {submitting ? t('saving') : editing ? t('save') : t('create')}
             </button>
           </form>
         </SheetContent>
