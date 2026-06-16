@@ -1,7 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { createAdminClient, serviceRoleConfigError } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
 
 // ---------------------------------------------------------------------------
@@ -69,6 +69,11 @@ async function getAdminCtx() {
 // Service-role client — only used AFTER admin role is verified in getAdminCtx().
 // Required for global rows (hotel_id = NULL) on banners/flash_sales and for all
 // showcase_hotels writes, which RLS blocks for a tenant admin.
+//
+// `createAdminClient()` throws when the service-role key is missing/placeholder;
+// every action that uses svc() first checks `serviceRoleConfigError()` and
+// returns that reason as a visible error string (the convention here is that
+// actions never throw — they return { …, error }).
 function svc() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return createAdminClient() as any
@@ -81,6 +86,9 @@ function svc() {
 export async function getAdBannersAdminAction(): Promise<{ banners: AdBanner[]; error?: string }> {
   const ctx = await getAdminCtx()
   if (!ctx) return { banners: [], error: 'Unauthorized' }
+
+  const cfg = serviceRoleConfigError()
+  if (cfg) return { banners: [], error: cfg }
 
   // Read via service-role so the admin sees both their hotel's rows and global
   // (hotel_id IS NULL) rows reliably regardless of RLS read scope.
@@ -108,6 +116,13 @@ export async function createAdBannerAction(input: {
   if (!input.image_url || !input.image_url.trim()) return { error: 'Image URL is required.' }
 
   const isGlobal = input.is_global === true
+  // Global rows require the service-role client (RLS blocks a tenant admin from
+  // inserting hotel_id IS NULL). Per-hotel rows go through the RLS client.
+  if (isGlobal) {
+    const cfg = serviceRoleConfigError()
+    if (cfg) return { error: cfg }
+  }
+
   const row = {
     hotel_id: isGlobal ? null : ctx.hotelId,
     image_url: input.image_url.trim(),
@@ -116,8 +131,6 @@ export async function createAdBannerAction(input: {
     sort_order: input.sort_order ?? 0,
   }
 
-  // Global rows require the service-role client (RLS blocks a tenant admin from
-  // inserting hotel_id IS NULL). Per-hotel rows go through the RLS client.
   const client = isGlobal ? svc() : ctx.supabase
   const { data, error } = await client.from('ad_banners').insert(row).select().single()
 
@@ -137,6 +150,9 @@ export async function updateAdBannerAction(
 ): Promise<{ banner?: AdBanner; error?: string }> {
   const ctx = await getAdminCtx()
   if (!ctx) return { error: 'Unauthorized' }
+
+  const cfg = serviceRoleConfigError()
+  if (cfg) return { error: cfg }
 
   if (input.image_url !== undefined && !input.image_url.trim()) {
     return { error: 'Image URL is required.' }
@@ -167,6 +183,9 @@ export async function toggleAdBannerAction(id: string, is_active: boolean): Prom
   const ctx = await getAdminCtx()
   if (!ctx) return { error: 'Unauthorized' }
 
+  const cfg = serviceRoleConfigError()
+  if (cfg) return { error: cfg }
+
   const { error } = await svc()
     .from('ad_banners')
     .update({ is_active })
@@ -182,6 +201,9 @@ export async function deleteAdBannerAction(id: string): Promise<{ error?: string
   const ctx = await getAdminCtx()
   if (!ctx) return { error: 'Unauthorized' }
 
+  const cfg = serviceRoleConfigError()
+  if (cfg) return { error: cfg }
+
   const { error } = await svc()
     .from('ad_banners')
     .delete()
@@ -196,6 +218,9 @@ export async function deleteAdBannerAction(id: string): Promise<{ error?: string
 export async function reorderAdBannerAction(id: string, sort_order: number): Promise<{ error?: string }> {
   const ctx = await getAdminCtx()
   if (!ctx) return { error: 'Unauthorized' }
+
+  const cfg = serviceRoleConfigError()
+  if (cfg) return { error: cfg }
 
   const { error } = await svc()
     .from('ad_banners')
@@ -227,6 +252,9 @@ export async function getFlashSalesAdminAction(): Promise<{ sales: FlashSale[]; 
   const ctx = await getAdminCtx()
   if (!ctx) return { sales: [], error: 'Unauthorized' }
 
+  const cfg = serviceRoleConfigError()
+  if (cfg) return { sales: [], error: cfg }
+
   const { data, error } = await svc()
     .from('flash_sales')
     .select('*')
@@ -257,6 +285,11 @@ export async function createFlashSaleAction(input: {
   if (windowError) return { error: windowError }
 
   const isGlobal = input.is_global === true
+  if (isGlobal) {
+    const cfg = serviceRoleConfigError()
+    if (cfg) return { error: cfg }
+  }
+
   const row = {
     hotel_id: isGlobal ? null : ctx.hotelId,
     title: input.title.trim(),
@@ -291,6 +324,9 @@ export async function updateFlashSaleAction(
   const ctx = await getAdminCtx()
   if (!ctx) return { error: 'Unauthorized' }
 
+  const cfg = serviceRoleConfigError()
+  if (cfg) return { error: cfg }
+
   if (input.title !== undefined && !input.title.trim()) return { error: 'Title is required.' }
 
   const windowError = validateSaleWindow(input.starts_at, input.ends_at)
@@ -322,6 +358,9 @@ export async function toggleFlashSaleAction(id: string, is_active: boolean): Pro
   const ctx = await getAdminCtx()
   if (!ctx) return { error: 'Unauthorized' }
 
+  const cfg = serviceRoleConfigError()
+  if (cfg) return { error: cfg }
+
   const { error } = await svc()
     .from('flash_sales')
     .update({ is_active })
@@ -337,6 +376,9 @@ export async function deleteFlashSaleAction(id: string): Promise<{ error?: strin
   const ctx = await getAdminCtx()
   if (!ctx) return { error: 'Unauthorized' }
 
+  const cfg = serviceRoleConfigError()
+  if (cfg) return { error: cfg }
+
   const { error } = await svc()
     .from('flash_sales')
     .delete()
@@ -351,6 +393,9 @@ export async function deleteFlashSaleAction(id: string): Promise<{ error?: strin
 export async function reorderFlashSaleAction(id: string, sort_order: number): Promise<{ error?: string }> {
   const ctx = await getAdminCtx()
   if (!ctx) return { error: 'Unauthorized' }
+
+  const cfg = serviceRoleConfigError()
+  if (cfg) return { error: cfg }
 
   const { error } = await svc()
     .from('flash_sales')
@@ -370,6 +415,9 @@ export async function reorderFlashSaleAction(id: string, sort_order: number): Pr
 export async function getShowcaseHotelsAdminAction(): Promise<{ hotels: ShowcaseHotel[]; error?: string }> {
   const ctx = await getAdminCtx()
   if (!ctx) return { hotels: [], error: 'Unauthorized' }
+
+  const cfg = serviceRoleConfigError()
+  if (cfg) return { hotels: [], error: cfg }
 
   const { data, error } = await svc()
     .from('showcase_hotels')
@@ -391,6 +439,9 @@ export async function createShowcaseHotelAction(input: {
 }): Promise<{ hotel?: ShowcaseHotel; error?: string }> {
   const ctx = await getAdminCtx()
   if (!ctx) return { error: 'Unauthorized' }
+
+  const cfg = serviceRoleConfigError()
+  if (cfg) return { error: cfg }
 
   if (!input.name || !input.name.trim()) return { error: 'Name is required.' }
 
@@ -424,6 +475,9 @@ export async function updateShowcaseHotelAction(
   const ctx = await getAdminCtx()
   if (!ctx) return { error: 'Unauthorized' }
 
+  const cfg = serviceRoleConfigError()
+  if (cfg) return { error: cfg }
+
   if (input.name !== undefined && !input.name.trim()) return { error: 'Name is required.' }
 
   const patch: Record<string, unknown> = {}
@@ -450,6 +504,9 @@ export async function toggleShowcaseHotelAction(id: string, is_active: boolean):
   const ctx = await getAdminCtx()
   if (!ctx) return { error: 'Unauthorized' }
 
+  const cfg = serviceRoleConfigError()
+  if (cfg) return { error: cfg }
+
   const { error } = await svc().from('showcase_hotels').update({ is_active }).eq('id', id)
 
   if (error) return { error: error.message }
@@ -461,6 +518,9 @@ export async function deleteShowcaseHotelAction(id: string): Promise<{ error?: s
   const ctx = await getAdminCtx()
   if (!ctx) return { error: 'Unauthorized' }
 
+  const cfg = serviceRoleConfigError()
+  if (cfg) return { error: cfg }
+
   const { error } = await svc().from('showcase_hotels').delete().eq('id', id)
 
   if (error) return { error: error.message }
@@ -471,6 +531,9 @@ export async function deleteShowcaseHotelAction(id: string): Promise<{ error?: s
 export async function reorderShowcaseHotelAction(id: string, sort_order: number): Promise<{ error?: string }> {
   const ctx = await getAdminCtx()
   if (!ctx) return { error: 'Unauthorized' }
+
+  const cfg = serviceRoleConfigError()
+  if (cfg) return { error: cfg }
 
   const { error } = await svc().from('showcase_hotels').update({ sort_order }).eq('id', id)
 

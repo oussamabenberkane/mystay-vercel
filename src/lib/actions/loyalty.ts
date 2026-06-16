@@ -205,8 +205,10 @@ export async function awardOrderPointsAction(
 
     if (error) return { balance: null, error: error.message }
     return { balance: typeof data === 'number' ? data : null, error: null }
-  } catch {
-    return { balance: null, error: 'Unexpected error' }
+  } catch (e) {
+    // Surface the real reason (e.g. a misconfigured service-role key thrown by
+    // createAdminClient) instead of swallowing it behind a generic message.
+    return { balance: null, error: e instanceof Error ? e.message : 'Unexpected error' }
   }
 }
 
@@ -258,8 +260,8 @@ export async function awardCheckInBonusAction(stayId?: string): Promise<{
 
     if (error) return { balance: null, error: error.message }
     return { balance: typeof data === 'number' ? data : null, error: null }
-  } catch {
-    return { balance: null, error: 'Unexpected error' }
+  } catch (e) {
+    return { balance: null, error: e instanceof Error ? e.message : 'Unexpected error' }
   }
 }
 

@@ -46,6 +46,7 @@ export function ShowcaseHotelsSection({ initial }: { initial: ShowcaseHotel[] })
   const [sheetOpen, setSheetOpen] = useState(false)
   const [editing, setEditing] = useState<ShowcaseHotel | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [formError, setFormError] = useState<string | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
 
   const [name, setName] = useState('')
@@ -57,6 +58,7 @@ export function ShowcaseHotelsSection({ initial }: { initial: ShowcaseHotel[] })
 
   function openCreate() {
     setEditing(null)
+    setFormError(null)
     setName('')
     setImageUrl('')
     setLocation('')
@@ -68,6 +70,7 @@ export function ShowcaseHotelsSection({ initial }: { initial: ShowcaseHotel[] })
 
   function openEdit(item: ShowcaseHotel) {
     setEditing(item)
+    setFormError(null)
     setName(item.name)
     setImageUrl(item.image_url ?? '')
     setLocation(item.location ?? '')
@@ -81,6 +84,7 @@ export function ShowcaseHotelsSection({ initial }: { initial: ShowcaseHotel[] })
     e.preventDefault()
     if (!name.trim()) return
     setSubmitting(true)
+    setFormError(null)
 
     const common = {
       name: name.trim(),
@@ -94,6 +98,7 @@ export function ShowcaseHotelsSection({ initial }: { initial: ShowcaseHotel[] })
     if (editing) {
       const result = await updateShowcaseHotelAction(editing.id, common)
       if (result.error) {
+        setFormError(result.error)
         showToast(result.error, true)
       } else if (result.hotel) {
         setItems((prev) => sortHotels(prev.map((h) => (h.id === editing.id ? result.hotel! : h))))
@@ -103,6 +108,7 @@ export function ShowcaseHotelsSection({ initial }: { initial: ShowcaseHotel[] })
     } else {
       const result = await createShowcaseHotelAction(common)
       if (result.error) {
+        setFormError(result.error)
         showToast(result.error, true)
       } else if (result.hotel) {
         setItems((prev) => sortHotels([result.hotel!, ...prev]))
@@ -330,6 +336,15 @@ export function ShowcaseHotelsSection({ initial }: { initial: ShowcaseHotel[] })
               <FieldLabel>{t('fields.sortOrder')}</FieldLabel>
               <TextField type="number" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} />
             </div>
+
+            {formError && (
+              <p
+                className="rounded-xl px-3 py-2.5 text-sm font-medium"
+                style={{ background: '#FEF2F2', color: '#991B1B' }}
+              >
+                {formError}
+              </p>
+            )}
 
             <SubmitButton
               label={submitting ? t('common.saving') : editing ? t('common.save') : t('common.create')}
