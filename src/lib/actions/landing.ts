@@ -41,6 +41,7 @@ export type FlashSale = {
 
 export type ShowcaseHotel = {
   id: string
+  slug: string | null
   name: string
   image_url: string | null
   location: string | null
@@ -82,7 +83,7 @@ export async function getLandingContentAction(): Promise<LandingContent> {
       .order('created_at', { ascending: true }),
     db
       .from('showcase_hotels')
-      .select('id, name, image_url, location, indicative_price, rating, sort_order, is_active, created_at')
+      .select('id, slug, name, image_url, location, indicative_price, rating, sort_order, is_active, created_at')
       .eq('is_active', true)
       .order('sort_order', { ascending: true })
       .order('created_at', { ascending: true }),

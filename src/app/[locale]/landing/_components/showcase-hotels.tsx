@@ -10,13 +10,14 @@ type Labels = {
   from: string
   perNight: string
   viewCta: string
+  viewAll: string
 }
 
 /**
- * Partner-hotel showcase grid (pure marketing — NOT tenant data). Each card is
- * a link into the EXISTING signup flow (signup-with-hotel-code), per the locked
- * decision that showcase cards do not book directly. Cards render image, name,
- * location, indicative price, and rating, ordered by sort_order (server).
+ * Partner-hotel showcase grid (pure marketing — NOT tenant data). Each card
+ * links into the public hotel directory detail page (/hotels/[slug]); the
+ * section header links to the full directory (/hotels). Cards render image,
+ * name, location, indicative price, and rating, ordered by sort_order (server).
  */
 export function ShowcaseHotels({
   hotels,
@@ -43,6 +44,16 @@ export function ShowcaseHotels({
             className="h-px flex-1"
             style={{ background: 'linear-gradient(to right, rgba(201,168,76,0.4), transparent)' }}
           />
+          <Link
+            href={`/${locale}/hotels`}
+            className="group flex shrink-0 items-center gap-1 text-xs font-bold uppercase tracking-wide"
+            style={{ color: '#C9A84C' }}
+          >
+            {labels.viewAll}
+            <span className="transition-transform group-hover:translate-x-0.5 rtl:rotate-180" aria-hidden="true">
+              →
+            </span>
+          </Link>
         </div>
       </div>
 
@@ -50,7 +61,7 @@ export function ShowcaseHotels({
         {hotels.map((hotel) => (
           <Link
             key={hotel.id}
-            href={`/${locale}/signup`}
+            href={hotel.slug ? `/${locale}/hotels/${hotel.slug}` : `/${locale}/hotels`}
             className="showcase-card card-warm group flex flex-col overflow-hidden"
           >
             {/* Image */}

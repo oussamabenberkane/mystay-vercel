@@ -270,7 +270,8 @@
       "heading": "Nos Hôtels Partenaires",
       "from": "À partir de",
       "perNight": "nuit",
-      "viewCta": "Découvrir"
+      "viewCta": "Découvrir",
+      "viewAll": "Tout voir"
     },
     "cta": {
       "kicker": "Quand Vous Voulez",
@@ -281,6 +282,69 @@
     },
     "footer": {
       "tagline": "Sécurisé · Privé · Exceptionnel"
+    }
+  },
+  "hotels": {
+    "nav": {
+      "home": "Accueil",
+      "login": "Connexion",
+      "signup": "S'inscrire"
+    },
+    "hero": {
+      "kicker": "Trouvez votre séjour",
+      "title": "Découvrez des hôtels qui valent le voyage",
+      "subtitle": "Parcourez notre sélection à travers le pays — recherchez par nom ou par ville, puis filtrez par prix et par note pour trouver le séjour qui vous convient."
+    },
+    "search": {
+      "placeholder": "Rechercher par hôtel ou ville…"
+    },
+    "filters": {
+      "city": "Ville",
+      "allCities": "Toutes les villes",
+      "maxPrice": "Prix max",
+      "anyPrice": "Tous les prix",
+      "rating": "Note",
+      "anyRating": "Toutes les notes",
+      "ratingValue": "{rating}+",
+      "sort": "Trier par",
+      "sortFeatured": "En vedette",
+      "sortPriceAsc": "Prix : croissant",
+      "sortPriceDesc": "Prix : décroissant",
+      "sortRating": "Les mieux notés",
+      "clear": "Effacer",
+      "results": "{count, plural, =0 {Aucun hôtel} one {# hôtel} other {# hôtels}}"
+    },
+    "card": {
+      "from": "À partir de",
+      "perNight": "nuit",
+      "viewCta": "Voir l'hôtel"
+    },
+    "empty": {
+      "title": "Aucun hôtel ne correspond à votre recherche",
+      "body": "Essayez d'ajuster ou d'effacer vos filtres pour voir plus de séjours.",
+      "reset": "Effacer tous les filtres"
+    },
+    "loading": "Chargement des hôtels…",
+    "detail": {
+      "back": "Tous les hôtels",
+      "from": "À partir de",
+      "perNight": "par nuit",
+      "ratingLabel": "note des clients",
+      "aboutHeading": "À propos de cet hôtel",
+      "amenitiesHeading": "Services et équipements",
+      "contactHeading": "Contact",
+      "phone": "Téléphone",
+      "email": "E-mail",
+      "address": "Adresse",
+      "photoAlt": "{name} — photo {n}",
+      "bookKicker": "Prêt à séjourner ?",
+      "bookTitle": "Créez votre compte",
+      "bookBody": "Inscrivez-vous pour profiter du room service, des demandes, du chat et de votre note — tout depuis votre téléphone.",
+      "signupCta": "Créer un compte",
+      "loginCta": "Se connecter",
+      "notFoundTitle": "Hôtel introuvable",
+      "notFoundBody": "Cet hôtel n'est peut-être plus répertorié. Parcourez plutôt l'annuaire complet.",
+      "notFoundCta": "Voir tous les hôtels"
     }
   },
   "adminPromos": {

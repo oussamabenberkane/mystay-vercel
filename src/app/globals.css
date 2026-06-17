@@ -166,3 +166,64 @@
 .status-updated {
   animation: status-flash 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
+
+/* ── Public hotel directory (/hotels, /hotels/[slug]) ── */
+.public-cta {
+  transition: transform 0.2s, box-shadow 0.2s, opacity 0.2s;
+}
+.public-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(27, 45, 91, 0.22);
+}
+.public-cta:active {
+  transform: translateY(0);
+}
+
+.hotel-card {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s;
+}
+.hotel-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(27, 45, 91, 0.16);
+}
+.hotel-card:hover .hotel-arrow {
+  transform: translateX(3px);
+}
+[dir='rtl'] .hotel-arrow {
+  display: inline-block;
+  transform: scaleX(-1);
+}
+[dir='rtl'] .hotel-card:hover .hotel-arrow {
+  transform: scaleX(-1) translateX(3px);
+}
+
+@keyframes hotel-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.hotel-reveal {
+  animation: hotel-rise 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.gallery-thumb {
+  transition: opacity 0.2s, transform 0.2s;
+  opacity: 0.6;
+}
+.gallery-thumb:hover {
+  opacity: 1;
+}
+.gallery-thumb[data-active='true'] {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hotel-reveal {
+    animation: none;
+  }
+}

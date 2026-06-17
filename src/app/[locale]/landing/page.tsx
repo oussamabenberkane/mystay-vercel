@@ -126,6 +126,7 @@ export default async function LandingPage({
             from: t('hotels.from'),
             perNight: t('hotels.perNight'),
             viewCta: t('hotels.viewCta'),
+            viewAll: t('hotels.viewAll'),
           }}
         />
 

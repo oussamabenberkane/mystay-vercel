@@ -16,6 +16,12 @@ const publicPaths = ['/login', '/signup', '/forgot-password', '/reset-password']
 // their role home below.
 const preAuthPaths = ['/', '/landing']
 
+// Public browse surfaces reachable by EVERYONE — the hotel directory. Unlike
+// preAuthPaths, logged-in users are NOT bounced away from these (a guest can
+// browse /hotels mid-stay). getRequiredRole returns null for them, so no
+// role-gating either.
+const publicBrowsePaths = ['/hotels']
+
 type Role = 'client' | 'staff' | 'admin'
 
 function getRoleRedirect(role: Role, locale: string): string {
@@ -56,9 +62,10 @@ export async function middleware(request: NextRequest) {
   const isPreAuthPath =
     pathnameWithoutLocale === '/' ||
     preAuthPaths.some(p => p !== '/' && pathnameWithoutLocale.startsWith(p))
+  const isPublicBrowsePath = publicBrowsePaths.some(p => pathnameWithoutLocale.startsWith(p))
 
-  // Redirect unauthenticated users to login (splash + landing stay reachable)
-  if (!user && !isPublicPath && !isPreAuthPath) {
+  // Redirect unauthenticated users to login (splash + landing + public browse stay reachable)
+  if (!user && !isPublicPath && !isPreAuthPath && !isPublicBrowsePath) {
     const url = request.nextUrl.clone()
     url.pathname = `/${locale}/login`
     return NextResponse.redirect(url)

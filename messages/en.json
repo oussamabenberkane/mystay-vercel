@@ -270,7 +270,8 @@
       "heading": "Our Partner Hotels",
       "from": "From",
       "perNight": "night",
-      "viewCta": "Discover"
+      "viewCta": "Discover",
+      "viewAll": "View all"
     },
     "cta": {
       "kicker": "Ready When You Are",
@@ -281,6 +282,69 @@
     },
     "footer": {
       "tagline": "Secure · Private · Exceptional"
+    }
+  },
+  "hotels": {
+    "nav": {
+      "home": "Home",
+      "login": "Login",
+      "signup": "Sign Up"
+    },
+    "hero": {
+      "kicker": "Find your stay",
+      "title": "Discover hotels worth the journey",
+      "subtitle": "Browse our curated collection across the country — search by name or city, then filter by price and rating to find the stay that fits."
+    },
+    "search": {
+      "placeholder": "Search by hotel or city…"
+    },
+    "filters": {
+      "city": "City",
+      "allCities": "All cities",
+      "maxPrice": "Max price",
+      "anyPrice": "Any price",
+      "rating": "Rating",
+      "anyRating": "Any rating",
+      "ratingValue": "{rating}+",
+      "sort": "Sort by",
+      "sortFeatured": "Featured",
+      "sortPriceAsc": "Price: low to high",
+      "sortPriceDesc": "Price: high to low",
+      "sortRating": "Top rated",
+      "clear": "Clear",
+      "results": "{count, plural, =0 {No hotels} one {# hotel} other {# hotels}}"
+    },
+    "card": {
+      "from": "From",
+      "perNight": "night",
+      "viewCta": "View hotel"
+    },
+    "empty": {
+      "title": "No hotels match your search",
+      "body": "Try adjusting or clearing your filters to see more stays.",
+      "reset": "Clear all filters"
+    },
+    "loading": "Loading hotels…",
+    "detail": {
+      "back": "All hotels",
+      "from": "From",
+      "perNight": "per night",
+      "ratingLabel": "guest rating",
+      "aboutHeading": "About this hotel",
+      "amenitiesHeading": "Services & amenities",
+      "contactHeading": "Contact",
+      "phone": "Phone",
+      "email": "Email",
+      "address": "Address",
+      "photoAlt": "{name} — photo {n}",
+      "bookKicker": "Ready to stay?",
+      "bookTitle": "Create your account",
+      "bookBody": "Sign up to unlock room service, requests, chat and your bill — all from your phone.",
+      "signupCta": "Create account",
+      "loginCta": "Sign in",
+      "notFoundTitle": "Hotel not found",
+      "notFoundBody": "This hotel may no longer be listed. Browse the full directory instead.",
+      "notFoundCta": "Browse all hotels"
     }
   },
   "adminPromos": {
